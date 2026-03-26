@@ -1,0 +1,79 @@
+.aatf-home-template__help {
+    margin: 0 0 12px;
+    color: #50575e;
+}
+
+.aatf-home-template__label {
+    font-weight: 600;
+}
+
+.aatf-home-template__repeater-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 12px;
+}
+
+.aatf-home-template__items {
+    display: grid;
+    gap: 12px;
+}
+
+.aatf-home-template__item {
+    display: flex;
+    gap: 14px;
+    padding: 12px;
+    border: 1px solid #dcdcde;
+    border-radius: 6px;
+    background: #f6f7f7;
+}
+
+.aatf-home-template__icon {
+    width: 150px;
+    min-width: 150px;
+}
+
+.aatf-home-template__icon-preview {
+    width: 100%;
+    height: 100px;
+    border: 1px dashed #c3c4c7;
+    border-radius: 6px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.aatf-home-template__icon-img {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+}
+
+.aatf-home-template__icon-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.aatf-home-template__fields {
+    flex: 1;
+}
+
+.aatf-home-template__item-actions {
+    margin: 0;
+}
+
+@media (max-width: 782px) {
+    .aatf-home-template__item {
+        flex-direction: column;
+    }
+
+    .aatf-home-template__icon {
+        width: 100%;
+        min-width: 0;
+    }
+}
+

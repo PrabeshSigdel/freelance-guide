@@ -1,0 +1,132 @@
+﻿/*
+Theme Name: AATF Expedition Base
+Theme URI: https://activeadventure.local
+Author: Freelance Trekking
+Description: Reusable trekking company theme designed to work with AA Trek Framework plugin.
+Version: 0.1.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 7.4
+Text Domain: aatf-expedition-base
+*/
+
+:root {
+    --brand-orange: #e8820c;
+    --brand-dark: #1a1a2e;
+    --brand-navy: #16213e;
+    --brand-gray: #6B7280;
+}
+
+/* Global font override */
+* {
+    font-family: 'Lato', sans-serif;
+}
+
+.font-display {
+    font-family: 'Cinzel', serif;
+}
+
+/* Hero background sizing/positioning */
+.hero-bg {
+    background-size: cover;
+    background-position: center top;
+}
+
+/* Decorative brush underline pseudo-element */
+.hero-underline::after {
+    content: '';
+    display: block;
+    height: 4px;
+    background: white;
+    margin-top: 6px;
+    border-radius: 2px;
+    opacity: 0.8;
+    transform: rotate(-0.5deg);
+}
+
+/* Nav dropdown arrow — purely decorative, no JS needed */
+.nav-item::after {
+    content: ' ▾';
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+.card-shadow {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.tour-image-container {
+    clip-path: inset(0 0 10% 0 round 0.75rem 0.75rem 0 0);
+}
+
+.featured-badge {
+    background-color: rgba(30, 150, 160, 0.8);
+}
+
+.testimonial-card img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.blog-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.read-more-link:hover .arrow-icon {
+    transform: translateX(4px);
+}
+
+.arrow-icon {
+    transition: transform 0.2s ease;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Specific styling for the date badge cutout effect */
+.date-badge-container {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Ensuring consistent card height */
+.article-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.curved-overlap {
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    margin-top: -40px;
+    position: relative;
+    z-index: 10;
+}
+
+.date-badge {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 0px;
+}
+
+/* Accordion chevron rotation */
+.accordion-open .chevron {
+    transform: rotate(180deg);
+}
+
+/* Star rating */
+.star-full {
+    color: var(--brand-orange);
+}
+
+.star-empty {
+    color: #d1d5db;
+}

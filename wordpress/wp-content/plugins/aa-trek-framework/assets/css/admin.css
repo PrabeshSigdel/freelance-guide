@@ -1,0 +1,63 @@
+﻿#aatf_trek_details .aatf-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 8px 16px;
+}
+
+#aatf_trek_details .aatf-meta-grid h3 {
+    grid-column: 1 / -1;
+    margin: 10px 0 0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#aatf_trek_details .aatf-meta-grid p {
+    margin: 0;
+}
+
+#aatf_trek_details input[type='number'],
+#aatf_trek_details input[type='text'],
+#aatf_trek_details input[type='url'],
+#aatf_trek_details select,
+#aatf_trek_details textarea {
+    margin-top: 4px;
+}
+
+#aatf_trek_details .aatf-equipment-row {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#aatf_trek_details .aatf-equipment-image-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+#aatf-faq-topic-groups .aatf-faq-topic-group {
+    border: 1px solid #ddd;
+    padding: 12px;
+    margin-bottom: 12px;
+    background: #fff;
+}
+
+#aatf-faq-topic-groups .aatf-faq-qa-row {
+    border: 1px dashed #c9c9c9;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #fafafa;
+}
+
+.column-trek_price,
+.column-trek_duration,
+.column-trek_group_size {
+    width: 10%;
+}
+
+@media (max-width: 960px) {
+    #aatf_trek_details .aatf-meta-grid {
+        grid-template-columns: 1fr;
+    }
+}
