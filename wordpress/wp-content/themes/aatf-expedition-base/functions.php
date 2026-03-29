@@ -171,6 +171,8 @@ add_action('after_setup_theme', function () {
         'footer_col_1' => 'Footer Column 1',
         'footer_col_2' => 'Footer Column 2',
         'footer_col_3' => 'Footer Column 3',
+        'footer_company' => 'Footer Company Menu',
+        'footer_explore' => 'Footer Explore Menu',
     ));
 });
 
@@ -341,6 +343,17 @@ add_action('customize_register', function ($wp_customize) {
         'type' => 'url',
         'section' => 'aatf_header_section',
         'label' => 'Instagram URL',
+    ));
+
+    $wp_customize->add_setting('aatf_social_pinterest', array(
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+
+    $wp_customize->add_control('aatf_social_pinterest', array(
+        'type' => 'url',
+        'section' => 'aatf_header_section',
+        'label' => 'Pinterest URL',
     ));
 
     $wp_customize->add_setting('aatf_header_destination_menu_mode', array(
@@ -695,7 +708,7 @@ add_action('customize_register', function ($wp_customize) {
     ));
 
     $wp_customize->add_setting('aatf_footer_col_1_heading', array(
-        'default' => 'Our Top Treks',
+        'default' => 'Company',
         'sanitize_callback' => 'sanitize_text_field',
     ));
     $wp_customize->add_control('aatf_footer_col_1_heading', array(
@@ -705,7 +718,7 @@ add_action('customize_register', function ($wp_customize) {
     ));
 
     $wp_customize->add_setting('aatf_footer_col_2_heading', array(
-        'default' => 'Travel Guide',
+        'default' => 'Explore',
         'sanitize_callback' => 'sanitize_text_field',
     ));
     $wp_customize->add_control('aatf_footer_col_2_heading', array(
@@ -715,7 +728,7 @@ add_action('customize_register', function ($wp_customize) {
     ));
 
     $wp_customize->add_setting('aatf_footer_col_3_heading', array(
-        'default' => 'Our Company',
+        'default' => 'Quick Links',
         'sanitize_callback' => 'sanitize_text_field',
     ));
     $wp_customize->add_control('aatf_footer_col_3_heading', array(
@@ -731,9 +744,28 @@ add_action('customize_register', function ($wp_customize) {
     $wp_customize->add_control('aatf_footer_company_heading', array(
         'type' => 'text',
         'section' => 'aatf_footer_section',
-        'label' => 'Company Heading (optional)',
+        'label' => 'Brand Name (optional)',
         'description' => 'Leave empty to use Site Name.',
     ));
+
+    $wp_customize->add_setting('aatf_footer_tagline', array(
+        'default' => "Welcome to our Trip and Tour Agency.\nLorem simply text amet cing elit.",
+        'sanitize_callback' => 'sanitize_textarea_field',
+    ));
+    $wp_customize->add_control('aatf_footer_tagline', array(
+        'type' => 'textarea',
+        'section' => 'aatf_footer_section',
+        'label' => 'Footer Tagline',
+    ));
+
+    $wp_customize->add_setting('aatf_footer_overlay_image', array(
+        'default' => 'https://images.unsplash.com/photo-1519500099198-fd81846b8f03?w=1600&q=60',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'aatf_footer_overlay_image', array(
+        'section' => 'aatf_footer_section',
+        'label' => 'Footer Background Overlay Image',
+    )));
 
     $wp_customize->add_setting('aatf_footer_address', array(
         'default' => '',
@@ -765,6 +797,46 @@ add_action('customize_register', function ($wp_customize) {
         'label' => 'Footer Email',
     ));
 
+    $wp_customize->add_setting('aatf_footer_newsletter_heading', array(
+        'default' => 'Newsletter',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('aatf_footer_newsletter_heading', array(
+        'type' => 'text',
+        'section' => 'aatf_footer_section',
+        'label' => 'Newsletter Heading',
+    ));
+
+    $wp_customize->add_setting('aatf_footer_newsletter_placeholder', array(
+        'default' => 'Email address',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('aatf_footer_newsletter_placeholder', array(
+        'type' => 'text',
+        'section' => 'aatf_footer_section',
+        'label' => 'Newsletter Placeholder',
+    ));
+
+    $wp_customize->add_setting('aatf_footer_newsletter_button_label', array(
+        'default' => 'Subscribe',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('aatf_footer_newsletter_button_label', array(
+        'type' => 'text',
+        'section' => 'aatf_footer_section',
+        'label' => 'Newsletter Button Label',
+    ));
+
+    $wp_customize->add_setting('aatf_footer_terms_label', array(
+        'default' => 'I agree to all terms and policies',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('aatf_footer_terms_label', array(
+        'type' => 'text',
+        'section' => 'aatf_footer_section',
+        'label' => 'Terms Checkbox Label',
+    ));
+
     $wp_customize->add_setting('aatf_footer_copyright', array(
         'default' => '',
         'sanitize_callback' => 'sanitize_text_field',
@@ -776,6 +848,54 @@ add_action('customize_register', function ($wp_customize) {
         'description' => 'Leave empty for auto copyright.',
     ));
 });
+
+function aatf_handle_footer_newsletter_subscribe()
+{
+    $redirect = wp_get_referer();
+    if (!$redirect) {
+        $redirect = home_url('/');
+    }
+
+    $redirect = remove_query_arg('aatf_footer_subscribe', $redirect);
+
+    if (
+        !isset($_POST['aatf_footer_nonce']) ||
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aatf_footer_nonce'])), 'aatf_footer_subscribe')
+    ) {
+        wp_safe_redirect(add_query_arg('aatf_footer_subscribe', 'invalid', $redirect));
+        exit;
+    }
+
+    $email = isset($_POST['aatf_footer_email']) ? sanitize_email(wp_unslash($_POST['aatf_footer_email'])) : '';
+    $consent = isset($_POST['aatf_footer_terms']) ? '1' : '0';
+
+    if ($email === '' || !is_email($email) || $consent !== '1') {
+        wp_safe_redirect(add_query_arg('aatf_footer_subscribe', 'invalid', $redirect));
+        exit;
+    }
+
+    $admin_email = sanitize_email((string) get_option('admin_email'));
+    $site_name = wp_specialchars_decode((string) get_bloginfo('name'), ENT_QUOTES);
+    $subject = sprintf(__('[%s] Footer newsletter subscription', 'aatf-expedition-base'), $site_name);
+    $message = sprintf(
+        "New footer newsletter signup.\n\nEmail: %s\nConsent: Yes\nSource: %s\nSubmitted at (UTC): %s",
+        $email,
+        esc_url_raw($redirect),
+        gmdate('c')
+    );
+
+    $sent = $admin_email !== '' ? wp_mail($admin_email, $subject, $message) : false;
+
+    if ($sent) {
+        do_action('aatf_footer_newsletter_subscription', $email, $redirect);
+    }
+
+    wp_safe_redirect(add_query_arg('aatf_footer_subscribe', $sent ? 'success' : 'error', $redirect));
+    exit;
+}
+
+add_action('admin_post_nopriv_aatf_footer_subscribe', 'aatf_handle_footer_newsletter_subscribe');
+add_action('admin_post_aatf_footer_subscribe', 'aatf_handle_footer_newsletter_subscribe');
 
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('aatf-expedition-base', get_stylesheet_uri(), array(), '0.1.0');
