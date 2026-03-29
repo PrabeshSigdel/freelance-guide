@@ -1,13 +1,13 @@
 ﻿/*
-Theme Name: AATF Expedition Base
+Theme Name: nepal-freelance-guide
 Theme URI: https://activeadventure.local
-Author: Freelance Trekking
+Author: Freelance Guide
 Description: Reusable trekking company theme designed to work with AA Trek Framework plugin.
 Version: 0.1.0
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Text Domain: aatf-expedition-base
+Text Domain: nepal-freelance-guide
 */
 
 :root {
@@ -15,6 +15,16 @@ Text Domain: aatf-expedition-base
     --brand-dark: #1a1a2e;
     --brand-navy: #16213e;
     --brand-gray: #6B7280;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow-x: hidden;
 }
 
 /* Global font override */
@@ -53,6 +63,14 @@ Text Domain: aatf-expedition-base
 
 .card-shadow {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.text-accent-orange {
+    color: #f99121;
+}
+
+.text-deep-blue {
+    color: #2a2d3e;
 }
 
 .tour-image-container {
@@ -104,17 +122,31 @@ Text Domain: aatf-expedition-base
     height: 100%;
 }
 
+.news-article-excerpt {
+    display: -webkit-box;
+    min-height: 4.5rem;
+    max-height: 4.5rem;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
+
+.news-article-readmore {
+    min-height: 1.25rem;
+}
+
 .curved-overlap {
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
-    margin-top: -40px;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    margin-top: -20px;
     position: relative;
     z-index: 10;
 }
 
 .date-badge {
     border-top-left-radius: 12px;
-    border-top-right-radius: 0px;
+    border-bottom-left-radius: 12px;
 }
 
 /* Accordion chevron rotation */

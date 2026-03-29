@@ -83,6 +83,131 @@
         render();
     });
 
+    function initTourCarousels() {
+        var carousels = document.querySelectorAll('[data-tour-carousel]');
+        if (!carousels.length) {
+            return;
+        }
+
+        carousels.forEach(function (carousel) {
+            var track = carousel.querySelector('[data-tour-track]');
+            var slider = carousel.querySelector('[data-tour-slider]');
+            var dotsWrap = carousel.querySelector('[data-tour-dots]');
+            var prevBtn = carousel.querySelector('[data-tour-prev]');
+            var nextBtn = carousel.querySelector('[data-tour-next]');
+            var cards = slider ? Array.prototype.slice.call(slider.querySelectorAll('.tour-card')) : [];
+            var currentPage = 0;
+            var totalPages = 1;
+
+            if (!track || !slider || cards.length === 0) {
+                return;
+            }
+
+            function getGap() {
+                var styles = window.getComputedStyle(slider);
+                var value = parseFloat(styles.columnGap || styles.gap || '0');
+                return Number.isFinite(value) ? value : 0;
+            }
+
+            function getCardsPerPage() {
+                if (!cards.length) {
+                    return 1;
+                }
+
+                var trackWidth = track.clientWidth;
+                var cardWidth = cards[0].getBoundingClientRect().width;
+                var gap = getGap();
+                var perPage = Math.floor((trackWidth + gap) / Math.max(1, cardWidth + gap));
+
+                return Math.max(1, perPage);
+            }
+
+            function getMaxOffset() {
+                return Math.max(0, slider.scrollWidth - track.clientWidth);
+            }
+
+            function updateDots() {
+                if (!dotsWrap) {
+                    return;
+                }
+
+                dotsWrap.innerHTML = '';
+                dotsWrap.style.display = totalPages <= 1 ? 'none' : 'flex';
+
+                for (var index = 0; index < totalPages; index += 1) {
+                    var dot = document.createElement('button');
+                    var isActive = index === currentPage;
+
+                    dot.type = 'button';
+                    dot.className = 'tour-dot rounded-full transition-all duration-300 ' + (isActive ? 'w-3 h-3 bg-[var(--brand-orange)]' : 'w-2.5 h-2.5 bg-[var(--brand-gray)]');
+                    dot.setAttribute('aria-label', 'Go to tour slide ' + (index + 1));
+                    dot.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+
+                    (function (pageIndex) {
+                        dot.addEventListener('click', function () {
+                            currentPage = pageIndex;
+                            render();
+                        });
+                    })(index);
+
+                    dotsWrap.appendChild(dot);
+                }
+            }
+
+            function render() {
+                var cardsPerPage = getCardsPerPage();
+                var gap = getGap();
+                totalPages = Math.max(1, Math.ceil(cards.length / cardsPerPage));
+
+                if (currentPage > totalPages - 1) {
+                    currentPage = totalPages - 1;
+                }
+
+                var targetIndex = currentPage * cardsPerPage;
+                var firstCard = cards[Math.min(targetIndex, cards.length - 1)];
+                var firstCardOffset = firstCard ? firstCard.offsetLeft : 0;
+                var offset = Math.min(firstCardOffset, getMaxOffset());
+
+                slider.style.transform = 'translateX(-' + offset + 'px)';
+                updateDots();
+
+                if (prevBtn) {
+                    prevBtn.style.display = totalPages <= 1 ? 'none' : 'flex';
+                    prevBtn.disabled = totalPages <= 1;
+                }
+
+                if (nextBtn) {
+                    nextBtn.style.display = totalPages <= 1 ? 'none' : 'flex';
+                    nextBtn.disabled = totalPages <= 1;
+                }
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function () {
+                    currentPage = currentPage <= 0 ? totalPages - 1 : currentPage - 1;
+                    render();
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function () {
+                    currentPage = currentPage >= totalPages - 1 ? 0 : currentPage + 1;
+                    render();
+                });
+            }
+
+            render();
+
+            var resizeTimer = null;
+            window.addEventListener('resize', function () {
+                window.clearTimeout(resizeTimer);
+                resizeTimer = window.setTimeout(render, 100);
+            });
+        });
+    }
+
+    initTourCarousels();
+
     function escapeHtml(value) {
         return String(value)
             .replace(/&/g, '&amp;')

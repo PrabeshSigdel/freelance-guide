@@ -84,4 +84,5 @@ $footer_logo = get_custom_logo();
 </footer>
 <?php wp_footer(); ?>
 </body>
+
 </html>

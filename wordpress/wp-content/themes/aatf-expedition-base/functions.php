@@ -212,12 +212,17 @@ function aatf_home_layout_allowed_sections()
 {
     return array(
         'hero',
+        'exotic-places',
+        'plan-trips',
+        'popular-tours',
+        'popular-tours2',
         'exclusive-activities',
         'featured-treks',
         'top-destinations',
         'testimonials',
         'departures',
         'content',
+        'news-articles',
     );
 }
 
@@ -292,6 +297,50 @@ add_action('customize_register', function ($wp_customize) {
         'type' => 'text',
         'section' => 'aatf_header_section',
         'label' => 'Phone Number',
+    ));
+
+    $wp_customize->add_setting('aatf_header_email', array(
+        'default' => 'contact@example.com',
+        'sanitize_callback' => 'sanitize_email',
+    ));
+
+    $wp_customize->add_control('aatf_header_email', array(
+        'type' => 'email',
+        'section' => 'aatf_header_section',
+        'label' => 'Email Address',
+    ));
+
+    $wp_customize->add_setting('aatf_social_twitter', array(
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+
+    $wp_customize->add_control('aatf_social_twitter', array(
+        'type' => 'url',
+        'section' => 'aatf_header_section',
+        'label' => 'Twitter / X URL',
+    ));
+
+    $wp_customize->add_setting('aatf_social_facebook', array(
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+
+    $wp_customize->add_control('aatf_social_facebook', array(
+        'type' => 'url',
+        'section' => 'aatf_header_section',
+        'label' => 'Facebook URL',
+    ));
+
+    $wp_customize->add_setting('aatf_social_instagram', array(
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ));
+
+    $wp_customize->add_control('aatf_social_instagram', array(
+        'type' => 'url',
+        'section' => 'aatf_header_section',
+        'label' => 'Instagram URL',
     ));
 
     $wp_customize->add_setting('aatf_header_destination_menu_mode', array(
@@ -405,14 +454,14 @@ add_action('customize_register', function ($wp_customize) {
     ));
 
     $wp_customize->add_setting('aatf_home_layout', array(
-        'default' => 'hero,exclusive-activities,featured-treks,top-destinations,testimonials,departures,content',
+        'default' => 'hero,exotic-places,plan-trips,popular-tours,popular-tours2,testimonials,news-articles',
         'sanitize_callback' => 'aatf_sanitize_home_layout',
     ));
     $wp_customize->add_control('aatf_home_layout', array(
         'type' => 'text',
         'section' => 'aatf_homepage_section',
         'label' => 'Homepage Section Order',
-        'description' => 'Comma-separated: hero, exclusive-activities, featured-treks, top-destinations, testimonials, departures, content',
+        'description' => 'Comma-separated: hero, exotic-places, plan-trips, popular-tours, popular-tours2, testimonials, news-articles',
     ));
 
     $wp_customize->add_setting('aatf_home_show_treks', array(
@@ -470,6 +519,15 @@ add_action('customize_register', function ($wp_customize) {
         'label' => 'Destinations Heading',
     ));
 
+    $wp_customize->add_setting('aatf_home_destinations_bg_image', array(
+        'default' => '',
+        'sanitize_callback' => 'aatf_sanitize_home_hero_image',
+    ));
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'aatf_home_destinations_bg_image', array(
+        'section' => 'aatf_homepage_section',
+        'label' => 'Exotic Places Background Image',
+    )));
+
     $wp_customize->add_setting('aatf_home_destinations_limit', array(
         'default' => 6,
         'sanitize_callback' => 'aatf_sanitize_home_limit',
@@ -477,12 +535,56 @@ add_action('customize_register', function ($wp_customize) {
     $wp_customize->add_control('aatf_home_destinations_limit', array(
         'type' => 'number',
         'section' => 'aatf_homepage_section',
-        'label' => 'Destinations Count',
+        'label' => 'Exotic Places Item Count',
         'input_attrs' => array(
             'min' => 1,
             'max' => 24,
             'step' => 1,
         ),
+    ));
+
+    $destination_choices = array(0 => '-- Select Destination --');
+    $destination_items = get_posts(array(
+        'post_type' => 'destination',
+        'post_status' => array('publish', 'private', 'draft'),
+        'numberposts' => -1,
+        'orderby' => 'menu_order title',
+        'order' => 'ASC',
+    ));
+    foreach ($destination_items as $destination_item) {
+        $destination_choices[(int) $destination_item->ID] = (string) $destination_item->post_title;
+    }
+
+    $wp_customize->add_setting('aatf_home_show_plan_trips', array(
+        'default' => '1',
+        'sanitize_callback' => 'aatf_sanitize_checkbox',
+    ));
+    $wp_customize->add_control('aatf_home_show_plan_trips', array(
+        'type' => 'checkbox',
+        'section' => 'aatf_homepage_section',
+        'label' => 'Show Plan Trips Section',
+    ));
+
+    $wp_customize->add_setting('aatf_home_plan_trips_heading', array(
+        'default' => 'Plan Your Trip with Us',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('aatf_home_plan_trips_heading', array(
+        'type' => 'text',
+        'section' => 'aatf_homepage_section',
+        'label' => 'Plan Trips Heading',
+    ));
+
+    $wp_customize->add_setting('aatf_home_plan_trips_destination_id', array(
+        'default' => 0,
+        'sanitize_callback' => 'absint',
+    ));
+    $wp_customize->add_control('aatf_home_plan_trips_destination_id', array(
+        'type' => 'select',
+        'section' => 'aatf_homepage_section',
+        'label' => 'Plan Trips Destination',
+        'description' => 'Leave unselected to feature the first published destination automatically.',
+        'choices' => $destination_choices,
     ));
 
     $wp_customize->add_setting('aatf_home_show_testimonials', array(
@@ -571,18 +673,6 @@ add_action('customize_register', function ($wp_customize) {
             'destination' => 'Specific Destination',
         ),
     ));
-
-    $destination_choices = array(0 => '-- Select Destination --');
-    $destination_items = get_posts(array(
-        'post_type' => 'destination',
-        'post_status' => array('publish', 'private', 'draft'),
-        'numberposts' => -1,
-        'orderby' => 'menu_order title',
-        'order' => 'ASC',
-    ));
-    foreach ($destination_items as $destination_item) {
-        $destination_choices[(int) $destination_item->ID] = (string) $destination_item->post_title;
-    }
 
     $wp_customize->add_setting('aatf_home_departures_destination_id', array(
         'default' => 0,
@@ -691,6 +781,15 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('aatf-expedition-base', get_stylesheet_uri(), array(), '0.1.0');
     wp_enqueue_style('aatf-expedition-base-layout', get_template_directory_uri() . '/assets/css/theme.css', array('aatf-expedition-base'), '0.1.0');
     wp_enqueue_script('aatf-expedition-header', get_template_directory_uri() . '/assets/js/header.js', array(), '0.1.0', true);
+
+    // Tailwind CSS v4.1.14
+    wp_enqueue_script(
+        'tailwindcss',
+        get_template_directory_uri() . '/assets/js/tailwindcss.js',
+        array(),    // no dependencies
+        '4.1.14',
+        false       // false = load in <head>, required for Tailwind to parse HTML before paint
+    );
 });
 
 function aatf_theme_has_framework()
