@@ -77,21 +77,51 @@ if (!function_exists('aatf_get_trek_location_label')) {
 $explore_heading = (string) get_theme_mod('aatf_explore_tours_heading', 'All Tours');
 $explore_subheading = (string) get_theme_mod('aatf_explore_tours_subheading', 'Browse every published trek');
 
+$current_page = max(1, (int) get_query_var('paged'), (int) get_query_var('page'));
+$sort_by = isset($_GET['sort_by']) ? sanitize_key(wp_unslash($_GET['sort_by'])) : 'featured';
+$sort_options = array(
+    'featured'       => __('Featured', 'aatf-expedition-base'),
+    'price_low_high' => __('Price: Low to High', 'aatf-expedition-base'),
+    'price_high_low' => __('Price: High to Low', 'aatf-expedition-base'),
+    'duration'       => __('Duration', 'aatf-expedition-base'),
+);
+
+if (!isset($sort_options[$sort_by])) {
+    $sort_by = 'featured';
+}
+
 $treks_query = null;
 if (post_type_exists('trek')) {
-    $treks_query = new WP_Query(array(
+    $query_args = array(
         'post_type'              => 'trek',
         'post_status'            => 'publish',
-        'posts_per_page'         => -1,
+        'posts_per_page'         => 6,
+        'paged'                  => $current_page,
         'orderby'                => array(
             'menu_order' => 'ASC',
             'date'       => 'DESC',
         ),
-        'no_found_rows'          => true,
+        'no_found_rows'          => false,
         'ignore_sticky_posts'    => true,
         'update_post_meta_cache' => true,
         'update_post_term_cache' => false,
-    ));
+    );
+
+    if ($sort_by === 'price_low_high') {
+        $query_args['meta_key'] = 'trek_price';
+        $query_args['orderby'] = 'meta_value_num';
+        $query_args['order'] = 'ASC';
+    } elseif ($sort_by === 'price_high_low') {
+        $query_args['meta_key'] = 'trek_price';
+        $query_args['orderby'] = 'meta_value_num';
+        $query_args['order'] = 'DESC';
+    } elseif ($sort_by === 'duration') {
+        $query_args['meta_key'] = 'trek_duration';
+        $query_args['orderby'] = 'meta_value_num';
+        $query_args['order'] = 'ASC';
+    }
+
+    $treks_query = new WP_Query($query_args);
 }
 ?>
 
@@ -107,6 +137,49 @@ if (post_type_exists('trek')) {
         </header>
 
         <?php if ($treks_query instanceof WP_Query && $treks_query->have_posts()) : ?>
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-10">
+                <div>
+                    <p class="text-[var(--brand-gray)] mt-2">
+                        <?php
+                        echo esc_html(sprintf(
+                            _n('%s Tour', '%s Tours', (int) $treks_query->found_posts, 'aatf-expedition-base'),
+                            number_format_i18n((int) $treks_query->found_posts)
+                        ));
+                        ?>
+                    </p>
+                </div>
+
+                <form method="get" class="flex items-center gap-3 self-start md:self-auto">
+                    <?php foreach ($_GET as $key => $value) : ?>
+                        <?php
+                        if ($key === 'sort_by' || $key === 'paged' || $key === 'page') {
+                            continue;
+                        }
+
+                        if (is_array($value)) {
+                            continue;
+                        }
+                        ?>
+                        <input type="hidden" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr(wp_unslash($value)); ?>">
+                    <?php endforeach; ?>
+
+                    <label for="sortBy" class="text-sm font-semibold text-[var(--brand-dark)]">
+                        <?php esc_html_e('Sort by', 'aatf-expedition-base'); ?>
+                    </label>
+                    <select
+                        id="sortBy"
+                        name="sort_by"
+                        onchange="this.form.submit()"
+                        class="border border-gray-200 bg-white px-5 py-3 text-sm text-[var(--brand-gray)] focus:outline-none focus:border-[var(--brand-orange)]">
+                        <?php foreach ($sort_options as $option_value => $option_label) : ?>
+                            <option value="<?php echo esc_attr($option_value); ?>" <?php selected($sort_by, $option_value); ?>>
+                                <?php echo esc_html($option_label); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                 <?php while ($treks_query->have_posts()) : $treks_query->the_post(); ?>
                     <?php
@@ -205,6 +278,38 @@ if (post_type_exists('trek')) {
                     </article>
                 <?php endwhile; ?>
             </div>
+
+            <?php
+            $pagination = paginate_links(array(
+                'base'      => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
+                'format'    => '?paged=%#%',
+                'current'   => $current_page,
+                'total'     => max(1, (int) $treks_query->max_num_pages),
+                'type'      => 'array',
+                'prev_text' => __('Previous', 'aatf-expedition-base'),
+                'next_text' => __('Next', 'aatf-expedition-base'),
+                'add_args'  => array(
+                    'sort_by' => $sort_by,
+                ),
+            ));
+            ?>
+
+            <?php if (!empty($pagination) && is_array($pagination)) : ?>
+                <div class="flex flex-wrap items-center justify-center gap-3 mt-12">
+                    <?php foreach ($pagination as $page_link) : ?>
+                        <?php
+                        $is_current = strpos($page_link, 'current') !== false;
+                        $classes = $is_current
+                            ? 'w-11 h-11 rounded-full border border-[var(--brand-orange)] bg-[var(--brand-orange)] text-white flex items-center justify-center font-semibold'
+                            : 'min-w-11 px-4 h-11 rounded-full border border-gray-200 bg-white text-[var(--brand-dark)] flex items-center justify-center font-semibold hover:border-[var(--brand-orange)] hover:text-[var(--brand-orange)] transition-colors';
+
+                        $page_link = str_replace('page-numbers', trim('page-numbers ' . $classes), $page_link);
+                        echo wp_kses_post($page_link);
+                        ?>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
             <?php wp_reset_postdata(); ?>
         <?php else : ?>
             <div class="bg-white border border-gray-200 rounded-2xl p-8 text-center">

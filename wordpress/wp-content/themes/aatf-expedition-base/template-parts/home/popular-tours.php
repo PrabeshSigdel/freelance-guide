@@ -222,7 +222,7 @@ function aatf_get_trek_location_label(int $post_id): string
 
                     <?php if ($use_static) :
                         foreach ($static_tours as $tour) : ?>
-                            <div class="tour-card bg-white rounded-2xl shadow-md overflow-hidden shrink-0 w-full sm:w-[calc(50%-12px)] xl:w-[calc(25%-18px)] border border-gray-100">
+                            <div class="tour-card bg-white rounded-2xl shadow-md overflow-hidden shrink-0 w-full sm:w-[calc(50%-12px)] xl:w-[calc(25%-18px)] border border-gray-100 flex h-full flex-col">
                                 <div class="relative">
                                     <img src="<?php echo esc_url($tour['image']); ?>"
                                         alt="<?php echo esc_attr($tour['title']); ?>"
@@ -237,26 +237,28 @@ function aatf_get_trek_location_label(int $post_id): string
                                     </button>
                                 </div>
                                 <div class="p-4">
-                                    <?php if ($tour['rating'] > 0) : ?>
-                                        <div class="flex items-center gap-1 mb-1">
-                                            <?php echo aatf_render_stars((float) $tour['rating']); ?>
-                                            <span class="text-sm font-semibold text-[var(--brand-gray)]"><?php echo esc_html($tour['rating']); ?></span>
+                                    <div class="flex-1 min-h-[140px]">
+                                        <?php if ($tour['rating'] > 0) : ?>
+                                            <div class="flex items-center gap-1 mb-1">
+                                                <?php echo aatf_render_stars((float) $tour['rating']); ?>
+                                                <span class="text-sm font-semibold text-[var(--brand-gray)]"><?php echo esc_html($tour['rating']); ?></span>
+                                            </div>
+                                        <?php endif; ?>
+                                        <h3 class="font-bold text-[var(--brand-dark)] text-base leading-snug mb-1">
+                                            <?php echo esc_html($tour['title']); ?>
+                                        </h3>
+                                        <div class="flex items-center gap-1 whitespace-nowrap text-xs text-[var(--brand-gray)] mb-3">
+                                            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                            </svg>
+                                            <?php echo esc_html($tour['location']); ?>
                                         </div>
-                                    <?php endif; ?>
-                                    <h3 class="font-bold text-[var(--brand-dark)] text-base leading-snug mb-1">
-                                        <?php echo esc_html($tour['title']); ?>
-                                    </h3>
-                                    <div class="flex items-center gap-1 whitespace-nowrap text-xs text-[var(--brand-gray)] mb-3">
-                                        <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                                        </svg>
-                                        <?php echo esc_html($tour['location']); ?>
+                                        <p class="text-[var(--brand-gray)] text-sm mb-3">
+                                            <?php esc_html_e('From', 'aatf-expedition-base'); ?>
+                                            <span class="text-[var(--brand-orange)] font-extrabold text-lg"><?php echo esc_html($tour['price']); ?></span>
+                                        </p>
                                     </div>
-                                    <p class="text-[var(--brand-gray)] text-sm mb-3">
-                                        <?php esc_html_e('From', 'aatf-expedition-base'); ?>
-                                        <span class="text-[var(--brand-orange)] font-extrabold text-lg"><?php echo esc_html($tour['price']); ?></span>
-                                    </p>
-                                    <div class="border-t border-gray-100 pt-3 flex items-center justify-between text-xs text-[var(--brand-gray)]">
+                                    <div class="border-t border-gray-100 pt-3 flex items-center justify-between text-xs text-[var(--brand-gray)] mt-auto">
                                         <div class="flex items-center gap-3">
                                             <span class="flex items-center gap-1">
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -294,7 +296,7 @@ function aatf_get_trek_location_label(int $post_id): string
                             $rating   = (float) aatf_get_first_meta_value($trek->ID, array('trek_average_rating', '_average_rating', 'trek_rating', '_rating', 'rating'));
                             $location = aatf_get_trek_location_label($trek->ID);
                         ?>
-                            <div class="tour-card bg-white rounded-2xl shadow-md overflow-hidden shrink-0 w-full sm:w-[calc(50%-12px)] xl:w-[calc(25%-18px)] border border-gray-100">
+                            <div class="tour-card bg-white rounded-2xl shadow-md overflow-hidden shrink-0 w-full sm:w-[calc(50%-12px)] xl:w-[calc(25%-18px)] border border-gray-100 flex h-full flex-col">
                                 <div class="relative">
                                     <img src="<?php echo esc_url($thumb); ?>"
                                         alt="<?php echo esc_attr(get_the_title($trek->ID)); ?>"
@@ -309,36 +311,38 @@ function aatf_get_trek_location_label(int $post_id): string
                                     </button>
                                 </div>
                                 <div class="p-4">
-                                    <?php if ($rating > 0) : ?>
-                                        <div class="flex items-center gap-1 mb-1">
-                                            <?php echo aatf_render_stars($rating); ?>
-                                            <span class="text-sm font-semibold text-[var(--brand-gray)]"><?php echo esc_html(number_format($rating, 1)); ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                    <h3 class="font-bold text-[var(--brand-dark)] text-base leading-snug mb-1">
-                                        <?php echo esc_html(get_the_title($trek->ID)); ?>
-                                    </h3>
-                                    <?php if ($location) : ?>
-                                        <div class="flex items-center gap-1 whitespace-nowrap text-xs text-[var(--brand-gray)] mb-3">
-                                            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                                            </svg>
-                                            <?php echo esc_html($location); ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    <?php if ($price) : ?>
-                                        <p class="text-[var(--brand-gray)] text-sm mb-3">
-                                            <?php esc_html_e('From', 'aatf-expedition-base'); ?>
-                                            <span class="text-[var(--brand-orange)] font-extrabold text-lg">
-                                                <?php echo esc_html(
-                                                    is_numeric($price)
-                                                        ? '$' . number_format_i18n((float) $price, 0)
-                                                        : $price
-                                                ); ?>
-                                            </span>
-                                        </p>
-                                    <?php endif; ?>
-                                    <div class="border-t border-gray-100 pt-3 flex items-center justify-between text-xs text-[var(--brand-gray)]">
+                                    <div class="flex-1 min-h-[100px]">
+                                        <?php if ($rating > 0) : ?>
+                                            <div class="flex items-center gap-1 mb-1">
+                                                <?php echo aatf_render_stars($rating); ?>
+                                                <span class="text-sm font-semibold text-[var(--brand-gray)]"><?php echo esc_html(number_format($rating, 1)); ?></span>
+                                            </div>
+                                        <?php endif; ?>
+                                        <h3 class="font-bold text-[var(--brand-dark)] text-base leading-snug mb-1">
+                                            <?php echo esc_html(get_the_title($trek->ID)); ?>
+                                        </h3>
+                                        <?php if ($location) : ?>
+                                            <div class="flex items-center gap-1 whitespace-nowrap text-xs text-[var(--brand-gray)] mb-3">
+                                                <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                                </svg>
+                                                <?php echo esc_html($location); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php if ($price) : ?>
+                                            <p class="text-[var(--brand-gray)] text-sm mb-3">
+                                                <?php esc_html_e('From', 'aatf-expedition-base'); ?>
+                                                <span class="text-[var(--brand-orange)] font-extrabold text-lg">
+                                                    <?php echo esc_html(
+                                                        is_numeric($price)
+                                                            ? '$' . number_format_i18n((float) $price, 0)
+                                                            : $price
+                                                    ); ?>
+                                                </span>
+                                            </p>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="border-t border-gray-100 pt-3 flex items-center justify-between text-xs text-[var(--brand-gray)] mt-auto">
                                         <div class="flex items-center gap-3">
                                             <?php if ($days) : ?>
                                                 <span class="flex items-center gap-1">

@@ -877,10 +877,31 @@
 }
 
 .aatf-panel {
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.aatf-single-trek__amenities {
+    margin-top: 1.25rem;
+    padding: 1rem 1.1rem;
     border: 1px solid var(--aatf-color-line, #d8e0ea);
     border-radius: 12px;
-    padding: 0.9rem;
-    background: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+}
+
+.aatf-single-trek__amenities h3 {
+    margin: 0 0 0.85rem;
+}
+
+.aatf-single-trek__amenities-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.55rem;
+}
+
+.aatf-single-trek__amenities-list li {
+    color: var(--aatf-color-ink, #13243c);
 }
 
 .aatf-departure-list {

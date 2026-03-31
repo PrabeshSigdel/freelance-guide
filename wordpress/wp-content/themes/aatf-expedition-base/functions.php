@@ -981,6 +981,26 @@ function aatf_home_sanitize_exclusive_activities($raw)
     );
 }
 
+function aatf_sanitize_bullet_textarea($value)
+{
+    $lines = preg_split('/\r\n|\n|\r/', (string) $value);
+    $clean_lines = array();
+
+    foreach ((array) $lines as $line) {
+        $line = trim((string) $line);
+        $line = preg_replace('/^[\-\*\x{2022}\s]+/u', '', $line);
+        $line = sanitize_text_field($line);
+
+        if ($line === '') {
+            continue;
+        }
+
+        $clean_lines[] = $line;
+    }
+
+    return implode("\n", $clean_lines);
+}
+
 add_filter('use_block_editor_for_post_type', function ($use_block_editor, $post_type) {
     if ($post_type === 'page') {
         return false;
@@ -1122,6 +1142,22 @@ add_action('add_meta_boxes', function () {
         'normal',
         'high'
     );
+
+    add_meta_box(
+        'aatf_trek_amenities',
+        esc_html__('Tour Amenities', 'aatf-expedition-base'),
+        function ($post) {
+            $amenities = (string) get_post_meta($post->ID, 'trek_amenities', true);
+
+            wp_nonce_field('aatf_trek_amenities_save', 'aatf_trek_amenities_nonce');
+
+            echo '<p>' . esc_html__('Add one amenity per line. Bullet characters like "-", "*" or "•" are optional.', 'aatf-expedition-base') . '</p>';
+            echo '<textarea class="widefat" rows="8" id="aatf_trek_amenities" name="aatf_trek_amenities" placeholder="' . esc_attr__("Free WiFi\nAirport pickup\nGuide\nMeals included", 'aatf-expedition-base') . '">' . esc_textarea($amenities) . '</textarea>';
+        },
+        'trek',
+        'normal',
+        'default'
+    );
 });
 
 add_action('save_post_page', function ($post_id) {
@@ -1154,6 +1190,38 @@ add_action('save_post_page', function ($post_id) {
     }
 
     update_post_meta($post_id, 'aatf_home_exclusive_activities', $sanitized);
+});
+
+add_action('save_post_trek', function ($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (wp_is_post_revision($post_id)) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    if (
+        !isset($_POST['aatf_trek_amenities_nonce']) ||
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aatf_trek_amenities_nonce'])), 'aatf_trek_amenities_save')
+    ) {
+        return;
+    }
+
+    $amenities = isset($_POST['aatf_trek_amenities'])
+        ? aatf_sanitize_bullet_textarea(wp_unslash($_POST['aatf_trek_amenities']))
+        : '';
+
+    if ($amenities === '') {
+        delete_post_meta($post_id, 'trek_amenities');
+        return;
+    }
+
+    update_post_meta($post_id, 'trek_amenities', $amenities);
 });
 
 add_action('admin_enqueue_scripts', function ($hook) {

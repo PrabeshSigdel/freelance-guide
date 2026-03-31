@@ -194,7 +194,7 @@ if (!function_exists('aatf_get_trek_location_label')) {
                                 </svg>
                             </button>
                         </div>
-                        <div class="p-6 -mt-8 relative z-10 bg-white rounded-t-3xl">
+                        <div class="p-6 -mt-8 relative z-10 bg-white rounded-t-3xl flex-1 flex flex-col">
                             <div class="flex justify-between items-center mb-3">
                                 <div class="flex items-center gap-1 text-[var(--brand-orange)]">
                                     <?php echo aatf_render_stars((float) $tour['rating']); ?>
@@ -229,7 +229,7 @@ if (!function_exists('aatf_get_trek_location_label')) {
                                     <span class="text-2xl font-bold text-[var(--brand-orange)]"><?php echo esc_html($tour['price']); ?></span>
                                 </p>
                             </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-gray-100 bg-gray-50 -mx-6 px-6 pb-4">
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100 bg-gray-50 -mx-6 px-6 pb-4 mt-auto">
                                 <div class="flex items-center gap-4 text-xs font-medium text-[var(--brand-gray)]">
                                     <?php if ($tour['days']) : ?>
                                         <span class="flex items-center gap-1">
@@ -287,7 +287,7 @@ if (!function_exists('aatf_get_trek_location_label')) {
                                 </svg>
                             </button>
                         </div>
-                        <div class="p-6 -mt-8 relative z-10 bg-white rounded-t-3xl">
+                        <div class="p-6 -mt-8 relative z-10 bg-white rounded-t-3xl flex-1 flex flex-col">
                             <div class="flex justify-between items-center mb-3">
                                 <div class="flex items-center gap-1 text-[var(--brand-orange)]">
                                     <?php if ($rating > 0) : ?>
@@ -334,7 +334,7 @@ if (!function_exists('aatf_get_trek_location_label')) {
                                     </p>
                                 </div>
                             <?php endif; ?>
-                            <div class="flex items-center justify-between pt-4 border-t border-gray-100 bg-gray-50 -mx-6 px-6 pb-4">
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100 bg-gray-50 -mx-6 px-6 pb-4 mt-auto">
                                 <div class="flex items-center gap-4 text-xs font-medium text-[var(--brand-gray)]">
                                     <?php if ($days) : ?>
                                         <span class="flex items-center gap-1">

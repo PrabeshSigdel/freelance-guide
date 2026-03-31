@@ -189,7 +189,7 @@ class AATF_Frontend_Components
     {
         $atts = shortcode_atts(array(
             'trek_id' => 0,
-            'title' => 'Itinerary',
+            'title' => 'Tour Plan',
         ), $atts, 'aatf_trek_itinerary');
 
         $trek_id = self::resolve_trek_id($atts);
@@ -228,23 +228,35 @@ class AATF_Frontend_Components
         ob_start();
         ?>
         <section class="aatf-panel aatf-single-trek__itinerary">
-            <h3><?php echo esc_html($atts['title']); ?></h3>
-            <ol>
-                <?php foreach ($clean_rows as $row) : ?>
-                    <?php
+            <h3 class="text-xl font-bold mb-5"><?php echo esc_html($atts['title']); ?></h3>
+            <div class="aatf-itinerary-accordion space-y-3">
+                <?php foreach ($clean_rows as $idx => $row) :
                     $day = isset($row['day']) ? (string) $row['day'] : '';
                     $title = isset($row['title']) ? (string) $row['title'] : '';
                     $description = isset($row['description']) ? (string) $row['description'] : '';
                     $heading = trim($day . ($title !== '' ? ' - ' . $title : ''));
-                    ?>
-                    <li>
-                        <p><strong><?php echo esc_html($heading); ?></strong></p>
+                    $is_first = ($idx === 0);
+                ?>
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <button type="button"
+                        class="aatf-itinerary-acc-btn w-full flex items-center justify-between px-5 py-3.5 font-semibold text-sm text-left<?php echo $is_first ? ' accordion-open' : ' bg-white'; ?>"
+                        style="<?php echo $is_first ? 'background: rgba(232,130,12,0.07); ' : ''; ?>color: var(--brand-dark);"
+                        aria-expanded="<?php echo $is_first ? 'true' : 'false'; ?>">
+                        <?php echo esc_html($heading); ?>
+                        <svg class="chevron w-4 h-4 transition-transform duration-300<?php echo $is_first ? ' rotate-180' : ''; ?>" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="aatf-itinerary-acc-body px-5 py-4 text-sm leading-relaxed<?php echo $is_first ? '' : ' hidden'; ?>" style="color: var(--brand-gray);">
                         <?php if ($description !== '') : ?>
-                            <p><?php echo nl2br(esc_html($description)); ?></p>
+                            <?php echo nl2br(esc_html($description)); ?>
+                        <?php else : ?>
+                            <em>No description provided.</em>
                         <?php endif; ?>
-                    </li>
+                    </div>
+                </div>
                 <?php endforeach; ?>
-            </ol>
+            </div>
         </section>
         <?php
 
