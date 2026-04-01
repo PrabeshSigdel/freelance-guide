@@ -36,7 +36,7 @@ $destinations = get_posts(array(
 
 <!-- ── Go Exotic Places ──────────────────────────────────────────── -->
 <section class="py-16" style="<?php echo esc_attr($section_style); ?>">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto px-4 xl:px-0">
 
         <div class="text-center mb-10">
             <p class="text-sm font-semibold tracking-wide text-[var(--brand-orange)]">
@@ -47,7 +47,7 @@ $destinations = get_posts(array(
             </h2>
         </div>
 
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
             <?php if (empty($destinations)) : ?>
                 <div class="col-span-3 rounded-2xl border border-slate-200 bg-slate-50 px-6 py-12 text-center">

@@ -898,9 +898,13 @@ add_action('admin_post_nopriv_aatf_footer_subscribe', 'aatf_handle_footer_newsle
 add_action('admin_post_aatf_footer_subscribe', 'aatf_handle_footer_newsletter_subscribe');
 
 add_action('wp_enqueue_scripts', function () {
-    wp_enqueue_style('aatf-expedition-base', get_stylesheet_uri(), array(), '0.1.0');
-    wp_enqueue_style('aatf-expedition-base-layout', get_template_directory_uri() . '/assets/css/theme.css', array('aatf-expedition-base'), '0.1.0');
-    wp_enqueue_script('aatf-expedition-header', get_template_directory_uri() . '/assets/js/header.js', array(), '0.1.0', true);
+    $stylesheet_path = get_stylesheet_directory() . '/style.css';
+    $theme_css_path = get_template_directory() . '/assets/css/theme.css';
+    $header_js_path = get_template_directory() . '/assets/js/header.js';
+
+    wp_enqueue_style('aatf-expedition-base', get_stylesheet_uri(), array(), file_exists($stylesheet_path) ? (string) filemtime($stylesheet_path) : '0.1.0');
+    wp_enqueue_style('aatf-expedition-base-layout', get_template_directory_uri() . '/assets/css/theme.css', array('aatf-expedition-base'), file_exists($theme_css_path) ? (string) filemtime($theme_css_path) : '0.1.0');
+    wp_enqueue_script('aatf-expedition-header', get_template_directory_uri() . '/assets/js/header.js', array(), file_exists($header_js_path) ? (string) filemtime($header_js_path) : '0.1.0', true);
 
     // Tailwind CSS v4.1.14
     wp_enqueue_script(

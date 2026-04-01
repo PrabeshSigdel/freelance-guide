@@ -40,19 +40,25 @@
 
     var sliders = document.querySelectorAll('[data-aatf-slider]');
     sliders.forEach(function (slider) {
+        var track = slider.querySelector('.aatf-slider__track');
         var slides = slider.querySelectorAll('.aatf-slider__slide');
         var prevBtn = slider.querySelector('.aatf-slider__btn--prev');
         var nextBtn = slider.querySelector('.aatf-slider__btn--next');
         var current = 0;
 
-        if (!slides.length) {
+        if (!track || !slides.length) {
             return;
         }
 
         var render = function () {
+            var offset = current * slider.clientWidth;
+
             slides.forEach(function (slide, index) {
                 slide.classList.toggle('is-active', index === current);
+                slide.setAttribute('aria-hidden', index === current ? 'false' : 'true');
             });
+
+            track.style.transform = 'translateX(-' + offset + 'px)';
         };
 
         if (slides.length <= 1) {
@@ -81,6 +87,12 @@
         }
 
         render();
+
+        var resizeTimer = null;
+        window.addEventListener('resize', function () {
+            window.clearTimeout(resizeTimer);
+            resizeTimer = window.setTimeout(render, 100);
+        });
     });
 
     function initTourCarousels() {

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -137,6 +137,21 @@ if (have_posts()) {
         }
         ?>
 
+        <?php if (!empty($slider_ids)) : ?>
+        <div class="aatf-single-trek__gallery-wrap">
+            <div class="aatf-single-trek__gallery">
+                <?php foreach (array_slice($slider_ids, 0, 4) as $index => $image_id) : ?>
+                    <?php
+                    echo wp_get_attachment_image($image_id, 'large', false, array(
+                        'class' => 'aatf-single-trek__gallery-image',
+                        'loading' => $index === 0 ? 'eager' : 'lazy',
+                    ));
+                    ?>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <!-- ── Title bar ─────────────────────────────────────────────────── -->
         <div class="bg-gray-100 border-b border-gray-200 px-6 py-4">
             <div class="max-w-7xl mx-auto flex items-start justify-between flex-wrap gap-4">
@@ -206,28 +221,6 @@ if (have_posts()) {
 
             <!-- ── Left column ────────────────────────────────────────────── -->
             <div class="flex-1 min-w-0">
-
-                <!-- Gallery Slider -->
-                <?php if (!empty($slider_ids)) : ?>
-                <div class="mb-8 aatf-single-trek__hero aatf-slider rounded-xl overflow-hidden" data-aatf-slider>
-                    <button type="button" class="aatf-slider__btn aatf-slider__btn--prev" aria-label="Previous image">&#10094;</button>
-                    <div class="aatf-slider__track">
-                        <?php foreach ($slider_ids as $index => $image_id) :
-                            $image = wp_get_attachment_image($image_id, 'large', false, array(
-                                'class' => 'aatf-single-trek__hero-image w-full h-full object-cover',
-                                'loading' => $index === 0 ? 'eager' : 'lazy',
-                            ));
-                            if ($image) : ?>
-                            <div class="aatf-slider__slide<?php echo $index === 0 ? ' is-active' : ''; ?>"><?php echo $image; ?></div>
-                        <?php endif; endforeach; ?>
-                    </div>
-                    <button type="button" class="aatf-slider__btn aatf-slider__btn--next" aria-label="Next image">&#10095;</button>
-                </div>
-                <?php elseif (has_post_thumbnail($post_id)) : ?>
-                <div class="mb-8 rounded-xl overflow-hidden">
-                    <?php echo get_the_post_thumbnail($post_id, 'large', array('class' => 'w-full h-auto object-cover')); ?>
-                </div>
-                <?php endif; ?>
 
                 <!-- Rating + Share/Reviews row -->
                 <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
@@ -344,41 +337,23 @@ if (have_posts()) {
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <?php foreach ($equipment_sections as $section) :
                             $heading = isset($section['heading']) ? (string) $section['heading'] : '';
-                            $image_id = isset($section['image_id']) ? (int) $section['image_id'] : 0;
                             $items = isset($section['items']) && is_array($section['items']) ? $section['items'] : array();
-                            $image_url = $image_id > 0 ? wp_get_attachment_image_url($image_id, 'thumbnail') : '';
 
-                            if ($heading === '' && empty($items) && !$image_url) {
+                            if ($heading === '' && empty($items)) {
                                 continue;
                             }
                             ?>
-                        <div class="bg-white rounded-xl">
-                            <div class="flex items-center gap-3 mb-4">
-                                <?php if ($image_url) : ?>
-                                <div class="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden" style="background: rgba(232,130,12,0.1);">
-                                    <img class="w-6 h-6 object-contain" src="<?php echo esc_url($image_url); ?>" alt="" />
-                                </div>
-                                <?php else : ?>
-                                <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: rgba(232,130,12,0.1);">
-                                    <svg class="w-5 h-5" style="color: var(--brand-orange);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                    </svg>
-                                </div>
-                                <?php endif; ?>
-                                <?php if ($heading !== '') : ?>
-                                <h4 class="font-bold text-sm" style="color: var(--brand-dark);"><?php echo esc_html($heading); ?></h4>
-                                <?php endif; ?>
-                            </div>
+                        <div class="pl-4" style="border-color: rgba(232,130,12,0.25);">
+                            <?php if ($heading !== '') : ?>
+                            <h4 class="mb-2 text-sm font-bold uppercase tracking-wide" style="color: var(--brand-dark);"><?php echo esc_html($heading); ?></h4>
+                            <?php endif; ?>
                             <?php if (!empty($items)) : ?>
-                            <ul class="space-y-2">
+                            <ul class="space-y-1.5 pl-5 text-sm leading-6 list-disc marker:text-[var(--brand-orange)]" style="color: var(--brand-gray);">
                                 <?php foreach ($items as $item) :
                                     $clean_item = (string) $item;
                                     if ($clean_item === '') continue;
                                     ?>
-                                <li class="flex items-center gap-2 text-sm" style="color: var(--brand-gray);">
-                                    <svg class="w-3 h-3 shrink-0" style="color: var(--brand-orange);" fill="currentColor" viewBox="0 0 20 20">
-                                        <circle cx="10" cy="10" r="3" />
-                                    </svg>
+                                <li class="pl-1">
                                     <?php echo esc_html($clean_item); ?>
                                 </li>
                                 <?php endforeach; ?>
