@@ -54,6 +54,64 @@ if (have_posts()) {
         }
         $equipment_sections = get_post_meta($post_id, 'trek_equipment_sections', true);
         $equipment_sections = is_array($equipment_sections) ? $equipment_sections : array();
+        $group_pricing_raw = get_post_meta($post_id, 'trek_group_pricing', true);
+        $group_pricing_rows = array();
+        if (is_array($group_pricing_raw)) {
+            foreach ($group_pricing_raw as $pricing_row) {
+                if (!is_array($pricing_row)) {
+                    continue;
+                }
+
+                $min_people = isset($pricing_row['min_people']) ? absint($pricing_row['min_people']) : 0;
+                $max_people = isset($pricing_row['max_people']) ? absint($pricing_row['max_people']) : 0;
+                $price_raw = isset($pricing_row['price_per_person']) ? str_replace(',', '', (string) $pricing_row['price_per_person']) : '';
+                $price_per_person = is_numeric($price_raw) ? max(0.0, (float) $price_raw) : 0.0;
+
+                if ($min_people <= 0 && $max_people <= 0 && $price_per_person <= 0) {
+                    continue;
+                }
+
+                if ($min_people > 0 && $max_people > 0 && $max_people < $min_people) {
+                    $max_people = $min_people;
+                }
+
+                $group_pricing_rows[] = array(
+                    'min_people' => $min_people,
+                    'max_people' => $max_people,
+                    'price_per_person' => $price_per_person,
+                );
+            }
+        }
+
+        $participant_cap = max(1, $group);
+        foreach ($group_pricing_rows as $pricing_row) {
+            $participant_cap = max(
+                $participant_cap,
+                isset($pricing_row['min_people']) ? (int) $pricing_row['min_people'] : 0,
+                isset($pricing_row['max_people']) ? (int) $pricing_row['max_people'] : 0
+            );
+        }
+        if ($participant_cap <= 1 && !empty($group_pricing_rows)) {
+            $participant_cap = 10;
+        }
+
+        $default_participants = 1;
+        $initial_price_per_person = $price;
+        foreach ($group_pricing_rows as $pricing_row) {
+            $min_people = isset($pricing_row['min_people']) ? (int) $pricing_row['min_people'] : 0;
+            $max_people = isset($pricing_row['max_people']) ? (int) $pricing_row['max_people'] : 0;
+            $row_price = isset($pricing_row['price_per_person']) ? (float) $pricing_row['price_per_person'] : 0.0;
+            $matches_default = $default_participants >= max(1, $min_people) && ($max_people <= 0 || $default_participants <= $max_people);
+
+            if ($matches_default && $row_price > 0) {
+                $initial_price_per_person = $row_price;
+                break;
+            }
+        }
+        if ($initial_price_per_person <= 0) {
+            $initial_price_per_person = $price;
+        }
+        $initial_total_price = max(0.0, $default_participants * $initial_price_per_person);
         $departures = new WP_Query(array(
             'post_type' => 'departure',
             'post_status' => 'publish',
@@ -121,6 +179,7 @@ if (have_posts()) {
             ),
             $booking_base_url
         );
+        $today_date = wp_date('Y-m-d');
 
         // Get destination taxonomy if available
         $destinations = get_the_terms($post_id, 'destination');
@@ -566,7 +625,7 @@ if (have_posts()) {
                 
                 if ($related_treks->have_posts()) :
                 ?>
-                <div class="mb-8">
+                <div class="">
                     <h2 class="text-xl font-bold mb-5" style="color: var(--brand-dark);">Related Tours</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <?php while ($related_treks->have_posts()) : $related_treks->the_post(); 
@@ -652,76 +711,117 @@ if (have_posts()) {
                     <div class="px-5 py-4 border-b border-gray-100">
                         <h3 class="font-bold text-base" style="color: var(--brand-dark);">Booking Tour</h3>
                     </div>
-                    <div class="px-5 py-4 space-y-4 text-sm">
+                    <div
+                        class="px-5 py-4 space-y-4 text-sm"
+                        data-booking-pricing
+                        data-base-price="<?php echo esc_attr((string) $price); ?>"
+                        data-group-pricing="<?php echo esc_attr(wp_json_encode($group_pricing_rows)); ?>"
+                    >
 
                         <!-- From date -->
                         <div>
                             <label class="block text-xs font-semibold mb-1.5" style="color: var(--brand-dark);">From:</label>
                             <div class="flex items-center border border-gray-200 rounded-lg px-3 py-2.5 gap-2">
-                                <input type="date" class="flex-1 text-xs outline-none bg-transparent" style="color: var(--brand-gray);" />
+                                <input type="date" min="<?php echo esc_attr($today_date); ?>" class="flex-1 text-xs outline-none bg-transparent" style="color: var(--brand-gray);" />
                             </div>
                         </div>
 
-                        <!-- Time -->
+                        <!-- Participants -->
                         <div>
-                            <label class="block text-xs font-semibold mb-1.5" style="color: var(--brand-dark);">Time:</label>
-                            <p class="text-xs italic" style="color: var(--brand-gray);">please select date first</p>
-                        </div>
-
-                        <!-- Tickets -->
-                        <div>
-                            <label class="block text-xs font-semibold mb-1.5" style="color: var(--brand-dark);">Tickets:</label>
-                            <p class="text-xs italic" style="color: var(--brand-gray);">please select date first</p>
-                        </div>
-
-                        <!-- Meeting point -->
-                        <div>
-                            <label class="block text-xs font-semibold mb-2" style="color: var(--brand-dark);">Select meeting point (find closest location):</label>
-                            <div class="space-y-1.5 text-xs" style="color: var(--brand-gray);">
-                                <label class="flex items-start gap-2 cursor-pointer">
-                                    <input type="radio" name="meeting" class="mt-0.5 accent-orange-500" />
-                                    <span>12:00 pm, 1:00 am, 2:00 am, 3:00 am, 5:00 am, 6:00 am. – Sandos Papagayo Beach Resort, Calle las Acacias, Yaiza, España</span>
-                                </label>
-                                <label class="flex items-start gap-2 cursor-pointer">
-                                    <input type="radio" name="meeting" class="mt-0.5 accent-orange-500" />
-                                    <span>5:00 pm, 10:00 am – Sandos Papagayo Beach Resort, Calle las Acacias, Yaiza, España</span>
-                                </label>
+                            <label class="block text-xs font-semibold mb-1.5" style="color: var(--brand-dark);">Participants:</label>
+                            <div class="flex items-center border border-gray-200 rounded-lg px-3 py-2.5 gap-2">
+                                <button
+                                    type="button"
+                                    class="w-7 h-7 rounded-full border border-gray-200 text-base leading-none flex items-center justify-center shrink-0"
+                                    data-booking-decrement
+                                    aria-label="Decrease participants"
+                                    style="color: var(--brand-dark);"
+                                >-</button>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="<?php echo esc_attr((string) $participant_cap); ?>"
+                                    step="1"
+                                    value="<?php echo esc_attr((string) $default_participants); ?>"
+                                    class="flex-1 text-center text-xs outline-none bg-transparent"
+                                    data-booking-participants
+                                    style="color: var(--brand-gray);"
+                                />
+                                <button
+                                    type="button"
+                                    class="w-7 h-7 rounded-full border border-gray-200 text-base leading-none flex items-center justify-center shrink-0"
+                                    data-booking-increment
+                                    aria-label="Increase participants"
+                                    style="color: var(--brand-dark);"
+                                >+</button>
                             </div>
                         </div>
 
-                        <!-- Mandatory fees -->
+                        <!-- Price per person -->
                         <div class="bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs font-semibold mb-1" style="color: var(--brand-dark);">Mandatory fees</p>
-                            <p class="text-xs" style="color: var(--brand-gray);">Fee 10%</p>
+                            <p class="text-xs font-semibold mb-1" style="color: var(--brand-gray);">Price per person</p>
+                            <p class="font-bold text-lg" data-booking-price-per-person style="color: var(--brand-dark);">
+                                $<?php echo esc_html(number_format_i18n($initial_price_per_person, 2)); ?>
+                            </p>
                         </div>
 
-                        <!-- Add Extra -->
-                        <div>
-                            <p class="text-xs font-bold mb-2" style="color: var(--brand-dark);">Add Extra</p>
-                            <div class="space-y-2 text-xs" style="color: var(--brand-gray);">
-                                <label class="flex items-center justify-between cursor-pointer">
-                                    <span class="flex items-center gap-2">
-                                        <input type="checkbox" class="accent-orange-500" />
-                                        Service per booking
-                                    </span>
-                                    <span class="font-semibold" style="color: var(--brand-dark);">$30.00</span>
-                                </label>
-                                <label class="flex items-start justify-between cursor-pointer">
-                                    <span class="flex items-center gap-2">
-                                        <input type="checkbox" class="accent-orange-500 mt-0.5" />
-                                        Service per person
-                                    </span>
-                                    <span class="text-right">
-                                        <span class="block font-semibold" style="color: var(--brand-dark);">Adult: $17.00</span>
-                                        <span class="block" style="color: var(--brand-gray);">Youth: $14.00</span>
-                                    </span>
-                                </label>
+                        <?php if (!empty($group_pricing_rows)) : ?>
+                        <div class="space-y-3">
+                            <button
+                                type="button"
+                                class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-xs font-semibold text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                                data-group-discount-toggle
+                                aria-expanded="false"
+                                style="color: var(--brand-dark);"
+                            >
+                                <span>View Group Discount</span>
+                                <span class="text-base leading-none" data-group-discount-icon>+</span>
+                            </button>
+                            <div class="hidden border border-gray-100 rounded-lg overflow-hidden" data-group-discount-panel>
+                                <table class="w-full text-xs">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-3 py-2 text-left font-semibold" style="color: var(--brand-dark);">Group Size</th>
+                                            <th class="px-3 py-2 text-left font-semibold" style="color: var(--brand-dark);">Price / Person</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($group_pricing_rows as $pricing_row) : ?>
+                                            <?php
+                                            $min_people = isset($pricing_row['min_people']) ? (int) $pricing_row['min_people'] : 0;
+                                            $max_people = isset($pricing_row['max_people']) ? (int) $pricing_row['max_people'] : 0;
+                                            $row_price = isset($pricing_row['price_per_person']) ? (float) $pricing_row['price_per_person'] : 0.0;
+                                            if ($min_people > 0 && $max_people > 0 && $min_people !== $max_people) {
+                                                $range_label = $min_people . ' - ' . $max_people;
+                                            } elseif ($min_people > 0 && $max_people > 0) {
+                                                $range_label = (string) $min_people;
+                                            } elseif ($min_people > 0) {
+                                                $range_label = $min_people . '+';
+                                            } elseif ($max_people > 0) {
+                                                $range_label = 'Up to ' . $max_people;
+                                            } else {
+                                                $range_label = 'Any size';
+                                            }
+                                            ?>
+                                        <tr class="border-t border-gray-100">
+                                            <td class="px-3 py-2" style="color: var(--brand-gray);"><?php echo esc_html($range_label); ?> Travellers</td>
+                                            <td class="px-3 py-2 font-semibold" style="color: var(--brand-dark);">
+                                                <?php echo $row_price > 0 ? esc_html('$' . number_format_i18n($row_price, 2)) : 'Price on request'; ?>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
+                        <?php endif; ?>
 
                         <!-- Total -->
                         <div class="flex items-center justify-between pt-2 border-t border-gray-100">
                             <span class="font-bold text-base" style="color: var(--brand-dark);">Total:</span>
+                            <span class="font-bold text-lg" data-booking-total style="color: var(--brand-orange);">
+                                $<?php echo esc_html(number_format_i18n($initial_total_price, 2)); ?>
+                            </span>
                         </div>
 
                         <!-- Book Now button -->
@@ -731,12 +831,6 @@ if (have_posts()) {
                             </svg>
                             Book Now
                         </a>
-
-                        <?php if (shortcode_exists('aatf_trek_group_pricing')) : ?>
-                        <div class="mt-2">
-                            <?php echo do_shortcode('[aatf_trek_group_pricing trek_id="' . esc_attr((string) $post_id) . '" wrap="none"]'); ?>
-                        </div>
-                        <?php endif; ?>
 
                     </div>
                 </div>
@@ -817,6 +911,110 @@ if (have_posts()) {
         <!-- Itinerary Accordion JS -->
         <script>
         (function() {
+            function formatPrice(amount) {
+                var numeric = Number(amount) || 0;
+                return '$' + numeric.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+
+            document.querySelectorAll('[data-booking-pricing]').forEach(function(card) {
+                var basePrice = parseFloat(card.getAttribute('data-base-price') || '0') || 0;
+                var participantsField = card.querySelector('[data-booking-participants]');
+                var decrementBtn = card.querySelector('[data-booking-decrement]');
+                var incrementBtn = card.querySelector('[data-booking-increment]');
+                var pricePerPersonEl = card.querySelector('[data-booking-price-per-person]');
+                var totalEl = card.querySelector('[data-booking-total]');
+                var toggleBtn = card.querySelector('[data-group-discount-toggle]');
+                var togglePanel = card.querySelector('[data-group-discount-panel]');
+                var toggleIcon = card.querySelector('[data-group-discount-icon]');
+                var pricingRows = [];
+
+                try {
+                    pricingRows = JSON.parse(card.getAttribute('data-group-pricing') || '[]');
+                } catch (error) {
+                    pricingRows = [];
+                }
+
+                function getPriceForParticipants(count) {
+                    var participants = Math.max(1, parseInt(count, 10) || 1);
+
+                    for (var i = 0; i < pricingRows.length; i += 1) {
+                        var row = pricingRows[i] || {};
+                        var minPeople = parseInt(row.min_people, 10) || 0;
+                        var maxPeople = parseInt(row.max_people, 10) || 0;
+                        var rowPrice = parseFloat(row.price_per_person) || 0;
+                        var minMatch = participants >= Math.max(1, minPeople);
+                        var maxMatch = maxPeople <= 0 || participants <= maxPeople;
+
+                        if (minMatch && maxMatch && rowPrice > 0) {
+                            return rowPrice;
+                        }
+                    }
+
+                    return basePrice;
+                }
+
+                function normalizeParticipantsValue(nextValue) {
+                    var min = parseInt(participantsField && participantsField.getAttribute('min'), 10) || 1;
+                    var max = parseInt(participantsField && participantsField.getAttribute('max'), 10) || min;
+                    var participants = parseInt(nextValue, 10);
+
+                    if (!Number.isFinite(participants)) {
+                        participants = min;
+                    }
+
+                    return Math.min(max, Math.max(min, participants));
+                }
+
+                function renderPricing() {
+                    if (!participantsField || !pricePerPersonEl || !totalEl) {
+                        return;
+                    }
+
+                    var participants = normalizeParticipantsValue(participantsField.value);
+                    participantsField.value = String(participants);
+                    var pricePerPerson = getPriceForParticipants(participants);
+                    var totalPrice = participants * pricePerPerson;
+
+                    pricePerPersonEl.textContent = formatPrice(pricePerPerson);
+                    totalEl.textContent = formatPrice(totalPrice);
+                }
+
+                if (participantsField) {
+                    participantsField.addEventListener('input', renderPricing);
+                    participantsField.addEventListener('change', renderPricing);
+                }
+
+                if (decrementBtn && participantsField) {
+                    decrementBtn.addEventListener('click', function() {
+                        participantsField.value = String(normalizeParticipantsValue((parseInt(participantsField.value, 10) || 1) - 1));
+                        renderPricing();
+                    });
+                }
+
+                if (incrementBtn && participantsField) {
+                    incrementBtn.addEventListener('click', function() {
+                        participantsField.value = String(normalizeParticipantsValue((parseInt(participantsField.value, 10) || 1) + 1));
+                        renderPricing();
+                    });
+                }
+
+                if (toggleBtn && togglePanel) {
+                    toggleBtn.addEventListener('click', function() {
+                        var isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+                        toggleBtn.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+                        togglePanel.classList.toggle('hidden', isExpanded);
+                        if (toggleIcon) {
+                            toggleIcon.textContent = isExpanded ? '+' : '-';
+                        }
+                    });
+                }
+
+                renderPricing();
+            });
+
             document.addEventListener('click', function(e) {
                 var btn = e.target.closest('.aatf-itinerary-acc-btn');
                 if (!btn) return;
