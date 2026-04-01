@@ -139,7 +139,7 @@
     </div>
 
     <!-- ── Navigation ───────────────────────────────────────────────── -->
-    <nav class="bg-white sticky top-0 z-50" aria-label="<?php esc_attr_e('Primary Menu', 'aatf-expedition-base'); ?>">
+    <nav class="aatf-main-nav bg-white sticky top-0 z-50" aria-label="<?php esc_attr_e('Primary Menu', 'aatf-expedition-base'); ?>">
         <div class="max-w-7xl mx-auto py-3 flex items-center gap-6">
 
             <!-- Logo / Brand -->
