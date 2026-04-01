@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -409,7 +409,28 @@ if (have_posts()) {
         </div>
 
         <!-- ── Main content ───────────────────────────────────────────────── -->
-        <div class="max-w-7xl mx-auto py-8 flex gap-8 items-start">
+        <div class="max-w-7xl mx-auto py-8 xl:px-0 px-4">
+            
+            <?php if (!empty($secondary_sections)) : ?>
+                <div id="aatf-nav-anchor"></div>
+                <nav class="aatf-single-trek__section-nav" aria-label="Trek page sections" data-trek-section-nav>
+                    <div class="max-w-7xl mx-auto px-4 xl:px-0">
+                        <div class="aatf-single-trek__section-nav-track">
+                        <?php foreach ($secondary_sections as $index => $section_nav) : ?>
+                            <a
+                                href="#<?php echo esc_attr($section_nav['id']); ?>"
+                                class="aatf-single-trek__section-link<?php echo $index === 0 ? ' is-active' : ''; ?>"
+                                data-section-link
+                                data-target="<?php echo esc_attr($section_nav['id']); ?>">
+                                <?php echo esc_html($section_nav['label']); ?>
+                            </a>
+                        <?php endforeach; ?>
+                        </div>
+                    </div>
+                </nav>
+            <?php endif; ?>
+
+            <div class="flex gap-8 items-start lg:flex-row flex-col">
 
             <!-- ── Left column ────────────────────────────────────────────── -->
             <div class="flex-1 min-w-0">
@@ -444,26 +465,17 @@ if (have_posts()) {
                     </div>
                 </div>
 
-                <?php if (!empty($secondary_sections)) : ?>
-                    <nav class="aatf-single-trek__section-nav mb-8" aria-label="Trek page sections" data-trek-section-nav>
-                        <div class="aatf-single-trek__section-nav-track">
-                            <?php foreach ($secondary_sections as $index => $section_nav) : ?>
-                                <a
-                                    href="#<?php echo esc_attr($section_nav['id']); ?>"
-                                    class="aatf-single-trek__section-link<?php echo $index === 0 ? ' is-active' : ''; ?>"
-                                    data-section-link
-                                    data-target="<?php echo esc_attr($section_nav['id']); ?>">
-                                    <?php echo esc_html($section_nav['label']); ?>
-                                </a>
-                            <?php endforeach; ?>
-                        </div>
-                    </nav>
-                <?php endif; ?>
+                <?php /* Nav moved above left column for full width display */ ?>
 
                 <!-- Overview -->
                 <?php if ($has_overview_section) : ?>
-                    <section class="mb-8 aatf-single-trek__content-section" id="trek-overview" data-section>
-                        <h2 class="text-xl font-bold mb-3" style="color: var(--brand-dark);">Overview</h2>
+                    <section class="mb-10 aatf-single-trek__content-section" id="trek-overview" data-section>
+                        <div class="aatf-section-header">
+                            <div class="aatf-section-header__icon">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            </div>
+                            <h2 class="aatf-section-header__title">Overview</h2>
+                        </div>
                         <div class="aatf-single-trek__overview">
                         <?php if (get_the_content()) : ?>
                             <div class="aatf-single-trek__overview-content">
@@ -481,54 +493,72 @@ if (have_posts()) {
 
                 <!-- Highlights -->
                 <?php if ($has_highlights_section) : ?>
-                    <section class="mb-8 aatf-single-trek__content-section" id="trek-highlights" data-section>
-                        <h2 class="text-xl font-bold mb-3" style="color: var(--brand-dark);">
-                            <?php echo esc_html($highlights_title !== '' ? $highlights_title : 'Trek Highlights'); ?>
-                        </h2>
+                    <section class="mb-10 aatf-single-trek__content-section" id="trek-highlights" data-section>
+                        <div class="aatf-section-header">
+                            <div class="aatf-section-header__icon">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                            </div>
+                            <h2 class="aatf-section-header__title">
+                                <?php echo esc_html($highlights_title !== '' ? $highlights_title : 'Trek Highlights'); ?>
+                            </h2>
+                        </div>
                         <?php if ($highlights_intro !== '') : ?>
-                            <p class="text-sm leading-relaxed mb-3" style="color: var(--brand-gray);"><?php echo esc_html($highlights_intro); ?></p>
+                            <p class="text-sm leading-relaxed mb-4" style="color: var(--brand-gray);"><?php echo esc_html($highlights_intro); ?></p>
                         <?php endif; ?>
                         <?php if (!empty($highlights)) : ?>
-                            <ul class="space-y-2">
-                                <?php foreach ($highlights as $item) : ?>
-                                    <li class="flex items-center gap-2 text-sm" style="color: var(--brand-dark);">
-                                        <svg class="w-4 h-4 shrink-0" style="color: var(--brand-orange);" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        <?php echo esc_html($item); ?>
-                                    </li>
+                            <div class="aatf-highlights-grid">
+                                <?php foreach ($highlights as $h_index => $item) : ?>
+                                    <div class="aatf-highlight-item">
+                                        <span class="aatf-highlight-item__num"><?php echo esc_html($h_index + 1); ?></span>
+                                        <span class="aatf-highlight-item__text"><?php echo esc_html($item); ?></span>
+                                    </div>
                                 <?php endforeach; ?>
-                            </ul>
+                            </div>
                         <?php endif; ?>
                     </section>
                 <?php endif; ?>
 
                 <!-- Cost Includes/Excludes -->
                 <?php if ($has_includes_section) : ?>
-                    <section class="mb-8 aatf-single-trek__content-section" id="trek-includes" data-section>
-                        <h2 class="text-xl font-bold mb-4" style="color: var(--brand-dark);">Included/Exclude</h2>
-                        <div class="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
+                    <section class="mb-10 aatf-single-trek__content-section" id="trek-includes" data-section>
+                        <div class="aatf-section-header">
+                            <div class="aatf-section-header__icon">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                            </div>
+                            <h2 class="aatf-section-header__title">Included / Excluded</h2>
+                        </div>
+                        <div class="aatf-includes-grid">
                             <!-- Included -->
-                            <div class="space-y-2">
-                                <?php foreach ($cost_includes as $inc_item) : ?>
-                                    <div class="flex items-center gap-2" style="color: var(--brand-dark);">
-                                        <svg class="w-4 h-4 shrink-0 text-green-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        <?php echo esc_html($inc_item); ?>
-                                    </div>
-                                <?php endforeach; ?>
+                            <div class="aatf-includes-card aatf-includes-card--included">
+                                <div class="aatf-includes-card__header aatf-includes-card__header--included">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <span>What's Included</span>
+                                    <span class="aatf-includes-card__count"><?php echo count($cost_includes); ?></span>
+                                </div>
+                                <ul class="aatf-includes-card__list">
+                                    <?php foreach ($cost_includes as $inc_item) : ?>
+                                        <li class="aatf-includes-card__item">
+                                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                            <span><?php echo esc_html($inc_item); ?></span>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
                             </div>
                             <!-- Excluded -->
-                            <div class="space-y-2">
-                                <?php foreach ($cost_excludes as $exc_item) : ?>
-                                    <div class="flex items-center gap-2 text-gray-400">
-                                        <svg class="w-4 h-4 shrink-0 text-red-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                        <?php echo esc_html($exc_item); ?>
-                                    </div>
-                                <?php endforeach; ?>
+                            <div class="aatf-includes-card aatf-includes-card--excluded">
+                                <div class="aatf-includes-card__header aatf-includes-card__header--excluded">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <span>What's Excluded</span>
+                                    <span class="aatf-includes-card__count"><?php echo count($cost_excludes); ?></span>
+                                </div>
+                                <ul class="aatf-includes-card__list">
+                                    <?php foreach ($cost_excludes as $exc_item) : ?>
+                                        <li class="aatf-includes-card__item aatf-includes-card__item--excluded">
+                                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            <span><?php echo esc_html($exc_item); ?></span>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
                             </div>
                         </div>
                     </section>
@@ -536,60 +566,65 @@ if (have_posts()) {
 
                 <!-- Equipment -->
                 <?php if ($has_equipment_section) : ?>
-                        <section class="aatf-single-trek__equipment mb-8 aatf-single-trek__content-section" id="trek-equipment" aria-labelledby="trek-equipment-heading" data-section>
-                            <div class="aatf-single-trek__equipment-header mb-5">
-                                <h2 id="trek-equipment-heading" class="aatf-single-trek__equipment-title text-xl font-bold" style="color: var(--brand-dark);">
-                                    <span>Equipment</span>
-                                </h2>
-                                <p class="aatf-single-trek__equipment-intro text-sm" style="color: var(--brand-gray);">
-                                    Pack according to the sections below so you can quickly see what is essential for the trek.
-                                </p>
+                    <section class="aatf-single-trek__equipment mb-10 aatf-single-trek__content-section" id="trek-equipment" aria-labelledby="trek-equipment-heading" data-section>
+                        <div class="aatf-section-header">
+                            <div class="aatf-section-header__icon">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
                             </div>
-                            <div class="grid grid-cols-1 gap-6">
-                                <?php foreach ($prepared_equipment_sections as $section) : ?>
-                                    <div class="aatf-single-trek__equipment-card">
-                                        <?php if ($section['heading'] !== '' || !empty($section['image_url'])) : ?>
-                                            <div class="aatf-single-trek__equipment-card-head">
-                                                <?php if (!empty($section['image_url'])) : ?>
-                                                    <div class="aatf-single-trek__equipment-card-media">
-                                                        <img
-                                                            src="<?php echo esc_url($section['image_url']); ?>"
-                                                            alt=""
-                                                            class="aatf-single-trek__equipment-card-image"
-                                                            loading="lazy" />
-                                                    </div>
-                                                <?php endif; ?>
+                            <h2 id="trek-equipment-heading" class="aatf-section-header__title">Equipment</h2>
+                        </div>
+                        <p class="aatf-single-trek__equipment-intro text-sm mb-5" style="color: var(--brand-gray);">
+                            Pack according to the sections below so you can quickly see what is essential for the trek.
+                        </p>
+                        <div class="aatf-equipment-grid">
+                            <?php foreach ($prepared_equipment_sections as $eq_idx => $section) : ?>
+                                <div class="aatf-equipment-card">
+                                    <?php if ($section['heading'] !== '' || !empty($section['image_url'])) : ?>
+                                        <div class="aatf-equipment-card__head">
+                                            <?php if (!empty($section['image_url'])) : ?>
+                                                <div class="aatf-equipment-card__media">
+                                                    <img src="<?php echo esc_url($section['image_url']); ?>" alt="" class="aatf-equipment-card__image" loading="lazy" />
+                                                </div>
+                                            <?php endif; ?>
+                                            <div class="aatf-equipment-card__head-text">
                                                 <?php if ($section['heading'] !== '') : ?>
-                                                    <h4 class="aatf-single-trek__equipment-card-title text-sm font-bold uppercase tracking-wide" style="color: var(--brand-dark);">
-                                                        <?php echo esc_html($section['heading']); ?>
-                                                    </h4>
+                                                    <h4 class="aatf-equipment-card__title"><?php echo esc_html($section['heading']); ?></h4>
+                                                <?php endif; ?>
+                                                <?php if (!empty($section['items'])) : ?>
+                                                    <span class="aatf-equipment-card__badge"><?php echo count($section['items']); ?> items</span>
                                                 <?php endif; ?>
                                             </div>
-                                        <?php endif; ?>
-                                        <?php if (!empty($section['items'])) : ?>
-                                            <ul class="aatf-single-trek__equipment-list text-sm">
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if (!empty($section['items'])) : ?>
+                                        <div class="aatf-equipment-card__body">
+                                            <ul class="aatf-equipment-card__list">
                                                 <?php foreach ($section['items'] as $item) : ?>
-                                                    <li class="aatf-single-trek__equipment-item">
-                                                        <span class="aatf-single-trek__equipment-bullet" aria-hidden="true">
-                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 12h8" />
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 7l5 5-5 5" />
-                                                            </svg>
+                                                    <li class="aatf-equipment-card__item">
+                                                        <span class="aatf-equipment-card__bullet" aria-hidden="true">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                                                         </span>
                                                         <span><?php echo esc_html($item); ?></span>
                                                     </li>
                                                 <?php endforeach; ?>
                                             </ul>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </section>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </section>
                 <?php endif; ?>
 
                 <!-- Itinerary / Tour Plan accordion -->
                 <?php if ($has_itinerary_section) : ?>
-                    <section class="mb-8 aatf-single-trek__content-section" id="trek-tour-plan" data-section>
+                    <section class="mb-10 aatf-single-trek__content-section" id="trek-tour-plan" data-section>
+                        <div class="aatf-section-header mb-1">
+                            <div class="aatf-section-header__icon">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+                            </div>
+                            <h2 class="aatf-section-header__title">Tour Plan</h2>
+                        </div>
                         <?php echo $itinerary_markup; ?>
                     </section>
                 <?php endif; ?>
@@ -1666,8 +1701,9 @@ if (have_posts()) {
                             return;
                         }
 
-                        var navRect = nav.getBoundingClientRect();
-                        var shouldTakeOver = navRect.top <= 0;
+                        var anchor = document.getElementById('aatf-nav-anchor') || nav;
+                        var anchorRect = anchor.getBoundingClientRect();
+                        var shouldTakeOver = anchorRect.top <= 0;
                         pageBody.classList.toggle('aatf-section-nav-takeover', shouldTakeOver);
                     }
 
@@ -1679,7 +1715,12 @@ if (have_posts()) {
                             threshold: [0, 1]
                         });
 
-                        navObserver.observe(nav);
+                        var anchorEl = document.getElementById('aatf-nav-anchor');
+                        if (anchorEl) {
+                            navObserver.observe(anchorEl);
+                        } else {
+                            navObserver.observe(nav);
+                        }
                     }
 
                     window.addEventListener('scroll', syncHeaderTakeover, {
@@ -1724,6 +1765,8 @@ if (have_posts()) {
                 });
             })();
         </script>
+
+    </div><!-- /max-w-7xl content wrapper -->
 
 <?php
     }
