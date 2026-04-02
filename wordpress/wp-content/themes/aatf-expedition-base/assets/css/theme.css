@@ -1225,7 +1225,8 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     z-index: 60;
     background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--aatf-color-line, #d8e0ea);
+    /* border-bottom: 1px solid var(--aatf-color-line, #d8e0ea); */
+    box-shadow: 0 10px 24px rgba(19, 36, 60, 0.05);
     padding: 0.75rem 0;
     transform: translateY(-100%);
     opacity: 0;
@@ -1245,11 +1246,49 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     gap: 0.7rem;
     overflow-x: auto;
     padding: 0.5rem;
-    border: 1px solid rgba(19, 36, 60, 0.08);
-    border-radius: 999px;
+    /* border: 1px solid rgba(19, 36, 60, 0.08); */
+    /* border-radius: 999px; */
     background: rgba(255, 255, 255, 0.86);
-    box-shadow: 0 10px 24px rgba(19, 36, 60, 0.05);
+    /* box-shadow: 0 10px 24px rgba(19, 36, 60, 0.05); */
     scrollbar-width: none;
+}
+
+.aatf-single-trek__section-nav-tour {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 220px;
+    padding: 0 0.75rem 0 0.25rem;
+    margin-right: 0.25rem;
+    /* border-right: 1px solid rgba(19, 36, 60, 0.08); */
+}
+
+.aatf-single-trek__section-nav-title {
+    margin: 0;
+    color: var(--brand-dark);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.aatf-single-trek__section-nav-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.2rem 0 0;
+    color: var(--brand-gray);
+    font-size: 0.78rem;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.aatf-single-trek__section-nav-location-icon {
+    width: 0.85rem;
+    height: 0.85rem;
+    color: var(--brand-orange);
+    flex: 0 0 auto;
 }
 
 .aatf-single-trek__section-nav-track::-webkit-scrollbar {
@@ -1281,11 +1320,209 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
 .aatf-single-trek__section-link.is-active {
     color: #ffffff;
     background: linear-gradient(135deg, #e8820c 0%, #ef9a2e 100%);
-    box-shadow: 0 12px 24px rgba(232, 130, 12, 0.24);
+    /* box-shadow: 0 12px 24px rgba(232, 130, 12, 0.24); */
 }
 
 .aatf-single-trek__content-section {
     scroll-margin-top: 170px;
+}
+
+.aatf-faq {
+    display: block;
+}
+
+.aatf-faq__card {
+    border: 1px solid rgba(19, 36, 60, 0.08);
+    border-radius: 1.5rem;
+    background:
+        radial-gradient(circle at top right, rgba(232, 130, 12, 0.1), transparent 32%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+    box-shadow: 0 18px 40px rgba(19, 36, 60, 0.06);
+    overflow: hidden;
+}
+
+.aatf-faq__header {
+    align-items: flex-start;
+    padding: 1.5rem;
+    margin-bottom: 0;
+    border-bottom: 1px solid rgba(19, 36, 60, 0.08);
+}
+
+.aatf-faq__header-copy {
+    flex: 1 1 320px;
+}
+
+.aatf-faq__intro {
+    margin: 0.4rem 0 0;
+    color: var(--brand-gray);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.aatf-faq__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.4rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(232, 130, 12, 0.1);
+    color: var(--brand-orange);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.aatf-faq__group {
+    padding: 1.25rem 1.5rem;
+}
+
+.aatf-faq__group + .aatf-faq__group {
+    border-top: 1px solid rgba(19, 36, 60, 0.08);
+}
+
+.aatf-faq__group-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.aatf-faq__group-title {
+    margin: 0;
+    color: var(--brand-dark);
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.aatf-faq__group-count {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(19, 36, 60, 0.06);
+    color: var(--brand-gray);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.aatf-faq__item {
+    border: 1px solid rgba(19, 36, 60, 0.08);
+    border-radius: 1rem;
+    background: linear-gradient(180deg, #ffffff, #fcfdff);
+    overflow: hidden;
+}
+
+.aatf-faq__item + .aatf-faq__item {
+    margin-top: 0.85rem;
+}
+
+.aatf-faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    cursor: pointer;
+    list-style: none;
+    color: var(--brand-dark);
+    font-size: 0.98rem;
+    font-weight: 700;
+    line-height: 1.5;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.aatf-faq__question::-webkit-details-marker {
+    display: none;
+}
+
+.aatf-faq__item[open] .aatf-faq__question {
+    background: rgba(232, 130, 12, 0.08);
+    color: var(--brand-orange);
+}
+
+.aatf-faq__question-text {
+    flex: 1 1 auto;
+}
+
+.aatf-faq__question-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: rgba(19, 36, 60, 0.06);
+    color: inherit;
+    flex: 0 0 auto;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.aatf-faq__item[open] .aatf-faq__question-icon {
+    transform: rotate(180deg);
+    background: rgba(232, 130, 12, 0.16);
+}
+
+.aatf-faq__answer {
+    padding: 0 1.1rem 1.15rem;
+    color: var(--brand-gray);
+    font-size: 0.95rem;
+    line-height: 1.75;
+}
+
+.aatf-faq__answer > *:first-child {
+    margin-top: 0;
+}
+
+.aatf-faq__answer > *:last-child {
+    margin-bottom: 0;
+}
+
+.aatf-faq__answer a {
+    color: var(--brand-orange);
+    text-decoration: underline;
+    text-underline-offset: 0.14em;
+}
+
+@media (max-width: 767px) {
+    .aatf-faq__header {
+        padding: 1.25rem;
+    }
+
+    .aatf-faq__group {
+        padding: 1rem 1.25rem;
+    }
+
+    .aatf-faq__group-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .aatf-faq__question {
+        padding: 0.95rem 1rem;
+    }
+
+    .aatf-faq__answer {
+        padding: 0 1rem 1rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .aatf-single-trek__section-nav-tour {
+        min-width: 180px;
+    }
+
+    .aatf-single-trek__section-nav-title,
+    .aatf-single-trek__section-nav-location {
+        white-space: normal;
+    }
 }
 
 .aatf-single-trek__equipment {

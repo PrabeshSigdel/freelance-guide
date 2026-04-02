@@ -189,7 +189,7 @@ class AATF_Frontend_Components
     {
         $atts = shortcode_atts(array(
             'trek_id' => 0,
-            'title' => 'Tour Plan',
+            'title' => 'Itinerary',
         ), $atts, 'aatf_trek_itinerary');
 
         $trek_id = self::resolve_trek_id($atts);
@@ -228,7 +228,14 @@ class AATF_Frontend_Components
         ob_start();
         ?>
         <section class="aatf-panel aatf-single-trek__itinerary">
-            <h3 class="text-xl font-bold mb-5"><?php echo esc_html($atts['title']); ?></h3>
+            <?php if ($atts['title'] !== '') : ?>
+                <div class="aatf-section-header mb-5">
+                    <div class="aatf-section-header__icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+                    </div>
+                    <h2 class="aatf-section-header__title"><?php echo esc_html($atts['title']); ?></h2>
+                </div>
+            <?php endif; ?>
             <div class="aatf-itinerary-accordion space-y-3">
                 <?php foreach ($clean_rows as $idx => $row) :
                     $day = isset($row['day']) ? (string) $row['day'] : '';
@@ -708,66 +715,88 @@ class AATF_Frontend_Components
             $topic_groups = get_post_meta($faq_id, 'aatf_faq_topic_groups', true);
             $topic_groups = is_array($topic_groups) ? $topic_groups : array();
 
-            if (!empty($topic_groups)) {
-                foreach ($topic_groups as $topic_group) {
-                    $topic_id = isset($topic_group['topic_id']) ? (int) $topic_group['topic_id'] : 0;
-                    $topic_term = $topic_id > 0 ? get_term($topic_id, 'faq_topic') : null;
-                    $topic_name = ($topic_term && !is_wp_error($topic_term)) ? (string) $topic_term->name : 'General';
-
-                    if (!isset($grouped[$topic_name])) {
-                        $grouped[$topic_name] = array();
-                    }
-
-                    $faqs = isset($topic_group['faqs']) && is_array($topic_group['faqs']) ? $topic_group['faqs'] : array();
-                    foreach ($faqs as $faq_row) {
-                        $question = isset($faq_row['question']) ? (string) $faq_row['question'] : '';
-                        $answer = isset($faq_row['answer']) ? (string) $faq_row['answer'] : '';
-                        if ($question === '' && $answer === '') {
-                            continue;
-                        }
-
-                        $grouped[$topic_name][] = array(
-                            'question' => $question,
-                            'answer' => wpautop($answer),
-                        );
-                    }
+            foreach ($topic_groups as $topic_group) {
+                if (!is_array($topic_group)) {
+                    continue;
                 }
-                continue;
-            }
 
-            $terms = get_the_terms($faq_id, 'faq_topic');
-            $topic_name = 'General';
-            if (!is_wp_error($terms) && !empty($terms)) {
-                $topic_name = (string) $terms[0]->name;
-            }
+                $topic_id = isset($topic_group['topic_id']) ? (int) $topic_group['topic_id'] : 0;
+                $topic_term = $topic_id > 0 ? get_term($topic_id, 'faq_topic') : null;
+                $topic_name = ($topic_term && !is_wp_error($topic_term)) ? (string) $topic_term->name : 'General';
 
-            if (!isset($grouped[$topic_name])) {
-                $grouped[$topic_name] = array();
-            }
+                if (!isset($grouped[$topic_name])) {
+                    $grouped[$topic_name] = array();
+                }
 
-            $grouped[$topic_name][] = array(
-                'question' => get_the_title($faq_id),
-                'answer' => apply_filters('the_content', get_post_field('post_content', $faq_id)),
-            );
+                $faqs = isset($topic_group['faqs']) && is_array($topic_group['faqs']) ? $topic_group['faqs'] : array();
+                foreach ($faqs as $faq_row) {
+                    if (!is_array($faq_row)) {
+                        continue;
+                    }
+
+                    $question = isset($faq_row['question']) ? trim((string) $faq_row['question']) : '';
+                    $answer = isset($faq_row['answer']) ? trim((string) $faq_row['answer']) : '';
+                    if ($question === '' && $answer === '') {
+                        continue;
+                    }
+
+                    $grouped[$topic_name][] = array(
+                        'question' => $question,
+                        'answer' => wpautop($answer),
+                    );
+                }
+            }
         }
 
         wp_reset_postdata();
 
+        $grouped = array_filter($grouped, static function ($items) {
+            return is_array($items) && !empty($items);
+        });
+
+        if (empty($grouped)) {
+            return '';
+        }
+
+        $total_faq_count = 0;
+        foreach ($grouped as $items) {
+            $total_faq_count += is_array($items) ? count($items) : 0;
+        }
+
         ob_start();
         ?>
         <section class="aatf-faq" aria-label="Trek FAQ">
-            <h2 class="aatf-faq__title"><?php echo esc_html($atts['title']); ?></h2>
-            <?php foreach ($grouped as $topic => $items) : ?>
-                <div class="aatf-faq__group">
-                    <h3 class="aatf-faq__group-title"><?php echo esc_html($topic); ?></h3>
-                    <?php foreach ($items as $index => $item) : ?>
-                        <details class="aatf-faq__item" <?php echo $index === 0 ? 'open' : ''; ?>>
-                            <summary class="aatf-faq__question"><?php echo esc_html($item['question']); ?></summary>
-                            <div class="aatf-faq__answer"><?php echo wp_kses_post($item['answer']); ?></div>
-                        </details>
-                    <?php endforeach; ?>
+            <div class="aatf-faq__card">
+                <div class="aatf-section-header aatf-faq__header">
+                    <div class="aatf-section-header__icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 1.813-2 3.272-2 1.933 0 3.5 1.567 3.5 3.5 0 1.355-.77 2.53-1.895 3.112-.73.378-1.355 1.12-1.355 1.888V16" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 19h.01" /><path stroke-linecap="round" stroke-linejoin="round" d="M4.93 4.93A10 10 0 1019.07 19.07 10 10 0 004.93 4.93z" /></svg>
+                    </div>
+                    <div class="aatf-faq__header-copy">
+                        <h2 class="aatf-section-header__title"><?php echo esc_html($atts['title']); ?></h2>
+                        <p class="aatf-faq__intro">Helpful answers for planning this trek, permits, logistics, and what to expect on the trail.</p>
+                    </div>
+                    <span class="aatf-faq__count"><?php echo esc_html((string) $total_faq_count); ?> FAQs</span>
                 </div>
-            <?php endforeach; ?>
+                <?php foreach ($grouped as $topic => $items) : ?>
+                    <div class="aatf-faq__group">
+                        <div class="aatf-faq__group-head">
+                            <h3 class="aatf-faq__group-title"><?php echo esc_html($topic); ?></h3>
+                            <span class="aatf-faq__group-count"><?php echo esc_html((string) count($items)); ?> items</span>
+                        </div>
+                        <?php foreach ($items as $index => $item) : ?>
+                            <details class="aatf-faq__item" <?php echo $index === 0 ? 'open' : ''; ?>>
+                                <summary class="aatf-faq__question">
+                                    <span class="aatf-faq__question-text"><?php echo esc_html($item['question']); ?></span>
+                                    <span class="aatf-faq__question-icon" aria-hidden="true">
+                                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.25" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                                    </span>
+                                </summary>
+                                <div class="aatf-faq__answer"><?php echo wp_kses_post($item['answer']); ?></div>
+                            </details>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </section>
         <?php
         return (string) ob_get_clean();

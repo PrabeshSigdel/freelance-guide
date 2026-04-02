@@ -192,69 +192,6 @@
     color: #ffffff;
 }
 
-.aatf-faq {
-    margin-top: 2rem;
-    border: 1px solid var(--aatf-color-line);
-    background: #fafafa;
-}
-
-.aatf-faq__title {
-    margin: 0;
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--aatf-color-line);
-    background: #f2f2f2;
-    font-size: 1.25rem;
-}
-
-.aatf-faq__group-title {
-    margin: 0;
-    padding: 1rem 1.25rem;
-    border-top: 1px solid var(--aatf-color-line);
-    border-bottom: 1px solid var(--aatf-color-line);
-    background: #efefef;
-    color: var(--aatf-color-primary);
-    font-size: 2rem;
-    font-weight: 600;
-}
-
-.aatf-faq__item {
-    border-bottom: 1px solid var(--aatf-color-line);
-    background: #ffffff;
-}
-
-.aatf-faq__question {
-    list-style: none;
-    padding: 1.1rem 1.25rem;
-    font-size: 1.08rem;
-    cursor: pointer;
-    position: relative;
-}
-
-.aatf-faq__question::-webkit-details-marker {
-    display: none;
-}
-
-.aatf-faq__question::after {
-    content: '\2304';
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #777;
-    font-size: 1.6rem;
-    line-height: 1;
-}
-
-.aatf-faq__item[open] .aatf-faq__question::after {
-    content: '\2303';
-}
-
-.aatf-faq__answer {
-    padding: 0.25rem 1.25rem 1.2rem;
-    color: #1f2d3d;
-    line-height: 1.8;
-}
-
 .aatf-testimonial-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -520,9 +457,5 @@
 
     .aatf-header__inner {
         align-items: flex-start;
-    }
-
-    .aatf-faq__group-title {
-        font-size: 1.5rem;
     }
 }

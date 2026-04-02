@@ -300,7 +300,7 @@ if (have_posts()) :
             <!-- ── DYNAMIC: Itinerary (shortcode) ───────────────────────────── -->
             <?php if (shortcode_exists('aatf_trek_itinerary')) : ?>
             <div class="aatf-panel aatf-single-trek__itinerary mb-8">
-                <h2 class="text-xl font-bold mb-4" style="color:var(--brand-dark);">Tour Plan</h2>
+                <h2 class="text-xl font-bold mb-4" style="color:var(--brand-dark);">Itinerary</h2>
                 <?php echo do_shortcode('[aatf_trek_itinerary trek_id="' . esc_attr((string) $post_id) . '"]'); ?>
             </div>
             <?php endif; ?>

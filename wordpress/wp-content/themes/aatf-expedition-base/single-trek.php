@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -310,7 +310,7 @@ if (have_posts()) {
             $secondary_sections[] = array('id' => 'trek-equipment', 'label' => 'Equipment');
         }
         if ($has_itinerary_section) {
-            $secondary_sections[] = array('id' => 'trek-tour-plan', 'label' => 'Tour Plan');
+            $secondary_sections[] = array('id' => 'trek-tour-plan', 'label' => 'Itinerary');
         }
         if ($has_altitude_section) {
             $secondary_sections[] = array('id' => 'trek-altitude-profile', 'label' => 'Trip Graph');
@@ -416,6 +416,17 @@ if (have_posts()) {
                 <nav class="aatf-single-trek__section-nav" aria-label="Trek page sections" data-trek-section-nav>
                     <div class="max-w-7xl mx-auto px-4 xl:px-0">
                         <div class="aatf-single-trek__section-nav-track">
+                        <div class="aatf-single-trek__section-nav-tour">
+                            <p class="aatf-single-trek__section-nav-title"><?php echo esc_html(get_the_title()); ?></p>
+                            <?php if ($location_name !== '') : ?>
+                                <p class="aatf-single-trek__section-nav-location">
+                                    <svg class="aatf-single-trek__section-nav-location-icon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span><?php echo esc_html($location_name); ?></span>
+                                </p>
+                            <?php endif; ?>
+                        </div>
                         <?php foreach ($secondary_sections as $index => $section_nav) : ?>
                             <a
                                 href="#<?php echo esc_attr($section_nav['id']); ?>"
@@ -616,15 +627,9 @@ if (have_posts()) {
                     </section>
                 <?php endif; ?>
 
-                <!-- Itinerary / Tour Plan accordion -->
+                <!-- Itinerary / Itinerary accordion -->
                 <?php if ($has_itinerary_section) : ?>
                     <section class="mb-10 aatf-single-trek__content-section" id="trek-tour-plan" data-section>
-                        <div class="aatf-section-header mb-1">
-                            <div class="aatf-section-header__icon">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
-                            </div>
-                            <h2 class="aatf-section-header__title">Tour Plan</h2>
-                        </div>
                         <?php echo $itinerary_markup; ?>
                     </section>
                 <?php endif; ?>
