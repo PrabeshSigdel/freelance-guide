@@ -1811,6 +1811,74 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     letter-spacing: -0.01em;
 }
 
+/* ── Itinerary Timeline ───────────────────────────────────── */
+.aatf-itinerary-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.aatf-itinerary-stop {
+    position: relative;
+    padding-left: 2.7rem;
+}
+
+.aatf-itinerary-stop::before,
+.aatf-itinerary-stop::after {
+    content: '';
+    position: absolute;
+    left: 1.1rem;
+    width: 2px;
+    background: linear-gradient(180deg, rgba(232, 130, 12, 0.16) 0%, rgba(232, 130, 12, 0.5) 100%);
+}
+
+.aatf-itinerary-stop::before {
+    top: 0;
+    bottom: calc(50% + 0.65rem);
+}
+
+.aatf-itinerary-stop::after {
+    top: calc(50% + 0.65rem);
+    bottom: 0;
+}
+
+.aatf-itinerary-stop.is-first::before,
+.aatf-itinerary-stop.is-last::after {
+    display: none;
+}
+
+.aatf-itinerary-stop__marker {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.aatf-itinerary-stop__dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--brand-orange, #e8820c) 0%, #f4b15d 100%);
+    border: 3px solid #fff7eb;
+    box-shadow: 0 0 0 4px rgba(232, 130, 12, 0.12);
+}
+
+.aatf-itinerary-stop__card {
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(19, 36, 60, 0.04);
+    transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.aatf-itinerary-stop__card:hover {
+    border-color: rgba(232, 130, 12, 0.24);
+    box-shadow: 0 14px 30px rgba(19, 36, 60, 0.08);
+}
+
 /* ── Highlights Grid ──────────────────────────────────────── */
 .aatf-highlights-grid {
     display: grid;
@@ -2111,6 +2179,19 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
 
     .aatf-section-header__title {
         font-size: 1.15rem;
+    }
+
+    .aatf-itinerary-stop {
+        padding-left: 2.35rem;
+    }
+
+    .aatf-itinerary-stop::before,
+    .aatf-itinerary-stop::after {
+        left: 0.95rem;
+    }
+
+    .aatf-itinerary-stop__marker {
+        width: 1.95rem;
     }
 
     .aatf-single-trek__overview {

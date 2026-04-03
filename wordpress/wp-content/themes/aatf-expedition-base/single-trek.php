@@ -141,35 +141,6 @@ if (have_posts()) {
             }
         }
 
-        $participant_cap = max(1, $group);
-        foreach ($group_pricing_rows as $pricing_row) {
-            $participant_cap = max(
-                $participant_cap,
-                isset($pricing_row['min_people']) ? (int) $pricing_row['min_people'] : 0,
-                isset($pricing_row['max_people']) ? (int) $pricing_row['max_people'] : 0
-            );
-        }
-        if ($participant_cap <= 1 && !empty($group_pricing_rows)) {
-            $participant_cap = 10;
-        }
-
-        $default_participants = 1;
-        $initial_price_per_person = $price;
-        foreach ($group_pricing_rows as $pricing_row) {
-            $min_people = isset($pricing_row['min_people']) ? (int) $pricing_row['min_people'] : 0;
-            $max_people = isset($pricing_row['max_people']) ? (int) $pricing_row['max_people'] : 0;
-            $row_price = isset($pricing_row['price_per_person']) ? (float) $pricing_row['price_per_person'] : 0.0;
-            $matches_default = $default_participants >= max(1, $min_people) && ($max_people <= 0 || $default_participants <= $max_people);
-
-            if ($matches_default && $row_price > 0) {
-                $initial_price_per_person = $row_price;
-                break;
-            }
-        }
-        if ($initial_price_per_person <= 0) {
-            $initial_price_per_person = $price;
-        }
-        $initial_total_price = max(0.0, $default_participants * $initial_price_per_person);
         $departures = new WP_Query(array(
             'post_type' => 'departure',
             'post_status' => 'publish',
@@ -237,8 +208,16 @@ if (have_posts()) {
             ),
             $booking_base_url
         );
-        $today_date = wp_date('Y-m-d');
-
+        $contact_page = get_page_by_path('contact');
+        $inquiry_base_url = ($contact_page instanceof WP_Post)
+            ? get_permalink((int) $contact_page->ID)
+            : home_url('/contact/');
+        $inquiry_cta_url = add_query_arg(
+            array(
+                'trek_id' => $post_id,
+            ),
+            $inquiry_base_url
+        );
         // Resolve location label the same way tour cards do.
         $location_name = '';
         if (function_exists('aatf_get_first_meta_value')) {
@@ -926,68 +905,22 @@ if (have_posts()) {
                     <div class="px-5 py-4 border-b border-gray-100">
                         <h3 class="font-bold text-base" style="color: var(--brand-dark);">Booking Tour</h3>
                     </div>
-                    <div
-                        class="px-5 py-4 space-y-4 text-sm"
-                        data-booking-pricing
-                        data-base-price="<?php echo esc_attr((string) $price); ?>"
-                        data-group-pricing="<?php echo esc_attr(wp_json_encode($group_pricing_rows)); ?>">
-
-                        <!-- From date -->
-                        <div>
-                            <label class="block text-xs font-semibold mb-1.5" style="color: var(--brand-dark);">From:</label>
-                            <div class="flex items-center border border-gray-200 rounded-lg px-3 py-2.5 gap-2">
-                                <input type="date" min="<?php echo esc_attr($today_date); ?>" class="flex-1 text-xs outline-none bg-transparent" style="color: var(--brand-gray);" />
-                            </div>
-                        </div>
-
-                        <!-- Participants -->
-                        <div>
-                            <label class="block text-xs font-semibold mb-1.5" style="color: var(--brand-dark);">Participants:</label>
-                            <div class="flex items-center border border-gray-200 rounded-lg px-3 py-2.5 gap-2">
-                                <button
-                                    type="button"
-                                    class="w-7 h-7 rounded-full border border-gray-200 text-base leading-none flex items-center justify-center shrink-0"
-                                    data-booking-decrement
-                                    aria-label="Decrease participants"
-                                    style="color: var(--brand-dark);">-</button>
-                                <input
-                                    type="number"
-                                    min="1"
-                                    max="<?php echo esc_attr((string) $participant_cap); ?>"
-                                    step="1"
-                                    value="<?php echo esc_attr((string) $default_participants); ?>"
-                                    class="flex-1 text-center text-xs outline-none bg-transparent"
-                                    data-booking-participants
-                                    style="color: var(--brand-gray);" />
-                                <button
-                                    type="button"
-                                    class="w-7 h-7 rounded-full border border-gray-200 text-base leading-none flex items-center justify-center shrink-0"
-                                    data-booking-increment
-                                    aria-label="Increase participants"
-                                    style="color: var(--brand-dark);">+</button>
-                            </div>
-                        </div>
+                    <div class="px-5 py-4 space-y-4 text-sm">
 
                         <!-- Price per person -->
                         <div class="bg-gray-50 rounded-lg p-3">
                             <p class="text-xs font-semibold mb-1" style="color: var(--brand-gray);">Price per person</p>
-                            <p class="font-bold text-lg" data-booking-price-per-person style="color: var(--brand-dark);">
-                                $<?php echo esc_html(number_format_i18n($initial_price_per_person, 2)); ?>
+                            <p class="font-bold text-lg" style="color: var(--brand-dark);">
+                                $<?php echo esc_html(number_format_i18n($price, 2)); ?>
                             </p>
                         </div>
 
                         <?php if (!empty($group_pricing_rows)) : ?>
                             <div class="space-y-3">
-                                <button
-                                    type="button"
-                                    class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-xs font-semibold text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-                                    data-group-discount-toggle
-                                    aria-expanded="false"
-                                    style="color: var(--brand-dark);">
-                                    <span>View Group Discount</span>
-                                    <span class="text-base leading-none" data-group-discount-icon>+</span>
-                                </button>
-                                <div class="hidden border border-gray-100 rounded-lg overflow-hidden" data-group-discount-panel>
+                                <div>
+                                    <p class="text-xs font-semibold mb-2" style="color: var(--brand-dark);">Group Discount</p>
+                                </div>
+                                <div class="border border-gray-100 rounded-lg overflow-hidden">
                                     <table class="w-full text-xs">
                                         <thead class="bg-gray-50">
                                             <tr>
@@ -1026,20 +959,19 @@ if (have_posts()) {
                             </div>
                         <?php endif; ?>
 
-                        <!-- Total -->
-                        <div class="flex items-center justify-between pt-2 border-t border-gray-100">
-                            <span class="font-bold text-base" style="color: var(--brand-dark);">Total:</span>
-                            <span class="font-bold text-lg" data-booking-total style="color: var(--brand-orange);">
-                                $<?php echo esc_html(number_format_i18n($initial_total_price, 2)); ?>
-                            </span>
-                        </div>
-
                         <!-- Book Now button -->
                         <a href="<?php echo esc_url($booking_cta_url); ?>" class="w-full text-white font-bold text-sm tracking-widest uppercase py-3.5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 no-underline" style="background-color: var(--brand-orange);">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             Book Now
+                        </a>
+
+                        <a href="<?php echo esc_url($inquiry_cta_url); ?>" class="w-full bg-white border font-bold text-sm tracking-widest uppercase py-3.5 rounded-lg hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 no-underline" style="border-color: var(--brand-orange); color: var(--brand-orange);">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h6m-6 8l-4-4V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2H9l-2 4z" />
+                            </svg>
+                            Inquire Now
                         </a>
 
                     </div>
@@ -1121,14 +1053,6 @@ if (have_posts()) {
         <!-- Itinerary Accordion JS -->
         <script>
             (function() {
-                function formatPrice(amount) {
-                    var numeric = Number(amount) || 0;
-                    return '$' + numeric.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-                }
-
                 function formatAltitudeValue(value, unit) {
                     var numeric = Number(value) || 0;
                     var rounded = Math.round(numeric);
@@ -1532,102 +1456,6 @@ if (have_posts()) {
                         setScrollState(scroller, scrollWrap, rangeInput);
                     });
                 }
-
-                document.querySelectorAll('[data-booking-pricing]').forEach(function(card) {
-                    var basePrice = parseFloat(card.getAttribute('data-base-price') || '0') || 0;
-                    var participantsField = card.querySelector('[data-booking-participants]');
-                    var decrementBtn = card.querySelector('[data-booking-decrement]');
-                    var incrementBtn = card.querySelector('[data-booking-increment]');
-                    var pricePerPersonEl = card.querySelector('[data-booking-price-per-person]');
-                    var totalEl = card.querySelector('[data-booking-total]');
-                    var toggleBtn = card.querySelector('[data-group-discount-toggle]');
-                    var togglePanel = card.querySelector('[data-group-discount-panel]');
-                    var toggleIcon = card.querySelector('[data-group-discount-icon]');
-                    var pricingRows = [];
-
-                    try {
-                        pricingRows = JSON.parse(card.getAttribute('data-group-pricing') || '[]');
-                    } catch (error) {
-                        pricingRows = [];
-                    }
-
-                    function getPriceForParticipants(count) {
-                        var participants = Math.max(1, parseInt(count, 10) || 1);
-
-                        for (var i = 0; i < pricingRows.length; i += 1) {
-                            var row = pricingRows[i] || {};
-                            var minPeople = parseInt(row.min_people, 10) || 0;
-                            var maxPeople = parseInt(row.max_people, 10) || 0;
-                            var rowPrice = parseFloat(row.price_per_person) || 0;
-                            var minMatch = participants >= Math.max(1, minPeople);
-                            var maxMatch = maxPeople <= 0 || participants <= maxPeople;
-
-                            if (minMatch && maxMatch && rowPrice > 0) {
-                                return rowPrice;
-                            }
-                        }
-
-                        return basePrice;
-                    }
-
-                    function normalizeParticipantsValue(nextValue) {
-                        var min = parseInt(participantsField && participantsField.getAttribute('min'), 10) || 1;
-                        var max = parseInt(participantsField && participantsField.getAttribute('max'), 10) || min;
-                        var participants = parseInt(nextValue, 10);
-
-                        if (!Number.isFinite(participants)) {
-                            participants = min;
-                        }
-
-                        return Math.min(max, Math.max(min, participants));
-                    }
-
-                    function renderPricing() {
-                        if (!participantsField || !pricePerPersonEl || !totalEl) {
-                            return;
-                        }
-
-                        var participants = normalizeParticipantsValue(participantsField.value);
-                        participantsField.value = String(participants);
-                        var pricePerPerson = getPriceForParticipants(participants);
-                        var totalPrice = participants * pricePerPerson;
-
-                        pricePerPersonEl.textContent = formatPrice(pricePerPerson);
-                        totalEl.textContent = formatPrice(totalPrice);
-                    }
-
-                    if (participantsField) {
-                        participantsField.addEventListener('input', renderPricing);
-                        participantsField.addEventListener('change', renderPricing);
-                    }
-
-                    if (decrementBtn && participantsField) {
-                        decrementBtn.addEventListener('click', function() {
-                            participantsField.value = String(normalizeParticipantsValue((parseInt(participantsField.value, 10) || 1) - 1));
-                            renderPricing();
-                        });
-                    }
-
-                    if (incrementBtn && participantsField) {
-                        incrementBtn.addEventListener('click', function() {
-                            participantsField.value = String(normalizeParticipantsValue((parseInt(participantsField.value, 10) || 1) + 1));
-                            renderPricing();
-                        });
-                    }
-
-                    if (toggleBtn && togglePanel) {
-                        toggleBtn.addEventListener('click', function() {
-                            var isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-                            toggleBtn.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-                            togglePanel.classList.toggle('hidden', isExpanded);
-                            if (toggleIcon) {
-                                toggleIcon.textContent = isExpanded ? '+' : '-';
-                            }
-                        });
-                    }
-
-                    renderPricing();
-                });
 
                 document.querySelectorAll('[data-aatf-altitude-profile]').forEach(function(profileRoot) {
                     renderAltitudeProfile(profileRoot);

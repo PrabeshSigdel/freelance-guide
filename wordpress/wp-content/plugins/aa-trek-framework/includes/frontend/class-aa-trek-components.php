@@ -236,29 +236,43 @@ class AATF_Frontend_Components
                     <h2 class="aatf-section-header__title"><?php echo esc_html($atts['title']); ?></h2>
                 </div>
             <?php endif; ?>
-            <div class="aatf-itinerary-accordion space-y-3">
-                <?php foreach ($clean_rows as $idx => $row) :
+            <div class="aatf-itinerary-accordion">
+                <?php
+                $total_rows = count($clean_rows);
+                foreach ($clean_rows as $idx => $row) :
                     $day = isset($row['day']) ? (string) $row['day'] : '';
                     $title = isset($row['title']) ? (string) $row['title'] : '';
                     $description = isset($row['description']) ? (string) $row['description'] : '';
                     $heading = trim($day . ($title !== '' ? ' - ' . $title : ''));
+                    $item_classes = 'aatf-itinerary-stop';
+                    if ($idx === 0) {
+                        $item_classes .= ' is-first';
+                    }
+                    if ($idx === ($total_rows - 1)) {
+                        $item_classes .= ' is-last';
+                    }
                 ?>
-                <div class="border border-gray-200 rounded-lg overflow-hidden">
-                    <button type="button"
-                        class="aatf-itinerary-acc-btn w-full flex items-center justify-between px-5 py-3.5 font-semibold text-sm text-left bg-white"
-                        style="color: var(--brand-dark);"
-                        aria-expanded="false">
-                        <?php echo esc_html($heading); ?>
-                        <svg class="chevron w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="aatf-itinerary-acc-body px-5 py-4 text-sm leading-relaxed hidden" style="color: var(--brand-gray);">
-                        <?php if ($description !== '') : ?>
-                            <?php echo nl2br(esc_html($description)); ?>
-                        <?php else : ?>
-                            <em>No description provided.</em>
-                        <?php endif; ?>
+                <div class="<?php echo esc_attr($item_classes); ?>">
+                    <div class="aatf-itinerary-stop__marker" aria-hidden="true">
+                        <span class="aatf-itinerary-stop__dot"></span>
+                    </div>
+                    <div class="aatf-itinerary-stop__card border border-gray-200 rounded-lg overflow-hidden">
+                        <button type="button"
+                            class="aatf-itinerary-acc-btn w-full flex items-center justify-between px-5 py-3.5 font-semibold text-sm text-left bg-white"
+                            style="color: var(--brand-dark);"
+                            aria-expanded="false">
+                            <?php echo esc_html($heading); ?>
+                            <svg class="chevron w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="aatf-itinerary-acc-body px-5 py-4 text-sm leading-relaxed hidden" style="color: var(--brand-gray);">
+                            <?php if ($description !== '') : ?>
+                                <?php echo nl2br(esc_html($description)); ?>
+                            <?php else : ?>
+                                <em>No description provided.</em>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
