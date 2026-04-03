@@ -242,19 +242,18 @@ class AATF_Frontend_Components
                     $title = isset($row['title']) ? (string) $row['title'] : '';
                     $description = isset($row['description']) ? (string) $row['description'] : '';
                     $heading = trim($day . ($title !== '' ? ' - ' . $title : ''));
-                    $is_first = ($idx === 0);
                 ?>
                 <div class="border border-gray-200 rounded-lg overflow-hidden">
                     <button type="button"
-                        class="aatf-itinerary-acc-btn w-full flex items-center justify-between px-5 py-3.5 font-semibold text-sm text-left<?php echo $is_first ? ' accordion-open' : ' bg-white'; ?>"
-                        style="<?php echo $is_first ? 'background: rgba(232,130,12,0.07); ' : ''; ?>color: var(--brand-dark);"
-                        aria-expanded="<?php echo $is_first ? 'true' : 'false'; ?>">
+                        class="aatf-itinerary-acc-btn w-full flex items-center justify-between px-5 py-3.5 font-semibold text-sm text-left bg-white"
+                        style="color: var(--brand-dark);"
+                        aria-expanded="false">
                         <?php echo esc_html($heading); ?>
-                        <svg class="chevron w-4 h-4 transition-transform duration-300<?php echo $is_first ? ' rotate-180' : ''; ?>" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <svg class="chevron w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div class="aatf-itinerary-acc-body px-5 py-4 text-sm leading-relaxed<?php echo $is_first ? '' : ' hidden'; ?>" style="color: var(--brand-gray);">
+                    <div class="aatf-itinerary-acc-body px-5 py-4 text-sm leading-relaxed hidden" style="color: var(--brand-gray);">
                         <?php if ($description !== '') : ?>
                             <?php echo nl2br(esc_html($description)); ?>
                         <?php else : ?>
@@ -784,7 +783,7 @@ class AATF_Frontend_Components
                             <span class="aatf-faq__group-count"><?php echo esc_html((string) count($items)); ?> items</span>
                         </div>
                         <?php foreach ($items as $index => $item) : ?>
-                            <details class="aatf-faq__item" <?php echo $index === 0 ? 'open' : ''; ?>>
+                            <details class="aatf-faq__item">
                                 <summary class="aatf-faq__question">
                                     <span class="aatf-faq__question-text"><?php echo esc_html($item['question']); ?></span>
                                     <span class="aatf-faq__question-icon" aria-hidden="true">
