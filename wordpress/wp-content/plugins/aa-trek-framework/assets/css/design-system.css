@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --aatf-color-primary: #0b5fff;
     --aatf-color-primary-dark: #0847bc;
     --aatf-color-accent: #ff7a18;
@@ -280,13 +280,10 @@
 
 .aatf-booking {
     margin: 1.5rem 0;
-    border: 1px solid var(--aatf-color-line);
-    border-radius: 28px;
-    background:
-        radial-gradient(circle at top right, rgba(255, 122, 24, 0.12), transparent 28%),
-        linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-    box-shadow: 0 24px 50px rgba(19, 36, 60, 0.1);
-    padding: 1.5rem;
+    /* border: 1px solid var(--aatf-color-line); */
+    /* border-radius: 12px; */
+    background: #ffffff;
+    padding: 1.5rem 7.5rem 1.5rem 7.5rem;
     overflow: visible;
 }
 
@@ -295,23 +292,14 @@
 }
 
 .aatf-booking__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.42rem 0.8rem;
-    border-radius: 999px;
-    background: rgba(11, 95, 255, 0.08);
-    color: var(--aatf-color-primary-dark);
-    font-size: 0.76rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 0.85rem;
+    display: none;
 }
 
 .aatf-booking__title {
     margin: 0 0 0.45rem;
-    font-size: clamp(1.75rem, 3vw, 2.4rem);
-    line-height: 1.08;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.3;
     color: var(--aatf-color-ink);
 }
 
@@ -347,10 +335,9 @@
 .aatf-booking-form__summary-card,
 .aatf-booking-form__estimate,
 .aatf-booking-form__group-discount {
-    border: 1px solid rgba(216, 224, 234, 0.95);
-    border-radius: 22px;
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 14px 30px rgba(19, 36, 60, 0.06);
+    border: 1px solid var(--aatf-color-line);
+    border-radius: 8px;
+    background: #ffffff;
 }
 
 .aatf-booking-form__section {
@@ -436,32 +423,29 @@
     width: auto;
     max-width: 100%;
     color: #ffffff;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 0.875rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-transform: none;
     line-height: 1;
-    min-height: 54px;
-    padding: 0.95rem 1.25rem;
-    border-radius: 0.5rem;
+    min-height: 46px;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     text-decoration: none;
-    transition: opacity 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
-    box-shadow: 0 14px 28px rgba(232, 130, 12, 0.22);
+    transition: background-color 0.15s ease;
 }
 
 .aatf-booking-form__theme-cta:hover,
 .aatf-booking-form__theme-cta:focus-visible {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    box-shadow: 0 18px 34px rgba(232, 130, 12, 0.28);
+    opacity: 0.88;
 }
 
 .aatf-booking-form__theme-cta:focus-visible {
-    outline: 2px solid rgba(232, 130, 12, 0.28);
+    outline: 2px solid rgba(232, 130, 12, 0.4);
     outline-offset: 2px;
 }
 
@@ -491,12 +475,13 @@
 .aatf-booking-form textarea {
     width: 100%;
     border: 1px solid #d4ddeb;
-    border-radius: 14px;
-    padding: 0.82rem 0.95rem;
+    border-radius: 6px;
+    padding: 0.65rem 0.85rem;
     box-sizing: border-box;
     background: #ffffff;
     color: var(--aatf-color-ink);
-    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    font-size: 0.9rem;
+    transition: border-color 0.15s ease;
 }
 
 .aatf-booking-form input::placeholder,
@@ -526,9 +511,9 @@
 }
 
 .aatf-booking-form__traveler-card {
-    border: 1px solid rgba(216, 224, 234, 0.95);
-    border-radius: 18px;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border: 1px solid var(--aatf-color-line);
+    border-radius: 8px;
+    background: #ffffff;
     padding: 1rem;
 }
 
@@ -568,38 +553,37 @@
 
 .aatf-booking-form__estimate {
     padding: 1.15rem;
-    background: linear-gradient(160deg, rgba(11, 95, 255, 0.08), rgba(255, 255, 255, 0.96));
+    background: #f8f9fb;
 }
 
 .aatf-booking-form__card-eyebrow {
-    margin: 0 0 0.75rem;
-    color: var(--aatf-color-primary-dark);
-    font-size: 0.76rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    margin: 0 0 0.65rem;
+    color: var(--aatf-color-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: none;
 }
 
 .aatf-booking-form__summary-card {
     padding: 1.15rem;
-    background: linear-gradient(135deg, #102844 0%, #1f4c87 100%);
-    color: #ffffff;
+    background: #f3f5f8;
+    color: var(--aatf-color-ink);
 }
 
 .aatf-booking-form__summary-label {
     margin: 0 0 0.35rem;
     font-size: 0.78rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.72);
+    font-weight: 600;
+    color: var(--aatf-color-muted);
 }
 
 .aatf-booking-form__summary-title {
     margin: 0;
-    font-size: 1.45rem;
-    line-height: 1.2;
-    color: #ffffff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--aatf-color-ink);
 }
 
 .aatf-booking-form__summary-meta {
@@ -612,11 +596,11 @@
 .aatf-booking-form__summary-pill {
     display: inline-flex;
     align-items: center;
-    padding: 0.5rem 0.8rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.14);
-    color: #ffffff;
-    font-size: 0.85rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 4px;
+    background: #e8ecf1;
+    color: var(--aatf-color-ink);
+    font-size: 0.82rem;
 }
 
 .aatf-booking-form__estimate-row,

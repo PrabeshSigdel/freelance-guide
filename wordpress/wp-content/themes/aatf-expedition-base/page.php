@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -12,7 +12,9 @@ if (have_posts()) {
         $has_booking_shortcode = function_exists('has_shortcode') && has_shortcode($page_content, 'aatf_booking_form');
         $should_render_default_booking_form = is_page('booking') && !$has_booking_shortcode && trim($page_content) === '';
         echo '<article>';
-        echo '<h1>' . esc_html(get_the_title()) . '</h1>';
+        if (!is_page('booking')) {
+            echo '<h1>' . esc_html(get_the_title()) . '</h1>';
+        }
         the_content();
         if ($should_render_default_booking_form && shortcode_exists('aatf_booking_form')) {
             echo do_shortcode('[aatf_booking_form]');
