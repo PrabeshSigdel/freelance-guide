@@ -18,19 +18,13 @@ class AATF_Booking_Handler
 
         $trek_id = isset($_POST['trek_id']) ? absint(wp_unslash($_POST['trek_id'])) : 0;
         $departure_id = isset($_POST['departure_id']) ? absint(wp_unslash($_POST['departure_id'])) : 0;
-        $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
-        $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
-        $phone = isset($_POST['phone']) ? sanitize_text_field(wp_unslash($_POST['phone'])) : '';
         $date = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
         $travelers = isset($_POST['travelers']) ? absint(wp_unslash($_POST['travelers'])) : 1;
         $message = isset($_POST['message']) ? sanitize_textarea_field(wp_unslash($_POST['message'])) : '';
+        $traveler_details = isset($_POST['travelers_details']) ? self::sanitize_traveler_details(wp_unslash($_POST['travelers_details'])) : array();
 
         if ($trek_id <= 0 || get_post_type($trek_id) !== 'trek') {
             wp_send_json_error(array('message' => 'Please select a valid trek.'));
-        }
-
-        if ($name === '' || $email === '' || !is_email($email)) {
-            wp_send_json_error(array('message' => 'Please fill in all required fields.'));
         }
 
         if ($departure_id > 0) {
@@ -46,6 +40,34 @@ class AATF_Booking_Handler
 
         if ($travelers <= 0) {
             $travelers = 1;
+        }
+
+        if ($departure_id <= 0) {
+            wp_send_json_error(array('message' => 'Please select a departure date.'));
+        }
+
+        if ($date === '') {
+            wp_send_json_error(array('message' => 'Please choose your departure date.'));
+        }
+
+        if (count($traveler_details) !== $travelers) {
+            wp_send_json_error(array('message' => 'Please complete traveler details for everyone in your group.'));
+        }
+
+        foreach ($traveler_details as $index => $traveler) {
+            $traveler_name = isset($traveler['full_name']) ? (string) $traveler['full_name'] : '';
+            if ($traveler_name === '') {
+                wp_send_json_error(array('message' => sprintf('Please enter the full name for Traveler %d.', (int) $index + 1)));
+            }
+        }
+
+        $lead_traveler = isset($traveler_details[0]) && is_array($traveler_details[0]) ? $traveler_details[0] : array();
+        $name = isset($lead_traveler['full_name']) ? (string) $lead_traveler['full_name'] : '';
+        $email = isset($lead_traveler['email']) ? (string) $lead_traveler['email'] : '';
+        $phone = isset($lead_traveler['phone']) ? (string) $lead_traveler['phone'] : '';
+
+        if ($name === '' || $email === '' || !is_email($email)) {
+            wp_send_json_error(array('message' => 'Please add a valid name and email for Traveler 1.'));
         }
 
         $pricing = self::calculate_booking_pricing($trek_id, $departure_id, $travelers);
@@ -75,12 +97,13 @@ class AATF_Booking_Handler
         update_post_meta($booking_id, 'booking_phone', $phone);
         update_post_meta($booking_id, 'booking_date', $date);
         update_post_meta($booking_id, 'booking_travelers', $travelers);
+        update_post_meta($booking_id, 'booking_travelers_details', $traveler_details);
         update_post_meta($booking_id, 'booking_price_per_person', $price_per_person);
         update_post_meta($booking_id, 'booking_total_price', $total_price);
         update_post_meta($booking_id, 'booking_price_source', $price_source);
         update_post_meta($booking_id, 'booking_status', 'pending');
 
-        self::send_notifications($booking_id, $trek_id, $departure_id, $name, $email, $date, $travelers, $message, $pricing);
+        self::send_notifications($booking_id, $trek_id, $departure_id, $name, $email, $date, $travelers, $message, $pricing, $traveler_details);
 
         $price_per_person_label = $price_per_person > 0
             ? 'USD ' . number_format_i18n($price_per_person, floor($price_per_person) === $price_per_person ? 0 : 2)
@@ -100,7 +123,7 @@ class AATF_Booking_Handler
         ));
     }
 
-    private static function send_notifications($booking_id, $trek_id, $departure_id, $name, $email, $date, $travelers, $message, $pricing)
+    private static function send_notifications($booking_id, $trek_id, $departure_id, $name, $email, $date, $travelers, $message, $pricing, $traveler_details)
     {
         $admin_email = get_option('admin_email');
         $trek_title = get_the_title($trek_id);
@@ -133,6 +156,45 @@ class AATF_Booking_Handler
         $body .= "Email: $email\n";
         $body .= "Date: $date\n";
         $body .= "Travelers: $travelers\n\n";
+
+        if (is_array($traveler_details) && !empty($traveler_details)) {
+            $body .= "Traveler Details:\n";
+            foreach ($traveler_details as $index => $traveler) {
+                if (!is_array($traveler)) {
+                    continue;
+                }
+
+                $traveler_name = isset($traveler['full_name']) ? (string) $traveler['full_name'] : '';
+                $traveler_email = isset($traveler['email']) ? (string) $traveler['email'] : '';
+                $traveler_phone = isset($traveler['phone']) ? (string) $traveler['phone'] : '';
+                $traveler_passport = isset($traveler['passport_number']) ? (string) $traveler['passport_number'] : '';
+                $traveler_nationality = isset($traveler['nationality']) ? (string) $traveler['nationality'] : '';
+                $traveler_age = isset($traveler['age']) ? (string) $traveler['age'] : '';
+                $traveler_gender = isset($traveler['gender']) ? (string) $traveler['gender'] : '';
+
+                $body .= sprintf("%d. %s\n", (int) $index + 1, $traveler_name !== '' ? $traveler_name : 'Traveler');
+                if ($traveler_email !== '') {
+                    $body .= "   Email: $traveler_email\n";
+                }
+                if ($traveler_phone !== '') {
+                    $body .= "   Phone: $traveler_phone\n";
+                }
+                if ($traveler_passport !== '') {
+                    $body .= "   Passport Number: $traveler_passport\n";
+                }
+                if ($traveler_nationality !== '') {
+                    $body .= "   Nationality: $traveler_nationality\n";
+                }
+                if ($traveler_age !== '') {
+                    $body .= "   Age: $traveler_age\n";
+                }
+                if ($traveler_gender !== '') {
+                    $body .= "   Gender: $traveler_gender\n";
+                }
+            }
+            $body .= "\n";
+        }
+
         if (is_array($pricing)) {
             $price_per_person = isset($pricing['price_per_person']) ? (float) $pricing['price_per_person'] : 0.0;
             $total_price = isset($pricing['total_price']) ? (float) $pricing['total_price'] : 0.0;
@@ -242,6 +304,45 @@ class AATF_Booking_Handler
             'source' => $source,
             'source_label' => $source_label,
         );
+    }
+
+    private static function sanitize_traveler_details($raw_details)
+    {
+        if (!is_array($raw_details)) {
+            return array();
+        }
+
+        $clean_details = array();
+
+        foreach ($raw_details as $traveler) {
+            if (!is_array($traveler)) {
+                continue;
+            }
+
+            $full_name = isset($traveler['full_name']) ? sanitize_text_field((string) $traveler['full_name']) : '';
+            $email = isset($traveler['email']) ? sanitize_email((string) $traveler['email']) : '';
+            $phone = isset($traveler['phone']) ? sanitize_text_field((string) $traveler['phone']) : '';
+            $passport_number = isset($traveler['passport_number']) ? sanitize_text_field((string) $traveler['passport_number']) : '';
+            $nationality = isset($traveler['nationality']) ? sanitize_text_field((string) $traveler['nationality']) : '';
+            $age = isset($traveler['age']) ? absint($traveler['age']) : 0;
+            $gender = isset($traveler['gender']) ? sanitize_text_field((string) $traveler['gender']) : '';
+
+            if ($full_name === '' && $email === '' && $phone === '' && $passport_number === '' && $nationality === '' && $age <= 0 && $gender === '') {
+                continue;
+            }
+
+            $clean_details[] = array(
+                'full_name' => $full_name,
+                'email' => $email,
+                'phone' => $phone,
+                'passport_number' => $passport_number,
+                'nationality' => $nationality,
+                'age' => $age > 0 ? (string) $age : '',
+                'gender' => $gender,
+            );
+        }
+
+        return $clean_details;
     }
 
     private static function get_group_pricing_rows($trek_id)

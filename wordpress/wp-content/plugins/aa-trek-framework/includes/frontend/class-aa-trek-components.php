@@ -413,6 +413,9 @@ class AATF_Frontend_Components
         );
         $pricing_json = wp_json_encode($pricing_payload, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
+        $selected_trek_title = get_the_title($trek_id);
+        $selected_trek_title = is_string($selected_trek_title) && $selected_trek_title !== '' ? $selected_trek_title : 'Selected trek';
+
         $initial_estimate = self::calculate_booking_estimate($trek_id, $departure_id, $travelers);
         $initial_per_person = isset($initial_estimate['price_per_person']) ? (float) $initial_estimate['price_per_person'] : 0.0;
         $initial_total = isset($initial_estimate['total_price']) ? (float) $initial_estimate['total_price'] : 0.0;
@@ -438,23 +441,28 @@ class AATF_Frontend_Components
         $trek_input_id = $form_uid . '-trek';
         $departure_input_id = $form_uid . '-departure';
         $date_input_id = $form_uid . '-date';
-        $name_input_id = $form_uid . '-name';
-        $email_input_id = $form_uid . '-email';
-        $phone_input_id = $form_uid . '-phone';
         $travelers_input_id = $form_uid . '-travelers';
         $message_input_id = $form_uid . '-message';
+        $selected_departure_label = 'Any available departure';
+        if (is_array($selected_departure_meta) && isset($selected_departure_meta['label']) && (string) $selected_departure_meta['label'] !== '') {
+            $selected_departure_label = (string) $selected_departure_meta['label'];
+        }
 
         ob_start();
         ?>
         <section class="aatf-booking">
-            <h2 class="aatf-booking__title"><?php echo esc_html($atts['title']); ?></h2>
-            <?php if ((string) $atts['subtitle'] !== '') : ?>
-                <p class="aatf-booking__subtitle"><?php echo esc_html((string) $atts['subtitle']); ?></p>
-            <?php endif; ?>
+            <div class="aatf-booking__intro">
+                <div class="aatf-booking__eyebrow">Adventure Booking</div>
+                <h2 class="aatf-booking__title"><?php echo esc_html($atts['title']); ?></h2>
+                <?php if ((string) $atts['subtitle'] !== '') : ?>
+                    <p class="aatf-booking__subtitle"><?php echo esc_html((string) $atts['subtitle']); ?></p>
+                <?php endif; ?>
+            </div>
 
             <form
                 class="aatf-booking-form"
                 data-aatf-booking-form
+                data-form-uid="<?php echo esc_attr($form_uid); ?>"
                 data-initial-trek="<?php echo esc_attr((string) $trek_id); ?>"
                 data-initial-departure="<?php echo esc_attr((string) $departure_id); ?>"
                 method="post"
@@ -463,114 +471,153 @@ class AATF_Frontend_Components
                 <input type="hidden" name="action" value="aatf_submit_booking" />
                 <input type="hidden" name="security" value="<?php echo esc_attr(wp_create_nonce('aatf_booking_nonce')); ?>" />
 
-                <div class="aatf-booking-form__grid">
-                    <p>
-                        <label for="<?php echo esc_attr($trek_input_id); ?>"><strong>Trek</strong></label><br />
-                        <select id="<?php echo esc_attr($trek_input_id); ?>" name="trek_id" required>
-                            <?php foreach ($treks as $trek) : ?>
-                                <option value="<?php echo esc_attr((string) $trek->ID); ?>" <?php selected((int) $trek->ID, $trek_id); ?>>
-                                    <?php echo esc_html((string) $trek->post_title); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </p>
-                    <p>
-                        <label for="<?php echo esc_attr($departure_input_id); ?>"><strong>Departure</strong></label><br />
-                        <select id="<?php echo esc_attr($departure_input_id); ?>" name="departure_id" data-aatf-departure-select>
-                            <option value="0">Any available departure</option>
-                            <?php foreach ($selected_trek_departures as $departure_option) : ?>
-                                <?php
-                                $departure_option_id = isset($departure_option['id']) ? (int) $departure_option['id'] : 0;
-                                $departure_option_label = isset($departure_option['label']) ? (string) $departure_option['label'] : '';
-                                ?>
-                                <option value="<?php echo esc_attr((string) $departure_option_id); ?>" <?php selected($departure_option_id, $departure_id); ?>>
-                                    <?php echo esc_html($departure_option_label); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </p>
-                    <p>
-                        <label for="<?php echo esc_attr($date_input_id); ?>"><strong>Preferred Date</strong></label><br />
-                        <input type="date" id="<?php echo esc_attr($date_input_id); ?>" name="date" value="<?php echo esc_attr($default_date); ?>" />
-                    </p>
-                    <p>
-                        <label for="<?php echo esc_attr($name_input_id); ?>"><strong>Full Name</strong></label><br />
-                        <input type="text" id="<?php echo esc_attr($name_input_id); ?>" name="name" required />
-                    </p>
-                    <p>
-                        <label for="<?php echo esc_attr($email_input_id); ?>"><strong>Email</strong></label><br />
-                        <input type="email" id="<?php echo esc_attr($email_input_id); ?>" name="email" required />
-                    </p>
-                    <p>
-                        <label for="<?php echo esc_attr($phone_input_id); ?>"><strong>Phone</strong></label><br />
-                        <input type="text" id="<?php echo esc_attr($phone_input_id); ?>" name="phone" />
-                    </p>
-                    <p>
-                        <label for="<?php echo esc_attr($travelers_input_id); ?>"><strong>Travelers</strong></label><br />
-                        <input type="number" id="<?php echo esc_attr($travelers_input_id); ?>" name="travelers" min="1" step="1" value="<?php echo esc_attr((string) $travelers); ?>" required />
-                    </p>
+                <div class="aatf-booking-form__layout">
+                    <div class="aatf-booking-form__main">
+                        <div class="aatf-booking-form__section">
+                            <div class="aatf-booking-form__section-head">
+                                <h3 class="aatf-booking-form__section-title">Trip details</h3>
+                                <p class="aatf-booking-form__section-copy">Choose your trek, select a departure date, and set your group size before continuing.</p>
+                            </div>
+                            <div class="aatf-booking-form__grid">
+                                <p class="aatf-booking-form__field">
+                                    <label for="<?php echo esc_attr($trek_input_id); ?>" class="aatf-booking-form__label">Trek</label>
+                                    <select id="<?php echo esc_attr($trek_input_id); ?>" name="trek_id" required>
+                                        <?php foreach ($treks as $trek) : ?>
+                                            <option value="<?php echo esc_attr((string) $trek->ID); ?>" <?php selected((int) $trek->ID, $trek_id); ?>>
+                                                <?php echo esc_html((string) $trek->post_title); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </p>
+                                <p class="aatf-booking-form__field">
+                                    <label for="<?php echo esc_attr($departure_input_id); ?>" class="aatf-booking-form__label">Departure</label>
+                                    <select id="<?php echo esc_attr($departure_input_id); ?>" name="departure_id" data-aatf-departure-select required>
+                                        <option value="">Select a departure date</option>
+                                        <?php foreach ($selected_trek_departures as $departure_option) : ?>
+                                            <?php
+                                            $departure_option_id = isset($departure_option['id']) ? (int) $departure_option['id'] : 0;
+                                            $departure_option_label = isset($departure_option['label']) ? (string) $departure_option['label'] : '';
+                                            ?>
+                                            <option value="<?php echo esc_attr((string) $departure_option_id); ?>" <?php selected($departure_option_id, $departure_id); ?>>
+                                                <?php echo esc_html($departure_option_label); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </p>
+                                <p class="aatf-booking-form__field">
+                                    <label for="<?php echo esc_attr($date_input_id); ?>" class="aatf-booking-form__label">Preferred date</label>
+                                    <input type="date" id="<?php echo esc_attr($date_input_id); ?>" name="date" value="<?php echo esc_attr($default_date); ?>" required />
+                                </p>
+                                <p class="aatf-booking-form__field">
+                                    <label for="<?php echo esc_attr($travelers_input_id); ?>" class="aatf-booking-form__label">Travelers</label>
+                                    <input type="number" id="<?php echo esc_attr($travelers_input_id); ?>" name="travelers" min="1" step="1" value="<?php echo esc_attr((string) $travelers); ?>" required />
+                                </p>
+                            </div>
+
+                            <div class="aatf-booking-form__step-actions">
+                                <button type="button" class="aatf-booking-form__theme-cta aatf-booking-form__continue w-full text-white font-bold text-sm tracking-widest uppercase py-3.5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 no-underline" style="background-color: var(--brand-orange);" data-aatf-continue-button>Continue</button>
+                                <p class="aatf-booking-form__hint">We will open one traveler detail form for each person in your group.</p>
+                            </div>
+                        </div>
+
+                        <div class="aatf-booking-form__section aatf-booking-form__section--travelers" data-aatf-travelers-section hidden>
+                            <div class="aatf-booking-form__section-head">
+                                <h3 class="aatf-booking-form__section-title">Traveler details</h3>
+                                <p class="aatf-booking-form__section-copy">Add the details for each traveler. The first traveler will be treated as the lead contact.</p>
+                            </div>
+                            <div class="aatf-booking-form__travelers-list" data-aatf-travelers-list></div>
+                            <div class="aatf-booking-form__grid">
+                                <p class="aatf-booking-form__field aatf-booking-form__field--span">
+                                    <label for="<?php echo esc_attr($message_input_id); ?>" class="aatf-booking-form__label">Message <span class="aatf-booking-form__optional">(optional)</span></label>
+                                    <textarea id="<?php echo esc_attr($message_input_id); ?>" name="message" rows="4" placeholder="Tell us anything helpful about your plans, pace, room sharing, or special requests."></textarea>
+                                </p>
+                            </div>
+                            <div class="aatf-booking-form__step-actions aatf-booking-form__step-actions--between">
+                                <button type="button" class="aatf-booking-form__back" data-aatf-back-button>Back</button>
+                                <p class="aatf-booking-form__hint">Traveler 1 should be the main contact for this booking.</p>
+                            </div>
+                        </div>
+
+                        <div class="aatf-booking-form__footer">
+                            <p class="aatf-booking-form__actions">
+                                <button type="submit" class="aatf-booking-form__theme-cta aatf-booking-form__submit w-full text-white font-bold text-sm tracking-widest uppercase py-3.5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 no-underline" style="background-color: var(--brand-orange);"><?php echo esc_html((string) $atts['submit_label']); ?></button>
+                            </p>
+                            <p class="aatf-booking-form__status" data-aatf-booking-status aria-live="polite"></p>
+                        </div>
+                    </div>
+
+                    <aside class="aatf-booking-form__aside">
+                        <div class="aatf-booking-form__summary-card">
+                            <p class="aatf-booking-form__summary-label">Selected trek</p>
+                            <h3 class="aatf-booking-form__summary-title" data-aatf-summary-trek><?php echo esc_html($selected_trek_title); ?></h3>
+                            <div class="aatf-booking-form__summary-meta">
+                                <span class="aatf-booking-form__summary-pill" data-aatf-summary-departure><?php echo esc_html($selected_departure_label); ?></span>
+                                <span class="aatf-booking-form__summary-pill" data-aatf-summary-travelers><?php echo esc_html(sprintf(_n('%s traveler', '%s travelers', $travelers, 'aa-trek-framework'), number_format_i18n($travelers))); ?></span>
+                            </div>
+                        </div>
+
+                        <div class="aatf-booking-form__estimate" data-aatf-booking-estimate>
+                            <p class="aatf-booking-form__card-eyebrow">Live estimate</p>
+                            <div class="aatf-booking-form__estimate-row">
+                                <span>Price per person</span>
+                                <strong data-aatf-estimate-per-person><?php echo esc_html($initial_per_person_label); ?></strong>
+                            </div>
+                            <div class="aatf-booking-form__estimate-row">
+                                <span>Total estimated cost</span>
+                                <strong data-aatf-estimate-total><?php echo esc_html($initial_total_label); ?></strong>
+                            </div>
+                            <div class="aatf-booking-form__estimate-source">
+                                <span>Pricing basis</span>
+                                <strong data-aatf-estimate-source><?php echo esc_html($initial_source); ?></strong>
+                            </div>
+                        </div>
+
+                        <div class="aatf-booking-form__group-discount" data-aatf-group-discount-wrap<?php echo $has_initial_group_rows ? '' : ' style="display:none;"'; ?>>
+                            <p class="aatf-booking-form__card-eyebrow">Savings for groups</p>
+                            <h3>Group discount</h3>
+                            <table class="aatf-group-pricing-table aatf-group-pricing-table--booking">
+                                <thead>
+                                    <tr>
+                                        <th>No. of People</th>
+                                        <th>Price Per Person</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-aatf-group-discount-body>
+                                    <?php foreach ($initial_group_rows as $group_row) : ?>
+                                        <?php
+                                        $min_people = isset($group_row['min_people']) ? (int) $group_row['min_people'] : 0;
+                                        $max_people = isset($group_row['max_people']) ? (int) $group_row['max_people'] : 0;
+                                        $price_per_person = isset($group_row['price_per_person']) ? (float) $group_row['price_per_person'] : 0.0;
+
+                                        if ($min_people > 0 && $max_people > 0 && $min_people !== $max_people) {
+                                            $range_label = $min_people . ' - ' . $max_people;
+                                        } elseif ($min_people > 0 && $max_people > 0) {
+                                            $range_label = (string) $min_people;
+                                        } elseif ($min_people > 0) {
+                                            $range_label = $min_people . '+';
+                                        } elseif ($max_people > 0) {
+                                            $range_label = 'Up to ' . $max_people;
+                                        } else {
+                                            $range_label = 'Any size';
+                                        }
+
+                                        if ($price_per_person > 0) {
+                                            $price_decimals = (floor($price_per_person) === $price_per_person) ? 0 : 2;
+                                            $price_label = 'USD ' . number_format_i18n($price_per_person, $price_decimals);
+                                        } else {
+                                            $price_label = 'Price on request';
+                                        }
+                                        ?>
+                                        <tr>
+                                            <td><?php echo esc_html($range_label); ?></td>
+                                            <td><?php echo esc_html($price_label); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </aside>
                 </div>
-
-                <div class="aatf-booking-form__estimate" data-aatf-booking-estimate>
-                    <p><strong>Price Per Person:</strong> <span data-aatf-estimate-per-person><?php echo esc_html($initial_per_person_label); ?></span></p>
-                    <p><strong>Total Estimated Cost:</strong> <span data-aatf-estimate-total><?php echo esc_html($initial_total_label); ?></span></p>
-                    <p><strong>Pricing Basis:</strong> <span data-aatf-estimate-source><?php echo esc_html($initial_source); ?></span></p>
-                </div>
-
-                <div class="aatf-booking-form__group-discount" data-aatf-group-discount-wrap<?php echo $has_initial_group_rows ? '' : ' style="display:none;"'; ?>>
-                    <h3>Group Discount</h3>
-                    <table class="aatf-group-pricing-table aatf-group-pricing-table--booking">
-                        <thead>
-                            <tr>
-                                <th>No. of People</th>
-                                <th>Price Per Person</th>
-                            </tr>
-                        </thead>
-                        <tbody data-aatf-group-discount-body>
-                            <?php foreach ($initial_group_rows as $group_row) : ?>
-                                <?php
-                                $min_people = isset($group_row['min_people']) ? (int) $group_row['min_people'] : 0;
-                                $max_people = isset($group_row['max_people']) ? (int) $group_row['max_people'] : 0;
-                                $price_per_person = isset($group_row['price_per_person']) ? (float) $group_row['price_per_person'] : 0.0;
-
-                                if ($min_people > 0 && $max_people > 0 && $min_people !== $max_people) {
-                                    $range_label = $min_people . ' - ' . $max_people;
-                                } elseif ($min_people > 0 && $max_people > 0) {
-                                    $range_label = (string) $min_people;
-                                } elseif ($min_people > 0) {
-                                    $range_label = $min_people . '+';
-                                } elseif ($max_people > 0) {
-                                    $range_label = 'Up to ' . $max_people;
-                                } else {
-                                    $range_label = 'Any size';
-                                }
-
-                                if ($price_per_person > 0) {
-                                    $price_decimals = (floor($price_per_person) === $price_per_person) ? 0 : 2;
-                                    $price_label = 'USD ' . number_format_i18n($price_per_person, $price_decimals);
-                                } else {
-                                    $price_label = 'Price on request';
-                                }
-                                ?>
-                                <tr>
-                                    <td><?php echo esc_html($range_label); ?></td>
-                                    <td><?php echo esc_html($price_label); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <p>
-                    <label for="<?php echo esc_attr($message_input_id); ?>"><strong>Message</strong> <small>(optional)</small></label><br />
-                    <textarea id="<?php echo esc_attr($message_input_id); ?>" name="message" rows="4"></textarea>
-                </p>
-
-                <p class="aatf-booking-form__actions">
-                    <button type="submit" class="aatf-btn aatf-btn--cta"><?php echo esc_html((string) $atts['submit_label']); ?></button>
-                </p>
-
-                <p class="aatf-booking-form__status" data-aatf-booking-status aria-live="polite"></p>
             </form>
             <script type="application/json" class="aatf-booking-form__pricing-data"><?php echo $pricing_json !== false ? $pricing_json : '{}'; ?></script>
         </section>

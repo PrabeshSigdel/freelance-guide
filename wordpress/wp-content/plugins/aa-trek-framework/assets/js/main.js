@@ -170,6 +170,189 @@
         }
     }
 
+    function updateSummaryUI(form, pricingData, trekId, departureId, travelers) {
+        var trekNode = form.querySelector('[data-aatf-summary-trek]');
+        var departureNode = form.querySelector('[data-aatf-summary-departure]');
+        var travelersNode = form.querySelector('[data-aatf-summary-travelers]');
+        var trekSelect = form.querySelector('select[name="trek_id"]');
+        var departure = findDepartureForTrek(pricingData, trekId, departureId);
+
+        if (trekNode && trekSelect && trekSelect.selectedIndex >= 0) {
+            trekNode.textContent = trekSelect.options[trekSelect.selectedIndex].textContent || 'Selected trek';
+        }
+
+        if (departureNode) {
+            departureNode.textContent = departure && departure.label ? departure.label : 'Any available departure';
+        }
+
+        if (travelersNode) {
+            travelersNode.textContent = String(travelers) + (travelers === 1 ? ' traveler' : ' travelers');
+        }
+    }
+
+    function buildTravelerCard(index, details, formUid) {
+        var travelerNumber = index + 1;
+        var traveler = details && typeof details === 'object' ? details : {};
+        var fullName = traveler.full_name ? String(traveler.full_name) : '';
+        var email = traveler.email ? String(traveler.email) : '';
+        var phone = traveler.phone ? String(traveler.phone) : '';
+        var passportNumber = traveler.passport_number ? String(traveler.passport_number) : '';
+        var nationality = traveler.nationality ? String(traveler.nationality) : '';
+        var age = traveler.age ? String(traveler.age) : '';
+        var gender = traveler.gender ? String(traveler.gender) : '';
+        var leadCopy = travelerNumber === 1 ? '<span class="aatf-booking-form__traveler-badge">Lead contact</span>' : '';
+        var emailRequired = travelerNumber === 1 ? ' required' : '';
+        var fieldPrefix = String(formUid || 'aatf-booking') + '-traveler-' + String(travelerNumber);
+
+        return '' +
+            '<article class="aatf-booking-form__traveler-card" data-aatf-traveler-card>' +
+                '<div class="aatf-booking-form__traveler-head">' +
+                    '<h4 class="aatf-booking-form__traveler-title">Traveler ' + String(travelerNumber) + '</h4>' +
+                    leadCopy +
+                '</div>' +
+                '<div class="aatf-booking-form__grid">' +
+                    '<p class="aatf-booking-form__field">' +
+                        '<label class="aatf-booking-form__label" for="' + fieldPrefix + '-name">Full name</label>' +
+                        '<input type="text" id="' + fieldPrefix + '-name" name="travelers_details[' + String(index) + '][full_name]" value="' + escapeHtml(fullName) + '" required />' +
+                    '</p>' +
+                    '<p class="aatf-booking-form__field">' +
+                        '<label class="aatf-booking-form__label" for="' + fieldPrefix + '-email">Email' + (travelerNumber === 1 ? '' : ' <span class="aatf-booking-form__optional">(optional)</span>') + '</label>' +
+                        '<input type="email" id="' + fieldPrefix + '-email" name="travelers_details[' + String(index) + '][email]" value="' + escapeHtml(email) + '"' + emailRequired + ' />' +
+                    '</p>' +
+                    '<p class="aatf-booking-form__field aatf-booking-form__field--span">' +
+                        '<label class="aatf-booking-form__label" for="' + fieldPrefix + '-phone">Phone <span class="aatf-booking-form__optional">(optional)</span></label>' +
+                        '<input type="text" id="' + fieldPrefix + '-phone" name="travelers_details[' + String(index) + '][phone]" value="' + escapeHtml(phone) + '" />' +
+                    '</p>' +
+                    '<p class="aatf-booking-form__field">' +
+                        '<label class="aatf-booking-form__label" for="' + fieldPrefix + '-passport">Passport number <span class="aatf-booking-form__optional">(optional)</span></label>' +
+                        '<input type="text" id="' + fieldPrefix + '-passport" name="travelers_details[' + String(index) + '][passport_number]" value="' + escapeHtml(passportNumber) + '" />' +
+                    '</p>' +
+                    '<p class="aatf-booking-form__field">' +
+                        '<label class="aatf-booking-form__label" for="' + fieldPrefix + '-nationality">Nationality <span class="aatf-booking-form__optional">(optional)</span></label>' +
+                        '<input type="text" id="' + fieldPrefix + '-nationality" name="travelers_details[' + String(index) + '][nationality]" value="' + escapeHtml(nationality) + '" />' +
+                    '</p>' +
+                    '<p class="aatf-booking-form__field">' +
+                        '<label class="aatf-booking-form__label" for="' + fieldPrefix + '-age">Age <span class="aatf-booking-form__optional">(optional)</span></label>' +
+                        '<input type="number" id="' + fieldPrefix + '-age" name="travelers_details[' + String(index) + '][age]" min="0" step="1" value="' + escapeHtml(age) + '" />' +
+                    '</p>' +
+                    '<p class="aatf-booking-form__field">' +
+                        '<label class="aatf-booking-form__label" for="' + fieldPrefix + '-gender">Gender <span class="aatf-booking-form__optional">(optional)</span></label>' +
+                        '<select id="' + fieldPrefix + '-gender" name="travelers_details[' + String(index) + '][gender]">' +
+                            '<option value="">Select gender</option>' +
+                            '<option value="Male"' + (gender === 'Male' ? ' selected' : '') + '>Male</option>' +
+                            '<option value="Female"' + (gender === 'Female' ? ' selected' : '') + '>Female</option>' +
+                            '<option value="Other"' + (gender === 'Other' ? ' selected' : '') + '>Other</option>' +
+                            '<option value="Prefer not to say"' + (gender === 'Prefer not to say' ? ' selected' : '') + '>Prefer not to say</option>' +
+                        '</select>' +
+                    '</p>' +
+                '</div>' +
+            '</article>';
+    }
+
+    function collectTravelerDetails(form) {
+        var nameNodes = form.querySelectorAll('input[name^="travelers_details["][name$="[full_name]"]');
+        var details = [];
+
+        Array.prototype.forEach.call(nameNodes, function (nameNode) {
+            var match = nameNode.name.match(/^travelers_details\[(\d+)\]\[full_name\]$/);
+            if (!match) {
+                return;
+            }
+
+            var index = Number(match[1]);
+            details[index] = {
+                full_name: nameNode.value || '',
+                email: '',
+                phone: '',
+                passport_number: '',
+                nationality: '',
+                age: '',
+                gender: ''
+            };
+
+            var emailNode = form.querySelector('input[name="travelers_details[' + String(index) + '][email]"]');
+            var phoneNode = form.querySelector('input[name="travelers_details[' + String(index) + '][phone]"]');
+            var passportNode = form.querySelector('input[name="travelers_details[' + String(index) + '][passport_number]"]');
+            var nationalityNode = form.querySelector('input[name="travelers_details[' + String(index) + '][nationality]"]');
+            var ageNode = form.querySelector('input[name="travelers_details[' + String(index) + '][age]"]');
+            var genderNode = form.querySelector('select[name="travelers_details[' + String(index) + '][gender]"]');
+
+            details[index].email = emailNode ? emailNode.value || '' : '';
+            details[index].phone = phoneNode ? phoneNode.value || '' : '';
+            details[index].passport_number = passportNode ? passportNode.value || '' : '';
+            details[index].nationality = nationalityNode ? nationalityNode.value || '' : '';
+            details[index].age = ageNode ? ageNode.value || '' : '';
+            details[index].gender = genderNode ? genderNode.value || '' : '';
+        });
+
+        return details.filter(function (item) {
+            return !!item;
+        });
+    }
+
+    function renderTravelerForms(form, travelers) {
+        var list = form.querySelector('[data-aatf-travelers-list]');
+        if (!list) {
+            return;
+        }
+
+        var count = Math.max(1, Number(travelers || 1));
+        var current = collectTravelerDetails(form);
+        var html = '';
+        var i;
+        var formUid = form.getAttribute('data-form-uid') || 'aatf-booking';
+
+        for (i = 0; i < count; i += 1) {
+            html += buildTravelerCard(i, current[i] || null, formUid);
+        }
+
+        list.innerHTML = html;
+    }
+
+    function toggleTravelerStep(form, isVisible) {
+        var section = form.querySelector('[data-aatf-travelers-section]');
+        var continueButton = form.querySelector('[data-aatf-continue-button]');
+        var footer = form.querySelector('.aatf-booking-form__footer');
+
+        if (!section) {
+            return;
+        }
+
+        section.hidden = !isVisible;
+
+        if (continueButton) {
+            continueButton.hidden = isVisible;
+        }
+
+        if (footer) {
+            footer.hidden = !isVisible;
+        }
+    }
+
+    function validateSetupStep(form) {
+        var departureSelect = form.querySelector('[data-aatf-departure-select]');
+        var dateField = form.querySelector('input[name="date"]');
+        var travelersInput = form.querySelector('input[name="travelers"]');
+
+        if (travelersInput && Number(travelersInput.value || 0) <= 0) {
+            travelersInput.value = '1';
+        }
+
+        if (departureSelect && typeof departureSelect.reportValidity === 'function' && !departureSelect.reportValidity()) {
+            return false;
+        }
+
+        if (dateField && typeof dateField.reportValidity === 'function' && !dateField.reportValidity()) {
+            return false;
+        }
+
+        if (travelersInput && typeof travelersInput.reportValidity === 'function' && !travelersInput.reportValidity()) {
+            return false;
+        }
+
+        return true;
+    }
+
     function getGroupRangeLabel(row) {
         var minPeople = Number(row && row.min_people ? row.min_people : 0);
         var maxPeople = Number(row && row.max_people ? row.max_people : 0);
@@ -237,7 +420,7 @@
         var list = departures[String(trekId || '')];
         list = Array.isArray(list) ? list : [];
 
-        var optionsHtml = '<option value="0">Any available departure</option>';
+        var optionsHtml = '<option value="">Select a departure date</option>';
         for (var i = 0; i < list.length; i += 1) {
             var item = list[i];
             if (!item || typeof item !== 'object') {
@@ -262,7 +445,7 @@
             }
         }
 
-        departureSelect.value = String(selected);
+        departureSelect.value = selected > 0 ? String(selected) : '';
         return selected;
     }
 
@@ -275,6 +458,8 @@
         var departure = findDepartureForTrek(pricingData, trekId, departureId);
         if (departure && typeof departure.start_date === 'string' && departure.start_date !== '') {
             dateField.value = departure.start_date;
+        } else if (!departureId) {
+            dateField.value = '';
         }
     }
 
@@ -288,6 +473,8 @@
             var pricingData = parsePricingData(form);
             var statusNode = form.querySelector('[data-aatf-booking-status]');
             var submitButton = form.querySelector('button[type="submit"]');
+            var continueButton = form.querySelector('[data-aatf-continue-button]');
+            var backButton = form.querySelector('[data-aatf-back-button]');
             var trekSelect = form.querySelector('select[name="trek_id"]');
             var departureSelect = form.querySelector('[data-aatf-departure-select]');
             var travelersInput = form.querySelector('input[name="travelers"]');
@@ -301,6 +488,8 @@
             selectedDeparture = rebuildDepartureOptions(form, pricingData, selectedTrek, selectedDeparture);
             applyDepartureDate(form, pricingData, selectedTrek, selectedDeparture);
             renderGroupDiscount(form, pricingData, selectedTrek);
+            renderTravelerForms(form, Number(travelersInput.value || 1));
+            toggleTravelerStep(form, false);
 
             function refreshEstimate() {
                 var trekId = Number(trekSelect.value || 0);
@@ -308,12 +497,14 @@
                 var travelers = Math.max(1, Number(travelersInput.value || 1));
                 var estimate = calculateEstimate(pricingData, trekId, departureId, travelers);
                 updateEstimateUI(form, estimate);
+                updateSummaryUI(form, pricingData, trekId, departureId, travelers);
             }
 
             trekSelect.addEventListener('change', function () {
                 var trekId = Number(trekSelect.value || 0);
                 selectedDeparture = rebuildDepartureOptions(form, pricingData, trekId, 0);
                 renderGroupDiscount(form, pricingData, trekId);
+                toggleTravelerStep(form, false);
                 refreshEstimate();
             });
 
@@ -330,13 +521,57 @@
                 if (Number(travelersInput.value || 0) <= 0) {
                     travelersInput.value = '1';
                 }
+                renderTravelerForms(form, Number(travelersInput.value || 1));
                 refreshEstimate();
             });
+
+            if (continueButton) {
+                continueButton.addEventListener('click', function () {
+                    if (!validateSetupStep(form)) {
+                        return;
+                    }
+
+                    renderTravelerForms(form, Number(travelersInput.value || 1));
+                    toggleTravelerStep(form, true);
+                    setBookingStatus(statusNode, '', '');
+
+                    var firstField = form.querySelector('[data-aatf-travelers-list] input[name="travelers_details[0][full_name]"]');
+                    if (firstField) {
+                        firstField.focus();
+                    }
+                });
+            }
+
+            if (backButton) {
+                backButton.addEventListener('click', function () {
+                    toggleTravelerStep(form, false);
+                    if (continueButton) {
+                        continueButton.focus();
+                    }
+                });
+            }
 
             refreshEstimate();
 
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
+                var travelerSection = form.querySelector('[data-aatf-travelers-section]');
+
+                if (!validateSetupStep(form)) {
+                    toggleTravelerStep(form, false);
+                    return;
+                }
+
+                if (travelerSection && travelerSection.hidden) {
+                    renderTravelerForms(form, Number(travelersInput.value || 1));
+                    toggleTravelerStep(form, true);
+
+                    var leadField = form.querySelector('[data-aatf-travelers-list] input[name="travelers_details[0][full_name]"]');
+                    if (leadField) {
+                        leadField.focus();
+                    }
+                    return;
+                }
 
                 var formData = new FormData(form);
                 if (!formData.get('action')) {
@@ -386,12 +621,16 @@
                                 travelersInput.value = String(Math.max(1, Number(lockedTravelers || 1)));
                             }
 
+                            renderTravelerForms(form, Number(lockedTravelers || 1));
+                            toggleTravelerStep(form, false);
+
                             if (data.data) {
                                 updateEstimateUI(form, {
                                     perPerson: Number(data.data.price_per_person || 0),
                                     total: Number(data.data.total_price || 0),
                                     source: String(data.data.price_source_label || 'Price on request')
                                 });
+                                updateSummaryUI(form, pricingData, Number(lockedTrek || 0), Number(lockedDeparture || 0), Math.max(1, Number(lockedTravelers || 1)));
                             } else {
                                 refreshEstimate();
                             }

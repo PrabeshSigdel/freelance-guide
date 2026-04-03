@@ -281,34 +281,206 @@
 .aatf-booking {
     margin: 1.5rem 0;
     border: 1px solid var(--aatf-color-line);
-    border-radius: var(--aatf-radius);
-    background: #ffffff;
-    box-shadow: var(--aatf-shadow);
-    padding: 1.2rem;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top right, rgba(255, 122, 24, 0.12), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    box-shadow: 0 24px 50px rgba(19, 36, 60, 0.1);
+    padding: 1.5rem;
+    overflow: visible;
+}
+
+.aatf-booking__intro {
+    margin-bottom: 1.5rem;
+}
+
+.aatf-booking__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(11, 95, 255, 0.08);
+    color: var(--aatf-color-primary-dark);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
 }
 
 .aatf-booking__title {
-    margin: 0 0 0.35rem;
-    font-size: 1.35rem;
+    margin: 0 0 0.45rem;
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    line-height: 1.08;
+    color: var(--aatf-color-ink);
 }
 
 .aatf-booking__subtitle {
     margin: 0 0 1rem;
     color: var(--aatf-color-muted);
+    max-width: 56rem;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.aatf-booking-form__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.95fr);
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.aatf-booking-form__main {
+    display: grid;
+    gap: 1rem;
+}
+
+.aatf-booking-form__aside {
+    display: grid;
+    gap: 1rem;
+    position: sticky;
+    top: 6.25rem;
+    align-self: start;
+}
+
+.aatf-booking-form__section,
+.aatf-booking-form__summary-card,
+.aatf-booking-form__estimate,
+.aatf-booking-form__group-discount {
+    border: 1px solid rgba(216, 224, 234, 0.95);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 14px 30px rgba(19, 36, 60, 0.06);
+}
+
+.aatf-booking-form__section {
+    padding: 1.2rem;
+}
+
+.aatf-booking-form__section--travelers[hidden] {
+    display: none;
+}
+
+.aatf-booking-form__section-head {
+    margin-bottom: 1rem;
+}
+
+.aatf-booking-form__section-title {
+    margin: 0 0 0.25rem;
+    color: var(--aatf-color-ink);
+    font-size: 1.08rem;
+}
+
+.aatf-booking-form__section-copy {
+    margin: 0;
+    color: var(--aatf-color-muted);
+    font-size: 0.94rem;
+    line-height: 1.6;
 }
 
 .aatf-booking-form__grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.9rem 1rem;
+    gap: 0.95rem 1rem;
 }
 
 .aatf-booking-form p {
     margin: 0;
 }
 
-.aatf-booking-form label {
+.aatf-booking-form__field {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.aatf-booking-form__field--span {
+    grid-column: 1 / -1;
+}
+
+.aatf-booking-form__label {
+    font-size: 0.84rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--aatf-color-ink);
+}
+
+.aatf-booking-form__optional {
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--aatf-color-muted);
+}
+
+.aatf-booking-form__step-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.aatf-booking-form__step-actions--between {
+    margin-top: 1.2rem;
+}
+
+.aatf-booking-form__continue {
+    min-width: 180px;
+    width: auto;
+}
+
+.aatf-booking-form__theme-cta {
+    appearance: none;
+    border: 0;
+    cursor: pointer;
+    width: auto;
+    max-width: 100%;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1;
+    min-height: 54px;
+    padding: 0.95rem 1.25rem;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    transition: opacity 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 14px 28px rgba(232, 130, 12, 0.22);
+}
+
+.aatf-booking-form__theme-cta:hover,
+.aatf-booking-form__theme-cta:focus-visible {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 18px 34px rgba(232, 130, 12, 0.28);
+}
+
+.aatf-booking-form__theme-cta:focus-visible {
+    outline: 2px solid rgba(232, 130, 12, 0.28);
+    outline-offset: 2px;
+}
+
+.aatf-booking-form__back {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--aatf-color-primary-dark);
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+}
+
+.aatf-booking-form__hint {
+    margin: 0;
+    color: var(--aatf-color-muted);
     font-size: 0.92rem;
+    line-height: 1.6;
+    text-align: right;
 }
 
 .aatf-booking-form input[type='text'],
@@ -318,16 +490,73 @@
 .aatf-booking-form select,
 .aatf-booking-form textarea {
     width: 100%;
-    margin-top: 0.3rem;
-    border: 1px solid var(--aatf-color-line);
-    border-radius: 10px;
-    padding: 0.58rem 0.7rem;
+    border: 1px solid #d4ddeb;
+    border-radius: 14px;
+    padding: 0.82rem 0.95rem;
     box-sizing: border-box;
+    background: #ffffff;
+    color: var(--aatf-color-ink);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.aatf-booking-form input::placeholder,
+.aatf-booking-form textarea::placeholder {
+    color: #8090a6;
+}
+
+.aatf-booking-form input[type='text']:focus,
+.aatf-booking-form input[type='email']:focus,
+.aatf-booking-form input[type='date']:focus,
+.aatf-booking-form input[type='number']:focus,
+.aatf-booking-form select:focus,
+.aatf-booking-form textarea:focus {
+    outline: none;
+    border-color: rgba(11, 95, 255, 0.7);
+    box-shadow: 0 0 0 4px rgba(11, 95, 255, 0.12);
 }
 
 .aatf-booking-form textarea {
     resize: vertical;
-    min-height: 110px;
+    min-height: 140px;
+}
+
+.aatf-booking-form__travelers-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.aatf-booking-form__traveler-card {
+    border: 1px solid rgba(216, 224, 234, 0.95);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    padding: 1rem;
+}
+
+.aatf-booking-form__traveler-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-bottom: 0.9rem;
+}
+
+.aatf-booking-form__traveler-title {
+    margin: 0;
+    color: var(--aatf-color-ink);
+    font-size: 1rem;
+}
+
+.aatf-booking-form__traveler-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.34rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(255, 122, 24, 0.14);
+    color: #9a4b0d;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
 
 .aatf-booking-form__departure {
@@ -338,33 +567,102 @@
 }
 
 .aatf-booking-form__estimate {
-    margin: 0.95rem 0;
-    padding: 0.75rem;
-    border: 1px solid var(--aatf-color-line);
-    border-radius: 10px;
-    background: var(--aatf-color-surface);
+    padding: 1.15rem;
+    background: linear-gradient(160deg, rgba(11, 95, 255, 0.08), rgba(255, 255, 255, 0.96));
 }
 
-.aatf-booking-form__estimate p {
-    margin: 0.2rem 0;
-    font-size: 0.94rem;
+.aatf-booking-form__card-eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--aatf-color-primary-dark);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
-.aatf-booking-form__estimate strong {
+.aatf-booking-form__summary-card {
+    padding: 1.15rem;
+    background: linear-gradient(135deg, #102844 0%, #1f4c87 100%);
+    color: #ffffff;
+}
+
+.aatf-booking-form__summary-label {
+    margin: 0 0 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.aatf-booking-form__summary-title {
+    margin: 0;
+    font-size: 1.45rem;
+    line-height: 1.2;
+    color: #ffffff;
+}
+
+.aatf-booking-form__summary-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.aatf-booking-form__summary-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    font-size: 0.85rem;
+}
+
+.aatf-booking-form__estimate-row,
+.aatf-booking-form__estimate-source {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.aatf-booking-form__estimate-row {
+    padding: 0.72rem 0;
+    border-bottom: 1px solid rgba(19, 36, 60, 0.1);
+}
+
+.aatf-booking-form__estimate-row:first-of-type {
+    padding-top: 0;
+}
+
+.aatf-booking-form__estimate-source {
+    padding-top: 0.8rem;
+    color: var(--aatf-color-muted);
+    font-size: 0.92rem;
+}
+
+.aatf-booking-form__estimate-row span,
+.aatf-booking-form__estimate-source span {
+    color: var(--aatf-color-muted);
+    font-size: 0.92rem;
+}
+
+.aatf-booking-form__estimate-row strong,
+.aatf-booking-form__estimate-source strong {
     color: var(--aatf-color-ink);
+    text-align: right;
 }
 
 .aatf-booking-form__group-discount {
-    margin: 0.95rem 0;
-    padding: 0.75rem;
-    border: 1px solid var(--aatf-color-line);
-    border-radius: 10px;
+    padding: 1.15rem;
     background: #ffffff;
 }
 
 .aatf-booking-form__group-discount h3 {
-    margin: 0 0 0.55rem;
-    font-size: 1rem;
+    margin: 0 0 0.75rem;
+    font-size: 1.02rem;
+    color: var(--aatf-color-ink);
 }
 
 .aatf-booking .aatf-group-pricing-table {
@@ -374,7 +672,7 @@
 
 .aatf-booking .aatf-group-pricing-table th,
 .aatf-booking .aatf-group-pricing-table td {
-    padding: 0.48rem 0.2rem;
+    padding: 0.7rem 0.2rem;
     border-bottom: 1px solid var(--aatf-color-line);
     text-align: left;
 }
@@ -391,14 +689,28 @@
     font-weight: 700;
 }
 
+.aatf-booking-form__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 0.15rem;
+}
+
 .aatf-booking-form__actions {
-    margin-top: 0.9rem;
+    margin-top: 0.2rem;
+}
+
+.aatf-booking-form__submit {
+    min-width: 220px;
+    min-height: 52px;
+    width: auto;
 }
 
 .aatf-booking-form__status {
-    margin-top: 0.75rem;
     font-size: 0.94rem;
     min-height: 1.2em;
+    text-align: right;
 }
 
 .aatf-booking-form__status.is-success {
@@ -421,6 +733,14 @@
     .aatf-testimonial-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .aatf-booking-form__layout {
+        grid-template-columns: 1fr;
+    }
+
+    .aatf-booking-form__aside {
+        position: static;
+    }
 }
 
 @media (max-width: 700px) {
@@ -430,6 +750,46 @@
 
     .aatf-booking-form__grid {
         grid-template-columns: 1fr;
+    }
+
+    .aatf-booking {
+        padding: 1rem;
+        border-radius: 22px;
+    }
+
+    .aatf-booking-form__section,
+    .aatf-booking-form__summary-card,
+    .aatf-booking-form__estimate,
+    .aatf-booking-form__group-discount {
+        padding: 1rem;
+        border-radius: 18px;
+    }
+
+    .aatf-booking-form__footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .aatf-booking-form__step-actions,
+    .aatf-booking-form__traveler-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .aatf-booking-form__submit {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .aatf-booking-form__status {
+        width: 100%;
+        text-align: left;
+    }
+
+    .aatf-booking-form__hint,
+    .aatf-booking-form__continue {
+        width: 100%;
+        text-align: left;
     }
 
     .aatf-testimonial-card {
