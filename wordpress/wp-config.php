@@ -26,7 +26,7 @@ define( 'DB_NAME', 'freelance' );
 define( 'DB_USER', 'root' );
 
 /** Database password */
-define( 'DB_PASSWORD', '' );
+define( 'DB_PASSWORD', 'root' );
 
 /** Database hostname */
 define( 'DB_HOST', 'localhost' );
@@ -89,7 +89,8 @@ define( 'WP_DEBUG', false );
 
 /* Add any custom values between this line and the "stop editing" line. */
 
-
+define('WP_HOME', 'http://wordpress.test');
+define('WP_SITEURL', 'http://wordpress.test');
 
 /* That's all, stop editing! Happy publishing. */
 
