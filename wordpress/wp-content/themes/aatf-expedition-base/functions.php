@@ -1267,3 +1267,67 @@ add_action('admin_enqueue_scripts', function ($hook) {
         'mediaButton' => esc_html__('Use this icon', 'aatf-expedition-base'),
     ));
 });
+
+// Contact Us Page Template Meta Box
+add_action('add_meta_boxes', function () {
+    add_meta_box(
+        'aatf_contact_info_metabox',
+        esc_html__('Contact Us Details', 'aatf-expedition-base'),
+        function ($post) {
+            $phone = get_post_meta($post->ID, 'aatf_contact_phone', true);
+            $email = get_post_meta($post->ID, 'aatf_contact_email', true);
+            $address = get_post_meta($post->ID, 'aatf_contact_address', true);
+            $map_url = get_post_meta($post->ID, 'aatf_contact_map_url', true);
+            
+            wp_nonce_field('aatf_contact_info_save', 'aatf_contact_info_nonce');
+
+            echo '<p>' . esc_html__('Fill in these details if this page uses the "Contact Us Template".', 'aatf-expedition-base') . '</p>';
+
+            echo '<p><label for="aatf_contact_phone"><strong>' . esc_html__('Phone Number', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<p><input type="text" class="widefat" id="aatf_contact_phone" name="aatf_contact_phone" value="' . esc_attr($phone) . '" placeholder="' . esc_attr__('+1 234 567 8900', 'aatf-expedition-base') . '"></p>';
+
+            echo '<p><label for="aatf_contact_email"><strong>' . esc_html__('Email Address', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<p><input type="email" class="widefat" id="aatf_contact_email" name="aatf_contact_email" value="' . esc_attr($email) . '" placeholder="' . esc_attr__('info@example.com', 'aatf-expedition-base') . '"></p>';
+
+            echo '<p><label for="aatf_contact_address"><strong>' . esc_html__('Physical Address', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<p><textarea class="widefat" rows="3" id="aatf_contact_address" name="aatf_contact_address" placeholder="' . esc_attr__('123 Adventure Lane...', 'aatf-expedition-base') . '">' . esc_textarea($address) . '</textarea></p>';
+
+            echo '<p><label for="aatf_contact_map_url"><strong>' . esc_html__('Google Map Embed URL (src only)', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<p><input type="url" class="widefat" id="aatf_contact_map_url" name="aatf_contact_map_url" value="' . esc_attr($map_url) . '" placeholder="' . esc_attr__('https://www.google.com/maps/embed?...', 'aatf-expedition-base') . '"></p>';
+            echo '<p class="description">' . esc_html__('Go to Google Maps -> Share -> Embed map -> Copy only the URL inside the src="..." attribute.', 'aatf-expedition-base') . '</p>';
+        },
+        'page',
+        'normal',
+        'high'
+    );
+});
+
+add_action('save_post_page', function ($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (wp_is_post_revision($post_id) || !current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    if (!isset($_POST['aatf_contact_info_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aatf_contact_info_nonce'])), 'aatf_contact_info_save')) {
+        return;
+    }
+
+    if (isset($_POST['aatf_contact_phone'])) {
+        update_post_meta($post_id, 'aatf_contact_phone', sanitize_text_field(wp_unslash($_POST['aatf_contact_phone'])));
+    }
+
+    if (isset($_POST['aatf_contact_email'])) {
+        update_post_meta($post_id, 'aatf_contact_email', sanitize_email(wp_unslash($_POST['aatf_contact_email'])));
+    }
+
+    if (isset($_POST['aatf_contact_address'])) {
+        update_post_meta($post_id, 'aatf_contact_address', sanitize_textarea_field(wp_unslash($_POST['aatf_contact_address'])));
+    }
+
+    if (isset($_POST['aatf_contact_map_url'])) {
+        update_post_meta($post_id, 'aatf_contact_map_url', esc_url_raw(wp_unslash($_POST['aatf_contact_map_url'])));
+    }
+});

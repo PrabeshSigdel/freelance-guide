@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -256,6 +256,302 @@ if (have_posts()) {
         $tour_type_name = 'Trekking';
         if ($tour_types && !is_wp_error($tour_types)) {
             $tour_type_name = $tour_types[0]->name;
+        }
+        $country_options = array(
+            'Afghanistan',
+            'Albania',
+            'Algeria',
+            'Andorra',
+            'Angola',
+            'Antigua and Barbuda',
+            'Argentina',
+            'Armenia',
+            'Australia',
+            'Austria',
+            'Azerbaijan',
+            'Bahamas',
+            'Bahrain',
+            'Bangladesh',
+            'Barbados',
+            'Belarus',
+            'Belgium',
+            'Belize',
+            'Benin',
+            'Bhutan',
+            'Bolivia',
+            'Bosnia and Herzegovina',
+            'Botswana',
+            'Brazil',
+            'Brunei',
+            'Bulgaria',
+            'Burkina Faso',
+            'Burundi',
+            'Cabo Verde',
+            'Cambodia',
+            'Cameroon',
+            'Canada',
+            'Central African Republic',
+            'Chad',
+            'Chile',
+            'China',
+            'Colombia',
+            'Comoros',
+            'Congo (Congo-Brazzaville)',
+            'Costa Rica',
+            'Croatia',
+            'Cuba',
+            'Cyprus',
+            'Czechia',
+            'Democratic Republic of the Congo',
+            'Denmark',
+            'Djibouti',
+            'Dominica',
+            'Dominican Republic',
+            'Ecuador',
+            'Egypt',
+            'El Salvador',
+            'Equatorial Guinea',
+            'Eritrea',
+            'Estonia',
+            'Eswatini',
+            'Ethiopia',
+            'Fiji',
+            'Finland',
+            'France',
+            'Gabon',
+            'Gambia',
+            'Georgia',
+            'Germany',
+            'Ghana',
+            'Greece',
+            'Grenada',
+            'Guatemala',
+            'Guinea',
+            'Guinea-Bissau',
+            'Guyana',
+            'Haiti',
+            'Holy See',
+            'Honduras',
+            'Hungary',
+            'Iceland',
+            'India',
+            'Indonesia',
+            'Iran',
+            'Iraq',
+            'Ireland',
+            'Israel',
+            'Italy',
+            'Jamaica',
+            'Japan',
+            'Jordan',
+            'Kazakhstan',
+            'Kenya',
+            'Kiribati',
+            'Kuwait',
+            'Kyrgyzstan',
+            'Laos',
+            'Latvia',
+            'Lebanon',
+            'Lesotho',
+            'Liberia',
+            'Libya',
+            'Liechtenstein',
+            'Lithuania',
+            'Luxembourg',
+            'Madagascar',
+            'Malawi',
+            'Malaysia',
+            'Maldives',
+            'Mali',
+            'Malta',
+            'Marshall Islands',
+            'Mauritania',
+            'Mauritius',
+            'Mexico',
+            'Micronesia',
+            'Moldova',
+            'Monaco',
+            'Mongolia',
+            'Montenegro',
+            'Morocco',
+            'Mozambique',
+            'Myanmar',
+            'Namibia',
+            'Nauru',
+            'Nepal',
+            'Netherlands',
+            'New Zealand',
+            'Nicaragua',
+            'Niger',
+            'Nigeria',
+            'North Korea',
+            'North Macedonia',
+            'Norway',
+            'Oman',
+            'Pakistan',
+            'Palau',
+            'Palestine State',
+            'Panama',
+            'Papua New Guinea',
+            'Paraguay',
+            'Peru',
+            'Philippines',
+            'Poland',
+            'Portugal',
+            'Qatar',
+            'Romania',
+            'Russia',
+            'Rwanda',
+            'Saint Kitts and Nevis',
+            'Saint Lucia',
+            'Saint Vincent and the Grenadines',
+            'Samoa',
+            'San Marino',
+            'Sao Tome and Principe',
+            'Saudi Arabia',
+            'Senegal',
+            'Serbia',
+            'Seychelles',
+            'Sierra Leone',
+            'Singapore',
+            'Slovakia',
+            'Slovenia',
+            'Solomon Islands',
+            'Somalia',
+            'South Africa',
+            'South Korea',
+            'South Sudan',
+            'Spain',
+            'Sri Lanka',
+            'Sudan',
+            'Suriname',
+            'Sweden',
+            'Switzerland',
+            'Syria',
+            'Tajikistan',
+            'Tanzania',
+            'Thailand',
+            'Timor-Leste',
+            'Togo',
+            'Tonga',
+            'Trinidad and Tobago',
+            'Tunisia',
+            'Turkey',
+            'Turkmenistan',
+            'Tuvalu',
+            'Uganda',
+            'Ukraine',
+            'United Arab Emirates',
+            'United Kingdom',
+            'United States',
+            'Uruguay',
+            'Uzbekistan',
+            'Vanuatu',
+            'Venezuela',
+            'Vietnam',
+            'Yemen',
+            'Zambia',
+            'Zimbabwe',
+        );
+        $inquiry_form_data = array(
+            'full_name' => '',
+            'email' => '',
+            'nationality' => '',
+            'phone' => '',
+            'message' => '',
+        );
+        $inquiry_form_errors = array();
+        $inquiry_form_success = '';
+        $open_inquiry_modal = false;
+
+        if ('POST' === strtoupper((string) $_SERVER['REQUEST_METHOD']) && isset($_POST['aatf_inquiry_submit'])) {
+            $open_inquiry_modal = true;
+
+            if (!isset($_POST['aatf_inquiry_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aatf_inquiry_nonce'])), 'aatf_trek_inquiry_' . $post_id)) {
+                $inquiry_form_errors[] = 'Security check failed. Please try again.';
+            } else {
+                $inquiry_form_data['full_name'] = sanitize_text_field(wp_unslash($_POST['aatf_inquiry_full_name'] ?? ''));
+                $inquiry_form_data['email'] = sanitize_email(wp_unslash($_POST['aatf_inquiry_email'] ?? ''));
+                $inquiry_form_data['nationality'] = sanitize_text_field(wp_unslash($_POST['aatf_inquiry_nationality'] ?? ''));
+                $inquiry_form_data['phone'] = sanitize_text_field(wp_unslash($_POST['aatf_inquiry_phone'] ?? ''));
+                $inquiry_form_data['message'] = sanitize_textarea_field(wp_unslash($_POST['aatf_inquiry_message'] ?? ''));
+
+                if ($inquiry_form_data['full_name'] === '') {
+                    $inquiry_form_errors[] = 'Full name is required.';
+                }
+                if ($inquiry_form_data['email'] === '' || !is_email($inquiry_form_data['email'])) {
+                    $inquiry_form_errors[] = 'A valid email address is required.';
+                }
+                if ($inquiry_form_data['nationality'] === '' || !in_array($inquiry_form_data['nationality'], $country_options, true)) {
+                    $inquiry_form_errors[] = 'Please select your nationality.';
+                }
+                if ($inquiry_form_data['phone'] === '') {
+                    $inquiry_form_errors[] = 'Phone number is required.';
+                }
+                if ($inquiry_form_data['message'] === '') {
+                    $inquiry_form_errors[] = 'Message is required.';
+                }
+
+                if (empty($inquiry_form_errors)) {
+                    $mail_to = sanitize_email((string) get_option('admin_email'));
+                    $mail_subject = sprintf('New trek inquiry for %s', get_the_title());
+                    $mail_body = implode("\n", array(
+                        'A new trek inquiry was submitted.',
+                        '',
+                        'Trek: ' . get_the_title(),
+                        'Page: ' . get_permalink($post_id),
+                        'Full Name: ' . $inquiry_form_data['full_name'],
+                        'Email Address: ' . $inquiry_form_data['email'],
+                        'Nationality: ' . $inquiry_form_data['nationality'],
+                        'Phone Number: ' . $inquiry_form_data['phone'],
+                        '',
+                        'Message:',
+                        $inquiry_form_data['message'],
+                    ));
+                    $mail_headers = array('Content-Type: text/plain; charset=UTF-8');
+                    if ($inquiry_form_data['email'] !== '') {
+                        $mail_headers[] = 'Reply-To: ' . $inquiry_form_data['email'];
+                    }
+
+                    if ($mail_to !== '' && wp_mail($mail_to, $mail_subject, $mail_body, $mail_headers)) {
+                        $inquiry_form_success = 'Your inquiry has been sent successfully. We will get back to you soon.';
+                        
+                        // Send confirmation email to customer
+                        $customer_mail_to = $inquiry_form_data['email'];
+                        $customer_mail_subject = sprintf('Inquiry Received: %s', get_the_title());
+                        $customer_mail_body = implode("\n", array(
+                            'Dear ' . $inquiry_form_data['full_name'] . ',',
+                            '',
+                            'Thank you for your inquiry about the "' . get_the_title() . '" trek.',
+                            'We have received your message and our team will get back to you shortly.',
+                            '',
+                            '--- Your Inquiry Details ---',
+                            'Trek: ' . get_the_title(),
+                            'Message: ' . $inquiry_form_data['message'],
+                            '',
+                            'Best regards,',
+                            get_bloginfo('name'),
+                        ));
+
+                        $customer_headers = array('Content-Type: text/plain; charset=UTF-8');
+                        if ($mail_to !== '') {
+                            $customer_headers[] = 'Reply-To: ' . $mail_to;
+                        }
+                        
+                        wp_mail($customer_mail_to, $customer_mail_subject, $customer_mail_body, $customer_headers);
+
+                        $inquiry_form_data = array(
+                            'full_name' => '',
+                            'email' => '',
+                            'nationality' => '',
+                            'phone' => '',
+                            'message' => '',
+                        );
+                    } else {
+                        $inquiry_form_errors[] = 'We could not send your inquiry right now. Please try again in a moment.';
+                    }
+                }
+            }
         }
         $has_overview_section = !empty($overview) || get_the_content() !== '';
         $has_highlights_section = $highlights_title !== '' || $highlights_intro !== '' || !empty($highlights);
@@ -967,12 +1263,9 @@ if (have_posts()) {
                             Book Now
                         </a>
 
-                        <a href="<?php echo esc_url($inquiry_cta_url); ?>" class="w-full bg-white border font-bold text-sm tracking-widest uppercase py-3.5 rounded-lg hover:bg-orange-50 transition-colors flex items-center justify-center gap-2 no-underline" style="border-color: var(--brand-orange); color: var(--brand-orange);">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h6m-6 8l-4-4V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2H9l-2 4z" />
-                            </svg>
+                        <button type="button" class="w-full bg-white border font-bold text-sm tracking-widest uppercase py-3.5 rounded-lg hover:bg-orange-50 transition-colors flex items-center justify-center gap-2" style="border-color: var(--brand-orange); color: var(--brand-orange);" data-inquiry-open aria-controls="aatf-inquiry-modal" aria-haspopup="dialog">
                             Inquire Now
-                        </a>
+                        </button>
 
                     </div>
                 </div>
@@ -1049,6 +1342,87 @@ if (have_posts()) {
 
             </div><!-- /right col -->
         </div><!-- /main flex -->
+
+        <div
+            id="aatf-inquiry-modal"
+            class="fixed inset-0 z-[9999] <?php echo $open_inquiry_modal ? 'flex' : 'hidden'; ?> items-center justify-center p-4"
+            data-inquiry-modal
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="aatf-inquiry-modal-title"
+            aria-hidden="<?php echo $open_inquiry_modal ? 'false' : 'true'; ?>">
+            <div class="absolute inset-0 bg-black/60" data-inquiry-close></div>
+            <div class="relative w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl bg-white shadow-2xl flex flex-col">
+                <div class="flex items-start justify-between gap-4 border-b border-gray-100 px-6 py-5">
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.28em]" style="color: var(--brand-orange);">Quick Inquiry</p>
+                        <h2 id="aatf-inquiry-modal-title" class="mt-1 text-2xl font-bold" style="color: var(--brand-dark);">Ask About <?php echo esc_html(get_the_title()); ?></h2>
+                        <p class="mt-2 text-sm leading-relaxed" style="color: var(--brand-gray);">Share your details and our team will get back to you with more information about this trek.</p>
+                    </div>
+                    <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition-colors hover:bg-gray-50" data-inquiry-close aria-label="Close inquiry form">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="overflow-y-auto px-6 py-6">
+                    <?php if ($inquiry_form_success !== '') : ?>
+                        <div class="mb-5 rounded-xl border px-4 py-3 text-sm" style="border-color: #bbf7d0; background-color: #f0fdf4; color: #166534;">
+                            <?php echo esc_html($inquiry_form_success); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($inquiry_form_errors)) : ?>
+                        <div class="mb-5 rounded-xl border px-4 py-3 text-sm" style="border-color: #fecaca; background-color: #fef2f2; color: #b91c1c;">
+                            <?php foreach ($inquiry_form_errors as $inquiry_form_error) : ?>
+                                <p><?php echo esc_html($inquiry_form_error); ?></p>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="post" action="<?php echo esc_url(get_permalink($post_id) . '#aatf-inquiry-modal'); ?>" class="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <?php wp_nonce_field('aatf_trek_inquiry_' . $post_id, 'aatf_inquiry_nonce'); ?>
+                        <input type="hidden" name="aatf_inquiry_submit" value="1" />
+
+                        <div>
+                            <label for="aatf_inquiry_full_name" class="mb-2 block text-sm font-semibold" style="color: var(--brand-dark);">Full Name</label>
+                            <input id="aatf_inquiry_full_name" name="aatf_inquiry_full_name" type="text" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-200" value="<?php echo esc_attr($inquiry_form_data['full_name']); ?>" autocomplete="name" required />
+                        </div>
+
+                        <div>
+                            <label for="aatf_inquiry_email" class="mb-2 block text-sm font-semibold" style="color: var(--brand-dark);">Email Address</label>
+                            <input id="aatf_inquiry_email" name="aatf_inquiry_email" type="email" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-200" value="<?php echo esc_attr($inquiry_form_data['email']); ?>" autocomplete="email" required />
+                        </div>
+
+                        <div>
+                            <label for="aatf_inquiry_nationality" class="mb-2 block text-sm font-semibold" style="color: var(--brand-dark);">Nationality</label>
+                            <select id="aatf_inquiry_nationality" name="aatf_inquiry_nationality" class="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-200" required>
+                                <option value="">Select your country</option>
+                                <?php foreach ($country_options as $country_option) : ?>
+                                    <option value="<?php echo esc_attr($country_option); ?>" <?php selected($inquiry_form_data['nationality'], $country_option); ?>><?php echo esc_html($country_option); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="aatf_inquiry_phone" class="mb-2 block text-sm font-semibold" style="color: var(--brand-dark);">Phone Number</label>
+                            <input id="aatf_inquiry_phone" name="aatf_inquiry_phone" type="tel" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-200" value="<?php echo esc_attr($inquiry_form_data['phone']); ?>" autocomplete="tel" required />
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label for="aatf_inquiry_message" class="mb-2 block text-sm font-semibold" style="color: var(--brand-dark);">Message</label>
+                            <textarea id="aatf_inquiry_message" name="aatf_inquiry_message" rows="6" class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-200" placeholder="Tell us about your travel plans, preferred dates, group size, or anything else you would like to ask." required><?php echo esc_textarea($inquiry_form_data['message']); ?></textarea>
+                        </div>
+
+                        <div class="md:col-span-2 flex justify-end">
+                            <button type="submit" class="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-bold uppercase tracking-[0.18em] text-white transition-opacity hover:opacity-90" style="background-color: var(--brand-orange);">
+                                Submit Inquiry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <!-- Itinerary Accordion JS -->
         <script>
@@ -1596,6 +1970,57 @@ if (have_posts()) {
                         if (chevron) chevron.classList.add('rotate-180');
                     }
                 });
+
+                var inquiryModal = document.querySelector('[data-inquiry-modal]');
+                var inquiryOpeners = document.querySelectorAll('[data-inquiry-open]');
+                var inquiryClosers = document.querySelectorAll('[data-inquiry-close]');
+                var inquiryFirstField = document.getElementById('aatf_inquiry_full_name');
+
+                function openInquiryModal() {
+                    if (!inquiryModal) {
+                        return;
+                    }
+
+                    inquiryModal.classList.remove('hidden');
+                    inquiryModal.classList.add('flex');
+                    inquiryModal.setAttribute('aria-hidden', 'false');
+                    document.body.classList.add('overflow-hidden');
+
+                    if (inquiryFirstField) {
+                        window.setTimeout(function() {
+                            inquiryFirstField.focus();
+                        }, 60);
+                    }
+                }
+
+                function closeInquiryModal() {
+                    if (!inquiryModal) {
+                        return;
+                    }
+
+                    inquiryModal.classList.add('hidden');
+                    inquiryModal.classList.remove('flex');
+                    inquiryModal.setAttribute('aria-hidden', 'true');
+                    document.body.classList.remove('overflow-hidden');
+                }
+
+                inquiryOpeners.forEach(function(opener) {
+                    opener.addEventListener('click', openInquiryModal);
+                });
+
+                inquiryClosers.forEach(function(closer) {
+                    closer.addEventListener('click', closeInquiryModal);
+                });
+
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && inquiryModal && inquiryModal.getAttribute('aria-hidden') === 'false') {
+                        closeInquiryModal();
+                    }
+                });
+
+                if (inquiryModal && inquiryModal.getAttribute('aria-hidden') === 'false') {
+                    document.body.classList.add('overflow-hidden');
+                }
             })();
         </script>
 
