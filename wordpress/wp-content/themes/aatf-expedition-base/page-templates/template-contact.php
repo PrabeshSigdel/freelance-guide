@@ -5,6 +5,57 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// ─── Form Handling Logic ─────────────────────────────────────
+$contact_success = false;
+$contact_error   = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aatf_contact_nonce'])) {
+    // 1. Verify Nonce
+    if (!wp_verify_nonce($_POST['aatf_contact_nonce'], 'aatf_contact_submit')) {
+        $contact_error = __('Security check failed. Please refresh and try again.', 'aatf-expedition-base');
+    } 
+    // 2. Honeypot check (hidden field should be empty)
+    elseif (!empty($_POST['aatf_contact_hp'])) {
+        $contact_error = __('Spam detected.', 'aatf-expedition-base');
+    }
+    else {
+        // 3. Collect and sanitize input
+        $name    = sanitize_text_field($_POST['contact_name'] ?? '');
+        $email   = sanitize_email($_POST['contact_email'] ?? '');
+        $subject = sanitize_text_field($_POST['contact_subject'] ?? '');
+        $message = sanitize_textarea_field($_POST['contact_message'] ?? '');
+
+        // 4. Validation
+        if (empty($name) || empty($email) || empty($subject) || empty($message)) {
+            $contact_error = __('Please fill in all required fields.', 'aatf-expedition-base');
+        } elseif (!is_email($email)) {
+            $contact_error = __('Please enter a valid email address.', 'aatf-expedition-base');
+        } else {
+            // 5. Send Email
+            $admin_email = get_option('admin_email');
+            $site_name   = get_bloginfo('name');
+            
+            $mail_subject = sprintf('[%s Contact Form] %s', $site_name, $subject);
+            
+            $mail_body  = "You have a new message from your Contact Us form:\n\n";
+            $mail_body .= "Name: $name\n";
+            $mail_body .= "Email: $email\n";
+            $mail_body .= "Subject: $subject\n\n";
+            $mail_body .= "Message:\n$message\n\n";
+            $mail_body .= "--------------------------------------------------\n";
+            $mail_body .= "Sent from: " . esc_url(get_permalink());
+
+            $headers = array('Content-Type: text/plain; charset=UTF-8', 'Reply-To: ' . $name . ' <' . $email . '>');
+            
+            if (wp_mail($admin_email, $mail_subject, $mail_body, $headers)) {
+                $contact_success = true;
+            } else {
+                $contact_error = __('Failed to send message. Please try again later or contact us directly.', 'aatf-expedition-base');
+            }
+        }
+    }
+}
+
 get_header();
 
 // Fetch meta values
@@ -439,27 +490,40 @@ if (have_posts()) {
             <h2 class="contact-form-title">Send Us a Message</h2>
             <p class="contact-form-subtitle">Fill out the form below and we'll get back to you as soon as possible.</p>
 
-            <form action="#" method="POST" class="contact-form" onsubmit="event.preventDefault(); this.reset(); this.nextElementSibling.style.display='flex';">
+            <?php if ($contact_error): ?>
+                <div style="background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:1rem; border-radius:12px; margin-bottom:1.5rem; font-size:0.9rem;">
+                    <strong>Error:</strong> <?php echo esc_html($contact_error); ?>
+                </div>
+            <?php endif; ?>
+
+            <form action="<?php echo esc_url(get_permalink()); ?>" method="POST" class="contact-form" <?php echo $contact_success ? 'style="display:none;"' : ''; ?>>
+                <?php wp_nonce_field('aatf_contact_submit', 'aatf_contact_nonce'); ?>
+                
+                <!-- Honeypot -->
+                <div style="display:none !important;">
+                    <label>Leave this field empty</label>
+                    <input type="text" name="aatf_contact_hp" value="">
+                </div>
 
                 <div class="contact-form-row">
                     <div class="cf-field">
                         <label for="cf-name">Full Name</label>
-                        <input type="text" id="cf-name" name="contact_name" required placeholder="e.g. John Doe">
+                        <input type="text" id="cf-name" name="contact_name" required placeholder="e.g. John Doe" value="<?php echo isset($_POST['contact_name']) ? esc_attr($_POST['contact_name']) : ''; ?>">
                     </div>
                     <div class="cf-field">
                         <label for="cf-email">Your Email</label>
-                        <input type="email" id="cf-email" name="contact_email" required placeholder="john@example.com">
+                        <input type="email" id="cf-email" name="contact_email" required placeholder="john@example.com" value="<?php echo isset($_POST['contact_email']) ? esc_attr($_POST['contact_email']) : ''; ?>">
                     </div>
                 </div>
 
                 <div class="cf-field">
                     <label for="cf-subject">Subject</label>
-                    <input type="text" id="cf-subject" name="contact_subject" required placeholder="How can we help?">
+                    <input type="text" id="cf-subject" name="contact_subject" required placeholder="How can we help?" value="<?php echo isset($_POST['contact_subject']) ? esc_attr($_POST['contact_subject']) : ''; ?>">
                 </div>
 
                 <div class="cf-field">
                     <label for="cf-message">Message</label>
-                    <textarea id="cf-message" name="contact_message" required placeholder="Write your message here..."></textarea>
+                    <textarea id="cf-message" name="contact_message" required placeholder="Write your message here..."><?php echo isset($_POST['contact_message']) ? esc_textarea($_POST['contact_message']) : ''; ?></textarea>
                 </div>
 
                 <button type="submit" class="cf-submit-btn">
@@ -467,8 +531,8 @@ if (have_posts()) {
                 </button>
             </form>
 
-            <!-- Success message (hidden) -->
-            <div id="cf-success" style="display:none;align-items:center;gap:1rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:14px;padding:1.25rem 1.5rem;margin-top:1.5rem;">
+            <!-- Success message -->
+            <div id="cf-success" style="<?php echo $contact_success ? 'display:flex;' : 'display:none;'; ?>align-items:center;gap:1rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:14px;padding:1.25rem 1.5rem;margin-top:1.5rem;">
                 <svg width="28" height="28" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <div>
                     <p style="margin:0;font-weight:700;color:#166534;font-size:0.95rem;">Message Sent!</p>
@@ -479,21 +543,5 @@ if (have_posts()) {
 
     </div>
 </section>
-
-<script>
-// Show success div when form is submitted
-(function(){
-    var form = document.querySelector('.contact-form');
-    var success = document.getElementById('cf-success');
-    if (form && success) {
-        form.addEventListener('submit', function(e){
-            e.preventDefault();
-            form.reset();
-            success.style.display = 'flex';
-            form.style.display = 'none';
-        });
-    }
-}());
-</script>
 
 <?php get_footer(); ?>
