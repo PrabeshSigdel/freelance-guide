@@ -1281,7 +1281,26 @@ add_action('add_meta_boxes', function () {
             
             wp_nonce_field('aatf_contact_info_save', 'aatf_contact_info_nonce');
 
+            $hero_image_id  = (int) get_post_meta($post->ID, 'aatf_contact_hero_image_id', true);
+            $hero_image_url = $hero_image_id > 0 ? wp_get_attachment_image_url($hero_image_id, 'large') : '';
+
             echo '<p>' . esc_html__('Fill in these details if this page uses the "Contact Us Template".', 'aatf-expedition-base') . '</p>';
+
+            // Hero image picker
+            echo '<p><label><strong>' . esc_html__('Hero / Banner Image', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">';
+            if ($hero_image_url) {
+                echo '<img id="aatf_contact_hero_preview" src="' . esc_url($hero_image_url) . '" style="max-width:200px;max-height:100px;border-radius:6px;border:1px solid #ddd;">';
+            } else {
+                echo '<img id="aatf_contact_hero_preview" src="" style="max-width:200px;max-height:100px;display:none;border-radius:6px;border:1px solid #ddd;">';
+            }
+            echo '</div>';
+            echo '<input type="hidden" id="aatf_contact_hero_image_id" name="aatf_contact_hero_image_id" value="' . esc_attr((string) $hero_image_id) . '">';
+            echo '<p>';
+            echo '<button type="button" id="aatf_contact_hero_select" class="button">' . esc_html__('Select Image', 'aatf-expedition-base') . '</button> ';
+            echo '<button type="button" id="aatf_contact_hero_remove" class="button button-link-delete" ' . ($hero_image_id < 1 ? 'style="display:none"' : '') . '>' . esc_html__('Remove Image', 'aatf-expedition-base') . '</button>';
+            echo '</p>';
+            echo '<hr />';
 
             echo '<p><label for="aatf_contact_phone"><strong>' . esc_html__('Phone Number', 'aatf-expedition-base') . '</strong></label></p>';
             echo '<p><input type="text" class="widefat" id="aatf_contact_phone" name="aatf_contact_phone" value="' . esc_attr($phone) . '" placeholder="' . esc_attr__('+1 234 567 8900', 'aatf-expedition-base') . '"></p>';
@@ -1295,6 +1314,33 @@ add_action('add_meta_boxes', function () {
             echo '<p><label for="aatf_contact_map_url"><strong>' . esc_html__('Google Map Embed URL (src only)', 'aatf-expedition-base') . '</strong></label></p>';
             echo '<p><input type="url" class="widefat" id="aatf_contact_map_url" name="aatf_contact_map_url" value="' . esc_attr($map_url) . '" placeholder="' . esc_attr__('https://www.google.com/maps/embed?...', 'aatf-expedition-base') . '"></p>';
             echo '<p class="description">' . esc_html__('Go to Google Maps -> Share -> Embed map -> Copy only the URL inside the src="..." attribute.', 'aatf-expedition-base') . '</p>';
+            ?>
+            <script>
+            (function($){
+                $(function(){
+                    var frame;
+                    $('#aatf_contact_hero_select').on('click', function(e){
+                        e.preventDefault();
+                        if (frame) { frame.open(); return; }
+                        frame = wp.media({ title: '<?php echo esc_js(__('Select Hero Image', 'aatf-expedition-base')); ?>', button: { text: '<?php echo esc_js(__('Use this image', 'aatf-expedition-base')); ?>' }, multiple: false });
+                        frame.on('select', function(){
+                            var att = frame.state().get('selection').first().toJSON();
+                            $('#aatf_contact_hero_image_id').val(att.id);
+                            var src = (att.sizes && att.sizes.large) ? att.sizes.large.url : att.url;
+                            $('#aatf_contact_hero_preview').attr('src', src).show();
+                            $('#aatf_contact_hero_remove').show();
+                        });
+                        frame.open();
+                    });
+                    $('#aatf_contact_hero_remove').on('click', function(){
+                        $('#aatf_contact_hero_image_id').val('0');
+                        $('#aatf_contact_hero_preview').attr('src','').hide();
+                        $(this).hide();
+                    });
+                });
+            }(jQuery));
+            </script>
+            <?php
         },
         'page',
         'normal',
@@ -1329,5 +1375,14 @@ add_action('save_post_page', function ($post_id) {
 
     if (isset($_POST['aatf_contact_map_url'])) {
         update_post_meta($post_id, 'aatf_contact_map_url', esc_url_raw(wp_unslash($_POST['aatf_contact_map_url'])));
+    }
+
+    if (isset($_POST['aatf_contact_hero_image_id'])) {
+        $hero_img_id = absint(wp_unslash($_POST['aatf_contact_hero_image_id']));
+        if ($hero_img_id > 0) {
+            update_post_meta($post_id, 'aatf_contact_hero_image_id', $hero_img_id);
+        } else {
+            delete_post_meta($post_id, 'aatf_contact_hero_image_id');
+        }
     }
 });
