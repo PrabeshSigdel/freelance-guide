@@ -1396,3 +1396,5 @@ add_action('save_post_page', function ($post_id) {
         }
     }
 });
+
+require_once get_template_directory() . '/inc-about-meta.php';
