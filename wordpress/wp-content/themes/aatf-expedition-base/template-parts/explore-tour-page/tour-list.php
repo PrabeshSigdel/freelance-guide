@@ -131,6 +131,11 @@ if (post_type_exists('trek')) {
         );
     }
 
+    // Apply Search Term Support
+    if (!empty($_GET['s'])) {
+        $query_args['s'] = sanitize_text_field(wp_unslash($_GET['s']));
+    }
+
     if ($sort_by === 'price_low_high') {
         $query_args['meta_key'] = 'trek_price';
         $query_args['orderby'] = 'meta_value_num';
@@ -152,12 +157,21 @@ if (post_type_exists('trek')) {
 <section class="bg-gray-50 py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header class="text-center mb-12">
-            <p class="text-[var(--brand-orange)] font-medium text-sm mb-2">
-                <?php echo esc_html($explore_subheading); ?>
-            </p>
-            <h2 class="text-4xl md:text-5xl font-bold text-[var(--brand-dark)]">
-                <?php echo esc_html($explore_heading); ?>
-            </h2>
+            <?php if (!empty($_GET['s'])) : ?>
+                <p class="text-[var(--brand-orange)] font-medium text-sm mb-2 uppercase tracking-widest">
+                    <?php esc_html_e('Search Results', 'aatf-expedition-base'); ?>
+                </p>
+                <h2 class="text-4xl md:text-5xl font-bold text-[var(--brand-dark)]">
+                    <?php echo sprintf(esc_html__('Results for "%s"', 'aatf-expedition-base'), esc_html(wp_unslash($_GET['s']))); ?>
+                </h2>
+            <?php else : ?>
+                <p class="text-[var(--brand-orange)] font-medium text-sm mb-2">
+                    <?php echo esc_html($explore_subheading); ?>
+                </p>
+                <h2 class="text-4xl md:text-5xl font-bold text-[var(--brand-dark)]">
+                    <?php echo esc_html($explore_heading); ?>
+                </h2>
+            <?php endif; ?>
         </header>
 
         <?php if ($treks_query instanceof WP_Query && $treks_query->have_posts()) : ?>
@@ -181,10 +195,13 @@ if (post_type_exists('trek')) {
                         }
 
                         if (is_array($value)) {
+                            foreach ($value as $sub_value) {
+                                echo '<input type="hidden" name="' . esc_attr($key) . '[]" value="' . esc_attr(wp_unslash((string) $sub_value)) . '">';
+                            }
                             continue;
                         }
                         ?>
-                        <input type="hidden" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr(wp_unslash($value)); ?>">
+                        <input type="hidden" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr(wp_unslash((string) $value)); ?>">
                     <?php endforeach; ?>
 
                     <label for="sortBy" class="text-sm font-semibold text-[var(--brand-dark)]">
