@@ -1269,7 +1269,17 @@ add_action('admin_enqueue_scripts', function ($hook) {
 });
 
 // Contact Us Page Template Meta Box
-add_action('add_meta_boxes', function () {
+add_action('add_meta_boxes_page', function ($post) {
+    if (!$post instanceof WP_Post) {
+        return;
+    }
+
+    $page_template = (string) get_page_template_slug($post->ID);
+
+    if ($page_template !== 'page-templates/template-contact.php') {
+        return;
+    }
+
     add_meta_box(
         'aatf_contact_info_metabox',
         esc_html__('Contact Us Details', 'aatf-expedition-base'),
