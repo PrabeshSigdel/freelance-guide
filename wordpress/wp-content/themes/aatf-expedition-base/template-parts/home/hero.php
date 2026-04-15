@@ -43,119 +43,183 @@ if ($media_type === 'image' && $hero_image !== '') {
     </div>
 </section>
 
-<!-- ── Search Bar Toggle (Mobile) ────────────────────────────────── -->
-<div class="lg:hidden mx-4 text-center -mt-8 relative z-20 mb-4">
-    <button id="mobileSearchToggle" class="bg-[var(--brand-orange)] rounded-xl shadow-lg hover:opacity-90 text-white font-bold px-6 py-3 flex items-center gap-2 mx-auto transition-colors text-sm tracking-wide">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <?php esc_html_e('Find a Tour', 'aatf-expedition-base'); ?>
-    </button>
-</div>
+<?php
+$explore_page = get_pages(array(
+    'meta_key'   => '_wp_page_template',
+    'meta_value' => 'page-templates/template-explore.php',
+    'number'     => 1,
+));
+$explore_url = !empty($explore_page) ? get_permalink($explore_page[0]->ID) : home_url('/');
+?>
 
-<!-- ── Search Bar ────────────────────────────────────────────────── -->
-<div id="heroSearchBar" class="hidden lg:flex bg-white lg:-mt-7 shadow-[0_8px_40px_rgba(0,0,0,0.13)] mx-4 lg:mx-auto lg:max-w-7xl rounded-lg relative z-20 flex-col lg:flex-row items-stretch lg:items-center divide-y lg:divide-y-0 lg:divide-x divide-gray-200 overflow-hidden border border-gray-100">
+<!-- ── Hero Search Bar ──────────────────────────────────────────── -->
+<div class="relative z-20 flex justify-center -mt-8 px-4">
+    <div class="w-full max-w-2xl">
+        <form id="heroSearchForm" method="GET" action="<?php echo esc_url($explore_url); ?>" autocomplete="off" class="relative">
+            <input type="hidden" name="post_type" value="trek" />
 
-    <!-- Destination -->
-    <div class="flex items-center gap-3 px-6 py-5 flex-1 cursor-pointer hover:bg-orange-50 transition-colors">
-        <div class="text-[var(--brand-orange)] shrink-0">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-            </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-            <div class="text-xs text-[var(--brand-gray)] mb-0.5 flex items-center gap-1">
-                <?php esc_html_e('Where are you going?', 'aatf-expedition-base'); ?>
-                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
+            <div class="flex items-center bg-white rounded-full shadow-[0_8px_40px_rgba(0,0,0,0.18)] border border-gray-100 overflow-hidden pr-1.5">
+                <!-- Search icon -->
+                <div class="pl-5 pr-3 text-[var(--brand-orange)] shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+
+                <!-- Input -->
+                <input
+                    id="heroSearchInput"
+                    type="text"
+                    name="s"
+                    placeholder="<?php esc_attr_e('Search for tours, treks, destinations…', 'aatf-expedition-base'); ?>"
+                    class="flex-1 py-4 text-sm font-medium text-[var(--brand-dark)] bg-transparent border-none focus:outline-none focus:ring-0 placeholder:text-gray-400"
+                />
+
+                <!-- Clear button (hidden by default) -->
+                <button type="button" id="heroSearchClear" class="hidden mr-2 text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <!-- Search button -->
+                <button type="submit" class="bg-[var(--brand-orange)] hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-full transition-colors text-sm tracking-wide whitespace-nowrap shrink-0">
+                    <?php esc_html_e('Search', 'aatf-expedition-base'); ?>
+                </button>
             </div>
-            <div class="font-bold text-[var(--brand-dark)] text-sm"><?php esc_html_e('Destinations', 'aatf-expedition-base'); ?></div>
-        </div>
-    </div>
 
-    <!-- Activity -->
-    <div class="flex items-center gap-3 px-6 py-5 flex-1 cursor-pointer hover:bg-orange-50 transition-colors">
-        <div class="text-[var(--brand-orange)] shrink-0">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.125A7.5 7.5 0 0112 12.75a7.5 7.5 0 017.499 7.375" />
-            </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-            <div class="text-xs text-[var(--brand-gray)] mb-0.5 flex items-center gap-1">
-                <?php esc_html_e('Activity type', 'aatf-expedition-base'); ?>
-                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
+            <!-- Autocomplete Dropdown -->
+            <div id="heroSearchDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-[0_16px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-50">
+                <!-- Loading state -->
+                <div id="heroSearchLoading" class="hidden flex items-center gap-3 px-5 py-4 text-sm text-gray-400">
+                    <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    Searching…
+                </div>
+                <!-- Results list -->
+                <ul id="heroSearchResults" class="divide-y divide-gray-50 max-h-80 overflow-y-auto"></ul>
+                <!-- No results -->
+                <div id="heroSearchEmpty" class="hidden px-5 py-4 text-sm text-gray-400 text-center">
+                    No tours found for "<span id="heroSearchEmptyTerm"></span>"
+                </div>
             </div>
-            <div class="font-bold text-[var(--brand-dark)] text-sm"><?php esc_html_e('Activity', 'aatf-expedition-base'); ?></div>
-        </div>
+        </form>
     </div>
-
-    <!-- When -->
-    <div class="flex items-center gap-3 px-6 py-5 flex-1 cursor-pointer hover:bg-orange-50 transition-colors">
-        <div class="text-[var(--brand-orange)] shrink-0">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-            <div class="text-xs text-[var(--brand-gray)] mb-0.5"><?php esc_html_e('When', 'aatf-expedition-base'); ?></div>
-            <div class="font-bold text-[var(--brand-dark)] text-sm"><?php esc_html_e('Date From', 'aatf-expedition-base'); ?></div>
-        </div>
-    </div>
-
-    <!-- Guests -->
-    <div class="flex items-center gap-3 px-6 py-5 flex-1 cursor-pointer hover:bg-orange-50 transition-colors">
-        <div class="text-[var(--brand-orange)] shrink-0">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-            </svg>
-        </div>
-        <div class="flex-1 min-w-0">
-            <div class="text-xs text-[var(--brand-gray)] mb-0.5"><?php esc_html_e('Guests', 'aatf-expedition-base'); ?></div>
-            <div class="font-bold text-[var(--brand-dark)] text-sm">0</div>
-        </div>
-    </div>
-
-    <!-- Filter icon -->
-    <div class="px-4 py-5 flex justify-center lg:block cursor-pointer hover:bg-orange-50 transition-colors border-t lg:border-t-0 border-gray-200">
-        <svg class="w-6 h-6 text-[var(--brand-orange)]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-        </svg>
-    </div>
-
-    <!-- Search Button -->
-    <button class="bg-gray-800 rounded-lg lg:rounded-xl hover:bg-gray-900 text-white font-bold px-4 py-4 lg:py-3 mx-4 mb-4 lg:m-0 lg:mr-3 flex items-center justify-center gap-1.5 transition-colors text-sm lg:text-xs tracking-wide uppercase whitespace-nowrap">
-        <svg class="w-4 h-4 lg:w-3.5 lg:h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <?php esc_html_e('Search', 'aatf-expedition-base'); ?>
-    </button>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var toggleBtn = document.getElementById('mobileSearchToggle');
-    var searchBar = document.getElementById('heroSearchBar');
-    
-    if (toggleBtn && searchBar) {
-        toggleBtn.addEventListener('click', function() {
-            if (searchBar.classList.contains('hidden')) {
-                searchBar.classList.remove('hidden');
-                searchBar.classList.add('flex');
-                // Create a smoother flow: animate opacity or max-height if needed
-                // For now, toggle visibility
-            } else {
-                searchBar.classList.add('hidden');
-                searchBar.classList.remove('flex');
-            }
+(function () {
+    var ajaxUrl   = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
+    var exploreUrl = '<?php echo esc_js($explore_url); ?>';
+
+    var input      = document.getElementById('heroSearchInput');
+    var dropdown   = document.getElementById('heroSearchDropdown');
+    var resultsList = document.getElementById('heroSearchResults');
+    var loading    = document.getElementById('heroSearchLoading');
+    var empty      = document.getElementById('heroSearchEmpty');
+    var emptyTerm  = document.getElementById('heroSearchEmptyTerm');
+    var clearBtn   = document.getElementById('heroSearchClear');
+    var form       = document.getElementById('heroSearchForm');
+
+    var debounceTimer = null;
+    var currentXhr    = null;
+
+    function showDropdown() { dropdown.classList.remove('hidden'); }
+    function hideDropdown() { dropdown.classList.add('hidden'); }
+    function showLoading()  { loading.classList.remove('hidden'); empty.classList.add('hidden'); resultsList.innerHTML = ''; }
+    function hideLoading()  { loading.classList.add('hidden'); }
+
+    function renderResults(items, term) {
+        resultsList.innerHTML = '';
+        if (!items || items.length === 0) {
+            emptyTerm.textContent = term;
+            empty.classList.remove('hidden');
+            return;
+        }
+        empty.classList.add('hidden');
+        items.forEach(function (item) {
+            var li = document.createElement('li');
+            li.className = 'flex items-center gap-4 px-5 py-3 hover:bg-orange-50 cursor-pointer transition-colors group';
+            li.innerHTML =
+                (item.thumb
+                    ? '<img src="' + item.thumb + '" alt="" class="w-12 h-10 object-cover rounded-lg shrink-0" />'
+                    : '<div class="w-12 h-10 bg-gray-100 rounded-lg shrink-0 flex items-center justify-center"><svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></div>') +
+                '<div class="flex-1 min-w-0">' +
+                    '<p class="text-sm font-semibold text-[#1a1a2e] group-hover:text-[var(--brand-orange)] transition-colors truncate">' + item.title + '</p>' +
+                    '<p class="text-xs text-gray-400">Trek</p>' +
+                '</div>' +
+                '<svg class="w-4 h-4 text-gray-300 group-hover:text-[var(--brand-orange)] transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>';
+
+            li.addEventListener('click', function () {
+                window.location.href = item.url;
+            });
+            resultsList.appendChild(li);
         });
     }
-});
+
+    function doSearch(term) {
+        if (currentXhr) { currentXhr.abort(); }
+        showLoading();
+        showDropdown();
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', ajaxUrl + '?action=aatf_trek_search&q=' + encodeURIComponent(term), true);
+        xhr.onload = function () {
+            hideLoading();
+            if (xhr.status === 200) {
+                try {
+                    var json = JSON.parse(xhr.responseText);
+                    if (json.success) {
+                        renderResults(json.data, term);
+                    }
+                } catch (e) {}
+            }
+        };
+        xhr.onerror = function () { hideLoading(); };
+        xhr.send();
+        currentXhr = xhr;
+    }
+
+    input.addEventListener('input', function () {
+        var term = input.value.trim();
+        clearBtn.classList.toggle('hidden', term === '');
+
+        if (term.length < 2) {
+            hideDropdown();
+            return;
+        }
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () { doSearch(term); }, 280);
+    });
+
+    clearBtn.addEventListener('click', function () {
+        input.value = '';
+        clearBtn.classList.add('hidden');
+        hideDropdown();
+        input.focus();
+    });
+
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!form.contains(e.target)) { hideDropdown(); }
+    });
+
+    // Prevent form submission if input is empty
+    form.addEventListener('submit', function (e) {
+        if (input.value.trim() === '') {
+            e.preventDefault();
+            window.location.href = exploreUrl;
+        }
+    });
+
+    // Show dropdown again when re-focusing if there's a value
+    input.addEventListener('focus', function () {
+        if (input.value.trim().length >= 2 && resultsList.children.length > 0) {
+            showDropdown();
+        }
+    });
+})();
 </script>

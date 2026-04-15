@@ -60,6 +60,15 @@ class AATF_Trek_Post_Types
             'rewrite' => array('slug' => 'trek-season'),
         ));
 
+        register_taxonomy('trek_type', array('trek'), array(
+            'label' => 'Tour Types',
+            'public' => true,
+            'hierarchical' => true,
+            'show_admin_column' => true,
+            'show_in_rest' => true,
+            'rewrite' => array('slug' => 'trek-type'),
+        ));
+
         register_taxonomy('faq_topic', array('trek_faq'), array(
             'label' => 'FAQ Topics',
             'public' => true,

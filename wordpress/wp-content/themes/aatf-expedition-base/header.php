@@ -1,4 +1,4 @@
-﻿<?php if (!defined('ABSPATH')) {
+<?php if (!defined('ABSPATH')) {
     exit;
 } ?>
 <!doctype html>
@@ -194,16 +194,6 @@
             <!-- Icons -->
             <div class="flex items-center gap-4 text-[var(--brand-gray)] shrink-0">
 
-                <!-- Search -->
-                <a href="<?php echo esc_url(home_url('/?s=')); ?>"
-                    class="hover:text-[var(--brand-orange)] transition-colors"
-                    aria-label="<?php esc_attr_e('Search', 'aatf-expedition-base'); ?>">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                        aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </a>
 
                 <!-- Account / My Account -->
                 <?php if (function_exists('wc_get_page_permalink')) : ?>

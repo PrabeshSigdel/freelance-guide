@@ -21,7 +21,7 @@ $story_image_id = (int) get_post_meta($post_id, 'aatf_about_story_image_id', tru
 $story_image_url = $story_image_id > 0 ? wp_get_attachment_image_url($story_image_id, 'large') : '';
 
 // Mission & Values Section
-$values_subtitle = get_post_meta($post_id, 'aatf_about_values_subtitle', true) ?: 'Guided by Core Principles';
+$values_subtitle = 'Guided by Core Principles';
 $values_title = get_post_meta($post_id, 'aatf_about_values_title', true) ?: 'The Values We Live By';
 $values_desc = get_post_meta($post_id, 'aatf_about_values_desc', true) ?: 'In every expedition we lead and every relationship we build, we are guided by a core set of principles that define who we are.';
 
@@ -35,7 +35,7 @@ $core_title = get_post_meta($post_id, 'aatf_about_core_title', true) ?: 'Our Val
 $core_text = get_post_meta($post_id, 'aatf_about_core_text', true) ?: 'Integrity in action, safety above all, respect for local cultures, and an unwavering passion for the great outdoors.';
 
 // Why Choose Us Section
-$whyus_subtitle = get_post_meta($post_id, 'aatf_about_whyus_subtitle', true) ?: 'Why choose Us?';
+$whyus_subtitle = 'Why choose Us?';
 $whyus_title = get_post_meta($post_id, 'aatf_about_whyus_title', true) ?: 'Expertise in Every Step';
 $whyus_desc = get_post_meta($post_id, 'aatf_about_whyus_desc', true) ?: 'We know you have choices when it comes to adventure. Here is why trekking with us is an experience like no other.';
 $whyus_points_raw = get_post_meta($post_id, 'aatf_about_whyus_points', true);

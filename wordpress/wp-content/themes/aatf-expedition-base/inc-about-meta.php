@@ -80,8 +80,6 @@ add_action('add_meta_boxes_page', function ($post) {
             $core_text = get_post_meta($post->ID, 'aatf_about_core_text', true);
 
             echo '<h3>' . esc_html__('Mission & Values Section', 'aatf-expedition-base') . '</h3>';
-            echo '<p><label for="aatf_about_values_subtitle"><strong>' . esc_html__('Section Subtitle (e.g. Guided by Core Principles)', 'aatf-expedition-base') . '</strong></label></p>';
-            echo '<p><input type="text" class="widefat" id="aatf_about_values_subtitle" name="aatf_about_values_subtitle" value="' . esc_attr($values_subtitle) . '"></p>';
             echo '<p><label for="aatf_about_values_title"><strong>' . esc_html__('Section Title', 'aatf-expedition-base') . '</strong></label></p>';
             echo '<p><input type="text" class="widefat" id="aatf_about_values_title" name="aatf_about_values_title" value="' . esc_attr($values_title) . '" placeholder="The Values We Live By"></p>';
             echo '<p><label for="aatf_about_values_desc"><strong>' . esc_html__('Section Description', 'aatf-expedition-base') . '</strong></label></p>';
@@ -108,8 +106,6 @@ add_action('add_meta_boxes_page', function ($post) {
             $whyus_points = get_post_meta($post->ID, 'aatf_about_whyus_points', true); // Stored as array or newline string
 
             echo '<h3>' . esc_html__('Why Choose Us Section', 'aatf-expedition-base') . '</h3>';
-            echo '<p><label for="aatf_about_whyus_subtitle"><strong>' . esc_html__('Section Subtitle', 'aatf-expedition-base') . '</strong></label></p>';
-            echo '<p><input type="text" class="widefat" id="aatf_about_whyus_subtitle" name="aatf_about_whyus_subtitle" value="' . esc_attr($whyus_subtitle) . '"></p>';
             echo '<p><label for="aatf_about_whyus_title"><strong>' . esc_html__('Section Title', 'aatf-expedition-base') . '</strong></label></p>';
             echo '<p><input type="text" class="widefat" id="aatf_about_whyus_title" name="aatf_about_whyus_title" value="' . esc_attr($whyus_title) . '" placeholder="Expertise in Every Step"></p>';
             echo '<p><label for="aatf_about_whyus_desc"><strong>' . esc_html__('Section Description', 'aatf-expedition-base') . '</strong></label></p>';
@@ -190,12 +186,10 @@ add_action('save_post_page', function ($post_id) {
 
     $fields = array(
         'aatf_about_story_title',
-        'aatf_about_values_subtitle',
         'aatf_about_values_title',
         'aatf_about_mission_title',
         'aatf_about_vision_title',
         'aatf_about_core_title',
-        'aatf_about_whyus_subtitle',
         'aatf_about_whyus_title'
     );
     foreach ($fields as $field) {

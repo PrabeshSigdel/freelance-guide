@@ -107,6 +107,30 @@ if (post_type_exists('trek')) {
         'update_post_term_cache' => false,
     );
 
+    // Apply Trek Specific Filter Support
+    if (!empty($_GET['trek_id'])) {
+        $query_args['post__in'] = array((int) $_GET['trek_id']);
+    }
+
+    if (!empty($_GET['trek_type'])) {
+        $query_args['tax_query'][] = array(
+            'taxonomy' => 'trek_type',
+            'field'    => 'slug',
+            'terms'    => sanitize_text_field($_GET['trek_type']),
+        );
+    }
+    
+    // Apply Guest Capacity Support
+    if (!empty($_GET['guests'])) {
+        $guests = (int) $_GET['guests'];
+        $query_args['meta_query'][] = array(
+            'key'     => 'trek_group_size',
+            'value'   => $guests,
+            'compare' => '>=',
+            'type'    => 'NUMERIC'
+        );
+    }
+
     if ($sort_by === 'price_low_high') {
         $query_args['meta_key'] = 'trek_price';
         $query_args['orderby'] = 'meta_value_num';

@@ -1398,3 +1398,34 @@ add_action('save_post_page', function ($post_id) {
 });
 
 require_once get_template_directory() . '/inc-about-meta.php';
+
+/* ── Hero Search Autocomplete AJAX ──────────────────────────────── */
+function aatf_trek_search_autocomplete() {
+    $keyword = isset($_GET['q']) ? sanitize_text_field(wp_unslash($_GET['q'])) : '';
+
+    if (strlen($keyword) < 2) {
+        wp_send_json_success(array());
+    }
+
+    $results = get_posts(array(
+        'post_type'      => 'trek',
+        'post_status'    => 'publish',
+        'posts_per_page' => 8,
+        's'              => $keyword,
+    ));
+
+    $data = array();
+    foreach ($results as $trek) {
+        $thumb = get_the_post_thumbnail_url($trek->ID, 'thumbnail');
+        $data[] = array(
+            'id'    => $trek->ID,
+            'title' => $trek->post_title,
+            'url'   => get_permalink($trek->ID),
+            'thumb' => $thumb ?: '',
+        );
+    }
+
+    wp_send_json_success($data);
+}
+add_action('wp_ajax_aatf_trek_search', 'aatf_trek_search_autocomplete');
+add_action('wp_ajax_nopriv_aatf_trek_search', 'aatf_trek_search_autocomplete');
