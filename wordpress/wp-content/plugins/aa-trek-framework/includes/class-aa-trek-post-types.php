@@ -10,10 +10,11 @@ class AATF_Trek_Post_Types
 
     public static function register_thumbnail_support()
     {
-        add_theme_support('post-thumbnails', array('trek', 'destination', 'testimonial'));
+        add_theme_support('post-thumbnails', array('trek', 'destination', 'testimonial', 'gallery_album'));
         add_post_type_support('trek', 'thumbnail');
         add_post_type_support('destination', 'thumbnail');
         add_post_type_support('testimonial', 'thumbnail');
+        add_post_type_support('gallery_album', 'thumbnail');
     }
 
     public static function register_post_types()
@@ -24,6 +25,7 @@ class AATF_Trek_Post_Types
         self::register_departures();
         self::register_faqs();
         self::register_bookings();
+        self::register_gallery_albums();
 
 
         if (is_admin()) {
@@ -76,6 +78,25 @@ class AATF_Trek_Post_Types
             'show_admin_column' => true,
             'show_in_rest' => true,
             'rewrite' => array('slug' => 'faq-topic'),
+        ));
+
+        register_taxonomy('gallery_category', array('gallery_album'), array(
+            'label' => 'Gallery Categories',
+            'labels' => array(
+                'name'              => 'Gallery Categories',
+                'singular_name'     => 'Gallery Category',
+                'add_new_item'      => 'Add New Category',
+                'edit_item'         => 'Edit Category',
+                'view_item'         => 'View Category',
+                'all_items'         => 'All Categories',
+                'search_items'      => 'Search Categories',
+                'not_found'         => 'No categories found.',
+            ),
+            'public'            => true,
+            'hierarchical'      => true,
+            'show_admin_column' => true,
+            'show_in_rest'      => true,
+            'rewrite'           => array('slug' => 'gallery-category'),
         ));
     }
 
@@ -205,6 +226,34 @@ class AATF_Trek_Post_Types
             'capability_type' => 'post',
             'map_meta_cap' => true,
             'show_in_rest' => false,
+        ));
+    }
+
+    private static function register_gallery_albums()
+    {
+        register_post_type('gallery_album', array(
+            'labels' => array(
+                'name'          => 'Gallery Albums',
+                'singular_name' => 'Gallery Album',
+                'menu_name'     => 'Gallery Albums',
+                'add_new'       => 'Add New',
+                'add_new_item'  => 'Add New Album',
+                'edit_item'     => 'Edit Album',
+                'new_item'      => 'New Album',
+                'view_item'     => 'View Album',
+                'all_items'     => 'All Albums',
+                'search_items'  => 'Search Albums',
+                'not_found'     => 'No albums found',
+            ),
+            'public'          => true,
+            'has_archive'     => false,
+            'rewrite'         => array('slug' => 'gallery-album'),
+            'menu_icon'       => 'dashicons-format-gallery',
+            'show_in_menu'    => 'aatf-framework',
+            'capability_type' => 'post',
+            'map_meta_cap'    => true,
+            'supports'        => array('title', 'thumbnail', 'excerpt', 'revisions'),
+            'show_in_rest'    => false,
         ));
     }
 
@@ -529,6 +578,17 @@ class AATF_Trek_Post_Types
             'post_parent' => (int) $parent_id,
         ));
         add_action('save_post_destination', array(__CLASS__, 'save_destination_parent_meta_box'));
+    }
+
+    public static function maybe_disable_block_editor_for_post_type($use_block_editor, $post_type)
+    {
+        $classic_post_types = array('post', 'trek', 'destination', 'departure', 'trek_faq', 'testimonial', 'gallery_album');
+
+        if (in_array($post_type, $classic_post_types, true)) {
+            return false;
+        }
+
+        return $use_block_editor;
     }
 
     public static function maybe_add_destination_parent_notice_flag($location, $post_id)

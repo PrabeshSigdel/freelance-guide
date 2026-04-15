@@ -81,83 +81,6 @@ if (have_posts()) {
 ?>
 
 <style>
-/* ─── Contact Hero ─────────────────────────────────────────── */
-.contact-hero {
-    position: relative;
-    min-height: 380px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    background: #0b473a;
-}
-.contact-hero__bg {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    transition: transform 8s ease;
-}
-.contact-hero:hover .contact-hero__bg {
-    transform: scale(1.04);
-}
-.contact-hero__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        160deg,
-        rgba(6, 40, 30, 0.80) 0%,
-        rgba(11, 71, 58, 0.65) 50%,
-        rgba(0, 0, 0, 0.75) 100%
-    );
-}
-.contact-hero__content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    padding: 5rem 1.25rem 4.5rem;
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-.contact-hero h1 {
-    margin: 0 0 1rem;
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-}
-.contact-hero__sub {
-    color: rgba(255,255,255,0.72);
-    font-size: 1.08rem;
-    line-height: 1.65;
-    margin: 0;
-}
-/* Decorative breadcrumb bar */
-.contact-hero__breadcrumb {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255,255,255,0.06);
-    backdrop-filter: blur(4px);
-    border-top: 1px solid rgba(255,255,255,0.10);
-    padding: 0.75rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: 0.84rem;
-    color: rgba(255,255,255,0.55);
-}
-.contact-hero__breadcrumb a {
-    color: rgba(255,255,255,0.55);
-    text-decoration: none;
-    transition: color 0.2s;
-}
-.contact-hero__breadcrumb a:hover { color: #fb923c; }
-
 /* ─── Contact Body ─────────────────────────────────────────── */
 .contact-section {
     background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
@@ -389,31 +312,34 @@ if (have_posts()) {
 .contact-badge svg { color: #22c55e; flex-shrink: 0; }
 </style>
 
-<!-- ═══════════════════════════════════════════════════════════ -->
-<!-- HERO SECTION                                               -->
-<!-- ═══════════════════════════════════════════════════════════ -->
-<section class="contact-hero">
-    <?php if ($hero_image_url): ?>
-    <div class="contact-hero__bg" style="background-image:url('<?php echo esc_url($hero_image_url); ?>')"></div>
-    <?php else: ?>
-    <div class="contact-hero__bg" style="background: linear-gradient(135deg, #063329 0%, #0b5c48 60%, #0d6b54 100%);"></div>
-    <?php endif; ?>
-
-    <div class="contact-hero__overlay"></div>
-
-    <div class="contact-hero__content">
-        <h1><?php echo esc_html(get_the_title()); ?></h1>
-        <?php if ($subtitle): ?>
-        <p class="contact-hero__sub"><?php echo esc_html($subtitle); ?></p>
-        <?php else: ?>
-        <p class="contact-hero__sub">We'd love to hear from you. Whether you have a question about our treks, pricing, or anything else — our team is ready to answer.</p>
+<!-- ── Hero Section ────────────────────────────────────────────── -->
+<section class="relative min-h-[450px] flex items-center justify-center text-center py-20 bg-cover bg-center" 
+    style="<?php echo $hero_image_url ? "background-image: url('" . esc_url($hero_image_url) . "');" : "background: linear-gradient(135deg, #063329 0%, #0b5c48 60%, #0d6b54 100%);"; ?>">
+    
+    <div class="absolute inset-0 bg-black/55"></div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto px-6">
+        <h1 class="font-display text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg tracking-tight">
+            <?php echo esc_html(get_the_title()); ?>
+        </h1>
+        
+        <?php if ($subtitle) : ?>
+            <p class="text-white/80 text-lg md:text-xl font-light mb-10 max-w-2xl mx-auto leading-relaxed">
+                <?php echo esc_html($subtitle); ?>
+            </p>
+        <?php else : ?>
+            <p class="text-white/80 text-lg md:text-xl font-light mb-10 max-w-2xl mx-auto leading-relaxed">
+                <?php esc_html_e("We'd love to hear from you. Reach out to our team of experts for any questions or support.", "aatf-expedition-base"); ?>
+            </p>
         <?php endif; ?>
-    </div>
 
-    <div class="contact-hero__breadcrumb">
-        <a href="<?php echo esc_url(home_url('/')); ?>">Home</a>
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-        <span style="color:rgba(255,255,255,0.85);"><?php echo esc_html(get_the_title()); ?></span>
+        <nav class="flex items-center justify-center gap-2 text-sm font-medium text-white/60" aria-label="Breadcrumb">
+            <a href="<?php echo esc_url(home_url('/')); ?>" class="hover:text-[var(--brand-orange)] transition-colors text-white/80">Home</a>
+            <svg class="w-4 h-4 text-white/40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+            <span class="text-[var(--brand-orange)] font-bold"><?php echo esc_html(get_the_title()); ?></span>
+        </nav>
     </div>
 </section>
 

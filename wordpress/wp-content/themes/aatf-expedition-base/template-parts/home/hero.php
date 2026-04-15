@@ -29,20 +29,6 @@ if ($media_type === 'image' && $hero_image !== '') {
 ?>
 
 <!-- ── Hero ──────────────────────────────────────────────────────── -->
-<section class="hero-bg relative min-h-[600px] flex flex-col items-center justify-center text-center"
-    style="background-image: url('<?php echo esc_url($bg_url); ?>');">
-    <div class="absolute inset-0 bg-black/30"></div>
-
-    <div class="relative z-10 px-6 py-20">
-        <h1 class="font-display text-6xl md:text-7xl font-bold text-[var(--brand-orange)] mb-4 drop-shadow-lg tracking-wide">
-            <?php echo esc_html($hero_title); ?>
-        </h1>
-        <p class="text-white text-xl md:text-2xl font-light tracking-widest drop-shadow">
-            <?php echo esc_html($hero_text); ?>
-        </p>
-    </div>
-</section>
-
 <?php
 $explore_page = get_pages(array(
     'meta_key'   => '_wp_page_template',
@@ -51,63 +37,79 @@ $explore_page = get_pages(array(
 ));
 $explore_url = !empty($explore_page) ? get_permalink($explore_page[0]->ID) : home_url('/');
 ?>
+<section class="hero-bg relative min-h-[600px] flex flex-col items-center justify-center text-center"
+    style="background-image: url('<?php echo esc_url($bg_url); ?>');">
+    <div class="absolute inset-0 bg-black/25"></div>
 
-<!-- ── Hero Search Bar ──────────────────────────────────────────── -->
-<div class="relative z-20 flex justify-center -mt-8 px-4">
-    <div class="w-full max-w-2xl">
-        <form id="heroSearchForm" method="GET" action="<?php echo esc_url($explore_url); ?>" autocomplete="off" class="relative">
-            <input type="hidden" name="post_type" value="trek" />
+    <div class="relative z-10 px-6 py-20 w-full">
+        <h1 class="font-display text-6xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg tracking-wide">
+            <?php echo esc_html($hero_title); ?>
+        </h1>
+        <p class="text-white/90 text-xl md:text-2xl font-light tracking-widest drop-shadow mb-10">
+            <?php echo esc_html($hero_text); ?>
+        </p>
 
-            <div class="flex items-center bg-white rounded-full shadow-[0_8px_40px_rgba(0,0,0,0.18)] border border-gray-100 overflow-hidden pr-1.5">
-                <!-- Search icon -->
-                <div class="pl-5 pr-3 text-[var(--brand-orange)] shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
+        <!-- ── Hero Search Bar ─────────────────────────────────────────── -->
+        <div class="flex justify-center px-4">
+            <div class="w-full max-w-2xl">
+                <form id="heroSearchForm" method="GET" action="<?php echo esc_url($explore_url); ?>" autocomplete="off" class="relative">
+                    <input type="hidden" name="post_type" value="trek" />
 
-                <!-- Input -->
-                <input
-                    id="heroSearchInput"
-                    type="text"
-                    name="s"
-                    placeholder="<?php esc_attr_e('Search for tours, treks, destinations…', 'aatf-expedition-base'); ?>"
-                    class="flex-1 py-4 text-sm font-medium text-[var(--brand-dark)] bg-transparent border-none focus:outline-none focus:ring-0 placeholder:text-gray-400"
-                />
+                    <div class="flex items-center bg-white rounded-full shadow-[0_8px_40px_rgba(0,0,0,0.35)] border border-white/20 overflow-hidden pr-1.5">
+                        <!-- Search icon -->
+                        <div class="pl-5 pr-3 text-[var(--brand-orange)] shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
 
-                <!-- Clear button (hidden by default) -->
-                <button type="button" id="heroSearchClear" class="hidden mr-2 text-gray-400 hover:text-gray-600 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                        <!-- Input -->
+                        <input
+                            id="heroSearchInput"
+                            type="text"
+                            name="s"
+                            placeholder="<?php esc_attr_e('Search for tours, treks, destinations…', 'aatf-expedition-base'); ?>"
+                            class="flex-1 py-4 text-sm font-medium text-[var(--brand-dark)] bg-transparent border-none focus:outline-none focus:ring-0 placeholder:text-gray-400"
+                        />
 
-                <!-- Search button -->
-                <button type="submit" class="bg-[var(--brand-orange)] hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-full transition-colors text-sm tracking-wide whitespace-nowrap shrink-0">
-                    <?php esc_html_e('Search', 'aatf-expedition-base'); ?>
-                </button>
+                        <!-- Clear button (hidden by default) -->
+                        <button type="button" id="heroSearchClear" class="hidden mr-2 text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        <!-- Search button -->
+                        <button type="submit" class="bg-[var(--brand-orange)] hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-full transition-colors text-sm tracking-wide whitespace-nowrap shrink-0">
+                            <?php esc_html_e('Search', 'aatf-expedition-base'); ?>
+                        </button>
+                    </div>
+
+                    <!-- Autocomplete Dropdown -->
+                    <div id="heroSearchDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-[0_16px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-50">
+                        <!-- Loading state -->
+                        <div id="heroSearchLoading" class="hidden flex items-center gap-3 px-5 py-4 text-sm text-gray-400">
+                            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            Searching…
+                        </div>
+                        <!-- Results list -->
+                        <ul id="heroSearchResults" class="divide-y divide-gray-50 max-h-80 overflow-y-auto"></ul>
+                        <!-- No results -->
+                        <div id="heroSearchEmpty" class="hidden px-5 py-4 text-sm text-gray-400 text-center">
+                            No tours found for "<span id="heroSearchEmptyTerm"></span>"
+                        </div>
+                    </div>
+                </form>
             </div>
+        </div>
+        <!-- ── /Hero Search Bar ────────────────────────────────────────── -->
 
-            <!-- Autocomplete Dropdown -->
-            <div id="heroSearchDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-[0_16px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-50">
-                <!-- Loading state -->
-                <div id="heroSearchLoading" class="hidden flex items-center gap-3 px-5 py-4 text-sm text-gray-400">
-                    <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    Searching…
-                </div>
-                <!-- Results list -->
-                <ul id="heroSearchResults" class="divide-y divide-gray-50 max-h-80 overflow-y-auto"></ul>
-                <!-- No results -->
-                <div id="heroSearchEmpty" class="hidden px-5 py-4 text-sm text-gray-400 text-center">
-                    No tours found for "<span id="heroSearchEmptyTerm"></span>"
-                </div>
-            </div>
-        </form>
     </div>
-</div>
+</section>
+
 
 <script>
 (function () {

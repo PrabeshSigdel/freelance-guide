@@ -541,6 +541,59 @@ add_action('customize_register', function ($wp_customize) {
         'label' => 'Exotic Places Background Image',
     )));
 
+    $wp_customize->add_section('aatf_explore_page_section', array(
+        'title' => 'Explore Page',
+        'priority' => 31,
+    ));
+
+    $wp_customize->add_setting('aatf_explore_hero_title', array(
+        'default' => '',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('aatf_explore_hero_title', array(
+        'type' => 'text',
+        'section' => 'aatf_explore_page_section',
+        'label' => 'Hero Title',
+        'description' => 'Leave empty to use default.',
+    ));
+
+    $wp_customize->add_setting('aatf_explore_hero_text', array(
+        'default' => '',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('aatf_explore_hero_text', array(
+        'type' => 'text',
+        'section' => 'aatf_explore_page_section',
+        'label' => 'Hero Subtitle',
+        'description' => 'Leave empty to use default.',
+    ));
+
+    $wp_customize->add_setting('aatf_explore_hero_media_type', array(
+        'default' => 'none',
+        'sanitize_callback' => function ($value) {
+            return aatf_sanitize_select((string) $value, array('none', 'image', 'video'), 'none');
+        },
+    ));
+    $wp_customize->add_control('aatf_explore_hero_media_type', array(
+        'type' => 'select',
+        'section' => 'aatf_explore_page_section',
+        'label' => 'Hero Media Type',
+        'choices' => array(
+            'none' => 'None',
+            'image' => 'Image',
+            'video' => 'Video',
+        ),
+    ));
+
+    $wp_customize->add_setting('aatf_explore_hero_image', array(
+        'default' => '',
+        'sanitize_callback' => 'aatf_sanitize_home_hero_image',
+    ));
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'aatf_explore_hero_image', array(
+        'section' => 'aatf_explore_page_section',
+        'label' => 'Hero Image',
+    )));
+
     $wp_customize->add_setting('aatf_home_destinations_limit', array(
         'default' => 6,
         'sanitize_callback' => 'aatf_sanitize_home_limit',
@@ -1398,6 +1451,114 @@ add_action('save_post_page', function ($post_id) {
 });
 
 require_once get_template_directory() . '/inc-about-meta.php';
+require_once get_template_directory() . '/inc-gallery-meta.php';
+
+/* ── Gallery Page Hero Meta Box ─────────────────────────────────── */
+add_action('add_meta_boxes_page', function ($post) {
+    if (!$post instanceof WP_Post) {
+        return;
+    }
+    if ((string) get_page_template_slug($post->ID) !== 'page-templates/template-gallery.php') {
+        return;
+    }
+    add_meta_box(
+        'aatf_gallery_page_hero_metabox',
+        esc_html__('Gallery Page Hero', 'aatf-expedition-base'),
+        function ($post) {
+            wp_nonce_field('aatf_gallery_page_hero_save', 'aatf_gallery_page_hero_nonce');
+
+            $hero_title    = (string) get_post_meta($post->ID, 'aatf_gallery_hero_title', true);
+            $hero_subtitle = (string) get_post_meta($post->ID, 'aatf_gallery_hero_subtitle', true);
+            $hero_image_id = (int)    get_post_meta($post->ID, 'aatf_gallery_hero_image_id', true);
+            $hero_img_url  = $hero_image_id > 0 ? wp_get_attachment_image_url($hero_image_id, 'large') : '';
+
+            echo '<p><label for="aatf_gallery_hero_title"><strong>' . esc_html__('Hero Title', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<p><input type="text" class="widefat" id="aatf_gallery_hero_title" name="aatf_gallery_hero_title" value="' . esc_attr($hero_title) . '" placeholder="' . esc_attr__('Our Gallery', 'aatf-expedition-base') . '"></p>';
+
+            echo '<p><label for="aatf_gallery_hero_subtitle"><strong>' . esc_html__('Hero Subtitle', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<p><input type="text" class="widefat" id="aatf_gallery_hero_subtitle" name="aatf_gallery_hero_subtitle" value="' . esc_attr($hero_subtitle) . '" placeholder="' . esc_attr__('Memories from the Mountains', 'aatf-expedition-base') . '"></p>';
+
+            echo '<p><label><strong>' . esc_html__('Hero Background Image', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">';
+            if ($hero_img_url) {
+                echo '<img id="aatf_gallery_hero_preview" src="' . esc_url($hero_img_url) . '" style="max-width:200px;max-height:100px;border-radius:6px;border:1px solid #ddd;">';
+            } else {
+                echo '<img id="aatf_gallery_hero_preview" src="" style="max-width:200px;max-height:100px;display:none;border-radius:6px;border:1px solid #ddd;">';
+            }
+            echo '</div>';
+            echo '<input type="hidden" id="aatf_gallery_hero_image_id" name="aatf_gallery_hero_image_id" value="' . esc_attr((string) $hero_image_id) . '">';
+            echo '<p>';
+            echo '<button type="button" id="aatf_gallery_hero_select" class="button">' . esc_html__('Select Image', 'aatf-expedition-base') . '</button> ';
+            echo '<button type="button" id="aatf_gallery_hero_remove" class="button button-link-delete"' . ($hero_image_id < 1 ? ' style="display:none"' : '') . '>' . esc_html__('Remove Image', 'aatf-expedition-base') . '</button>';
+            echo '</p>';
+            ?>
+            <script>
+            (function($){
+                $(function(){
+                    var ghFrame;
+                    $('#aatf_gallery_hero_select').on('click', function(e){
+                        e.preventDefault();
+                        if (ghFrame) { ghFrame.open(); return; }
+                        ghFrame = wp.media({ title: '<?php echo esc_js(__('Select Hero Image', 'aatf-expedition-base')); ?>', button: { text: '<?php echo esc_js(__('Use this image', 'aatf-expedition-base')); ?>' }, multiple: false });
+                        ghFrame.on('select', function(){
+                            var att = ghFrame.state().get('selection').first().toJSON();
+                            $('#aatf_gallery_hero_image_id').val(att.id);
+                            var src = (att.sizes && att.sizes.large) ? att.sizes.large.url : att.url;
+                            $('#aatf_gallery_hero_preview').attr('src', src).show();
+                            $('#aatf_gallery_hero_remove').show();
+                        });
+                        ghFrame.open();
+                    });
+                    $('#aatf_gallery_hero_remove').on('click', function(){
+                        $('#aatf_gallery_hero_image_id').val('0');
+                        $('#aatf_gallery_hero_preview').attr('src','').hide();
+                        $(this).hide();
+                    });
+                });
+            }(jQuery));
+            </script>
+            <?php
+        },
+        'page',
+        'normal',
+        'high'
+    );
+});
+
+add_action('save_post_page', function ($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) { return; }
+    if (wp_is_post_revision($post_id) || !current_user_can('edit_post', $post_id)) { return; }
+    if (!isset($_POST['aatf_gallery_page_hero_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aatf_gallery_page_hero_nonce'])), 'aatf_gallery_page_hero_save')) { return; }
+
+    if (isset($_POST['aatf_gallery_hero_title'])) {
+        update_post_meta($post_id, 'aatf_gallery_hero_title', sanitize_text_field(wp_unslash($_POST['aatf_gallery_hero_title'])));
+    }
+    if (isset($_POST['aatf_gallery_hero_subtitle'])) {
+        update_post_meta($post_id, 'aatf_gallery_hero_subtitle', sanitize_text_field(wp_unslash($_POST['aatf_gallery_hero_subtitle'])));
+    }
+    if (isset($_POST['aatf_gallery_hero_image_id'])) {
+        $img_id = absint(wp_unslash($_POST['aatf_gallery_hero_image_id']));
+        if ($img_id > 0) {
+            update_post_meta($post_id, 'aatf_gallery_hero_image_id', $img_id);
+        } else {
+            delete_post_meta($post_id, 'aatf_gallery_hero_image_id');
+        }
+    }
+}, 20);
+
+/* ── Conditionally enqueue gallery stylesheet ───────────────────── */
+add_action('wp_enqueue_scripts', function () {
+    if (!is_page()) { return; }
+    $template = (string) get_page_template_slug(get_the_ID());
+    if ($template !== 'page-templates/template-gallery.php') { return; }
+    $gallery_css_path = get_template_directory() . '/assets/css/gallery.css';
+    wp_enqueue_style(
+        'aatf-gallery',
+        get_template_directory_uri() . '/assets/css/gallery.css',
+        array('aatf-expedition-base-layout'),
+        file_exists($gallery_css_path) ? (string) filemtime($gallery_css_path) : '1.0.0'
+    );
+}, 15);
 
 /* ── Hero Search Autocomplete AJAX ──────────────────────────────── */
 function aatf_trek_search_autocomplete() {
