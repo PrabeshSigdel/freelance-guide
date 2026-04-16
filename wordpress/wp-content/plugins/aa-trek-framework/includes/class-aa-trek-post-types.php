@@ -10,11 +10,12 @@ class AATF_Trek_Post_Types
 
     public static function register_thumbnail_support()
     {
-        add_theme_support('post-thumbnails', array('trek', 'destination', 'testimonial', 'gallery_album'));
+        add_theme_support('post-thumbnails', array('trek', 'destination', 'testimonial', 'gallery_album', 'team_member'));
         add_post_type_support('trek', 'thumbnail');
         add_post_type_support('destination', 'thumbnail');
         add_post_type_support('testimonial', 'thumbnail');
         add_post_type_support('gallery_album', 'thumbnail');
+        add_post_type_support('team_member', 'thumbnail');
     }
 
     public static function register_post_types()
@@ -26,6 +27,7 @@ class AATF_Trek_Post_Types
         self::register_faqs();
         self::register_bookings();
         self::register_gallery_albums();
+        self::register_team_members();
 
 
         if (is_admin()) {
@@ -257,6 +259,34 @@ class AATF_Trek_Post_Types
         ));
     }
 
+    private static function register_team_members()
+    {
+        register_post_type('team_member', array(
+            'labels' => array(
+                'name'          => 'Team Members',
+                'singular_name' => 'Team Member',
+                'menu_name'     => 'Our Team',
+                'add_new'       => 'Add New',
+                'add_new_item'  => 'Add New Member',
+                'edit_item'     => 'Edit Member',
+                'new_item'      => 'New Member',
+                'view_item'     => 'View Member',
+                'all_items'     => 'All Members',
+                'search_items'  => 'Search Members',
+                'not_found'     => 'No members found',
+            ),
+            'public'          => true,
+            'has_archive'     => false,
+            'rewrite'         => array('slug' => 'team-member'),
+            'menu_icon'       => 'dashicons-groups',
+            'show_in_menu'    => 'aatf-framework',
+            'capability_type' => 'post',
+            'map_meta_cap'    => true,
+            'supports'        => array('title', 'revisions'),
+            'show_in_rest'    => true,
+        ));
+    }
+
 
     private static function register_admin_enhancements()
     {
@@ -278,6 +308,10 @@ class AATF_Trek_Post_Types
         add_action('manage_trek_booking_posts_custom_column', array(__CLASS__, 'render_trek_booking_columns'), 10, 2);
         add_action('add_meta_boxes_trek_booking', array(__CLASS__, 'add_trek_booking_meta_box'));
         add_action('save_post_trek_booking', array(__CLASS__, 'save_trek_booking_meta_box'));
+
+        // Team Admin Enhancements
+        add_action('add_meta_boxes_team_member', array(__CLASS__, 'add_team_member_meta_box'));
+        add_action('save_post_team_member', array(__CLASS__, 'save_team_member_meta_box'));
     }
 
     public static function trek_booking_columns($columns)
@@ -395,6 +429,130 @@ class AATF_Trek_Post_Types
             }
         }
     }
+
+    public static function add_team_member_meta_box()
+    {
+        add_meta_box(
+            'aatf_team_member_details',
+            'Team Member Details',
+            array(__CLASS__, 'render_team_member_meta_box'),
+            'team_member',
+            'normal',
+            'high'
+        );
+    }
+
+    public static function render_team_member_meta_box($post)
+    {
+        wp_nonce_field('aatf_team_member_nonce_action', 'aatf_team_member_nonce');
+
+        $position = get_post_meta($post->ID, 'team_position', true);
+        $experience = get_post_meta($post->ID, 'team_experience', true);
+        $languages = get_post_meta($post->ID, 'team_languages', true);
+        $bio = get_post_meta($post->ID, 'team_bio', true);
+        $image_id = get_post_meta($post->ID, 'team_member_image_id', true);
+        $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'medium') : '';
+
+        echo '<table class="form-table"><tbody>';
+        
+        echo '<tr>';
+        echo '<th scope="row"><label>Member Photo</label></th>';
+        echo '<td>';
+        echo '<div style="margin-bottom: 10px;">';
+        if ($image_url) {
+            echo '<img id="aatf_team_image_preview" src="' . esc_url($image_url) . '" style="max-width:200px;max-height:100px;border-radius:6px;border:1px solid #ddd;">';
+        } else {
+            echo '<img id="aatf_team_image_preview" src="" style="max-width:200px;max-height:100px;display:none;border-radius:6px;border:1px solid #ddd;">';
+        }
+        echo '</div>';
+        echo '<input type="hidden" id="team_member_image_id" name="team_member_image_id" value="' . esc_attr($image_id) . '">';
+        echo '<button type="button" id="aatf_team_image_select" class="button">Select Photo</button> ';
+        echo '<button type="button" id="aatf_team_image_remove" class="button button-link-delete"' . ($image_id ? '' : ' style="display:none"') . '>Remove Photo</button>';
+        echo '</td>';
+        echo '</tr>';
+
+        echo '<tr>';
+        echo '<th scope="row"><label for="team_position">Position / Role</label></th>';
+        echo '<td><input type="text" id="team_position" name="team_position" value="' . esc_attr($position) . '" class="regular-text" placeholder="e.g. Senior Guide" /></td>';
+        echo '</tr>';
+
+        echo '<tr>';
+        echo '<th scope="row"><label for="team_experience">Experience</label></th>';
+        echo '<td><input type="text" id="team_experience" name="team_experience" value="' . esc_attr($experience) . '" class="regular-text" placeholder="e.g. 10 Years" /></td>';
+        echo '</tr>';
+
+        echo '<tr>';
+        echo '<th scope="row"><label for="team_languages">Languages</label></th>';
+        echo '<td><input type="text" id="team_languages" name="team_languages" value="' . esc_attr($languages) . '" class="regular-text" placeholder="e.g. English, Nepali" /></td>';
+        echo '</tr>';
+
+        echo '<tr>';
+        echo '<th scope="row"><label for="team_bio">Short Biography</label></th>';
+        echo '<td><textarea id="team_bio" name="team_bio" class="widefat" rows="4" placeholder="Brief description of the member...">' . esc_textarea($bio) . '</textarea></td>';
+        echo '</tr>';
+
+        echo '</tbody></table>';
+
+        ?>
+        <script>
+        (function($){
+            $(function(){
+                var frame;
+                $('#aatf_team_image_select').on('click', function(e){
+                    e.preventDefault();
+                    if (frame) { frame.open(); return; }
+                    frame = wp.media({ title: 'Select Member Photo', button: { text: 'Use this photo' }, multiple: false });
+                    frame.on('select', function(){
+                        var att = frame.state().get('selection').first().toJSON();
+                        $('#team_member_image_id').val(att.id);
+                        var src = (att.sizes && att.sizes.medium) ? att.sizes.medium.url : att.url;
+                        $('#aatf_team_image_preview').attr('src', src).show();
+                        $('#aatf_team_image_remove').show();
+                    });
+                    frame.open();
+                });
+                $('#aatf_team_image_remove').on('click', function(){
+                    $('#team_member_image_id').val('');
+                    $('#aatf_team_image_preview').attr('src','').hide();
+                    $(this).hide();
+                });
+            });
+        }(jQuery));
+        </script>
+        <?php
+    }
+
+    public static function save_team_member_meta_box($post_id)
+    {
+        if (!isset($_POST['aatf_team_member_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aatf_team_member_nonce'])), 'aatf_team_member_nonce_action')) {
+            return;
+        }
+
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        if (isset($_POST['team_position'])) {
+            update_post_meta($post_id, 'team_position', sanitize_text_field(wp_unslash($_POST['team_position'])));
+        }
+        if (isset($_POST['team_experience'])) {
+            update_post_meta($post_id, 'team_experience', sanitize_text_field(wp_unslash($_POST['team_experience'])));
+        }
+        if (isset($_POST['team_languages'])) {
+            update_post_meta($post_id, 'team_languages', sanitize_text_field(wp_unslash($_POST['team_languages'])));
+        }
+        if (isset($_POST['team_bio'])) {
+            update_post_meta($post_id, 'team_bio', wp_kses_post(wp_unslash($_POST['team_bio'])));
+        }
+        if (isset($_POST['team_member_image_id'])) {
+            update_post_meta($post_id, 'team_member_image_id', sanitize_text_field(wp_unslash($_POST['team_member_image_id'])));
+        }
+    }
+
 
     public static function add_trek_featured_image_meta_box($post)
     {

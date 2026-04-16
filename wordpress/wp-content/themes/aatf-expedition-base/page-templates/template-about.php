@@ -109,7 +109,6 @@ if (empty($story_content)) {
                 <div class="order-2 lg:order-1">
                     <div class="relative inline-block mb-8">
                         <h2 class="text-3xl lg:text-4xl font-extrabold text-[var(--brand-dark)] pr-10"><?php echo esc_html($story_title); ?></h2>
-                        <div class="absolute bottom-0 left-0 w-16 h-1 bg-[var(--brand-orange)] rounded-full"></div>
                     </div>
                     
                     <div class="space-y-6 text-lg leading-relaxed text-[var(--brand-gray)]">

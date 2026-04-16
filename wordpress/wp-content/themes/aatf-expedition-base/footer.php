@@ -176,7 +176,7 @@ if ($subscription_status === 'success') {
 <footer class="aatf-modern-footer relative overflow-hidden" style="background-color: var(--brand-dark);">
     <?php if ($footer_overlay_image !== '') : ?>
         <div
-            class="aatf-modern-footer__overlay absolute inset-0 opacity-10 bg-cover bg-center bg-no-repeat pointer-events-none"
+            class="aatf-modern-footer__overlay absolute inset-0 opacity-10 bg-cover bg-top bg-no-repeat pointer-events-none"
             style="background-image: url('<?php echo esc_url($footer_overlay_image); ?>');"></div>
     <?php endif; ?>
 

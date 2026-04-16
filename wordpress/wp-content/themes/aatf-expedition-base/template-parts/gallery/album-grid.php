@@ -21,7 +21,7 @@ $terms         = isset($terms)         ? $terms         : array();
 $all_albums    = isset($all_albums)    ? $all_albums    : array();
 
 $hero_style = $hero_bg_url
-    ? 'background-image: url(' . esc_url($hero_bg_url) . '); background-size: cover; background-position: center;'
+    ? 'background-image: url(' . esc_url($hero_bg_url) . '); background-size: cover; background-position: top;'
     : '';
 ?>
 
