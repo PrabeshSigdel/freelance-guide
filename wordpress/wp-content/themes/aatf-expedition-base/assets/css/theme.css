@@ -127,7 +127,7 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     padding: 0.3rem 0;
 }
 
-.aatf-site-header__menu > li.menu-item-has-children > a::after {
+.aatf-site-header__menu>li.menu-item-has-children>a::after {
     content: "▾";
     display: inline-block;
     margin-left: 0.35rem;
@@ -178,9 +178,9 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     white-space: nowrap;
 }
 
-.aatf-site-header__menu li:hover > .sub-menu,
-.aatf-site-header__menu li:focus-within > .sub-menu,
-.aatf-site-header__menu li.is-open > .sub-menu {
+.aatf-site-header__menu li:hover>.sub-menu,
+.aatf-site-header__menu li:focus-within>.sub-menu,
+.aatf-site-header__menu li.is-open>.sub-menu {
     display: block;
 }
 
@@ -263,7 +263,7 @@ body.aatf-section-nav-takeover .aatf-main-nav {
 }
 
 /* Mega menu items use custom destination panel, not default WP submenu. */
-.menu-item-mega > .sub-menu {
+.menu-item-mega>.sub-menu {
     display: none !important;
 }
 
@@ -281,9 +281,9 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     z-index: 70;
 }
 
-.menu-item-mega:hover > .aatf-mega-menu,
-.menu-item-mega:focus-within > .aatf-mega-menu,
-.menu-item-mega.is-open > .aatf-mega-menu {
+.menu-item-mega:hover>.aatf-mega-menu,
+.menu-item-mega:focus-within>.aatf-mega-menu,
+.menu-item-mega.is-open>.aatf-mega-menu {
     display: block;
 }
 
@@ -350,12 +350,10 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(6, 52, 42, 0.88) 0%,
-        rgba(11, 71, 58, 0.72) 45%,
-        rgba(6, 52, 42, 0.9) 100%
-    );
+    background: linear-gradient(180deg,
+            rgba(6, 52, 42, 0.88) 0%,
+            rgba(11, 71, 58, 0.72) 45%,
+            rgba(6, 52, 42, 0.9) 100%);
 }
 
 .site-hero--home .site-hero__media {
@@ -498,12 +496,10 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(6, 52, 42, 0.86) 0%,
-        rgba(11, 71, 58, 0.78) 45%,
-        rgba(6, 52, 42, 0.86) 100%
-    );
+    background: linear-gradient(180deg,
+            rgba(6, 52, 42, 0.86) 0%,
+            rgba(11, 71, 58, 0.78) 45%,
+            rgba(6, 52, 42, 0.86) 100%);
 }
 
 .aatf-exclusive-activities__inner {
@@ -1173,12 +1169,12 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     color: var(--brand-gray);
 }
 
-.aatf-single-trek__overview-content > *:first-child,
+.aatf-single-trek__overview-content>*:first-child,
 .aatf-single-trek__overview-summary:first-child {
     margin-top: 0;
 }
 
-.aatf-single-trek__overview-content > *:last-child,
+.aatf-single-trek__overview-content>*:last-child,
 .aatf-single-trek__overview-summary:last-child {
     margin-bottom: 0;
 }
@@ -1379,7 +1375,7 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     padding: 1.25rem 1.5rem;
 }
 
-.aatf-faq__group + .aatf-faq__group {
+.aatf-faq__group+.aatf-faq__group {
     border-top: 1px solid rgba(19, 36, 60, 0.08);
 }
 
@@ -1420,7 +1416,7 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     overflow: hidden;
 }
 
-.aatf-faq__item + .aatf-faq__item {
+.aatf-faq__item+.aatf-faq__item {
     margin-top: 0.85rem;
 }
 
@@ -1477,11 +1473,11 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     line-height: 1.75;
 }
 
-.aatf-faq__answer > *:first-child {
+.aatf-faq__answer>*:first-child {
     margin-top: 0;
 }
 
-.aatf-faq__answer > *:last-child {
+.aatf-faq__answer>*:last-child {
     margin-bottom: 0;
 }
 
@@ -1677,12 +1673,12 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
         display: block;
     }
 
-    .aatf-site-header__menu > li {
+    .aatf-site-header__menu>li {
         border-bottom: 1px solid var(--aatf-color-line, #d8e0ea);
         padding: 0.45rem 0;
     }
 
-    .aatf-site-header__menu > li:last-child {
+    .aatf-site-header__menu>li:last-child {
         border-bottom: 0;
     }
 
@@ -1705,11 +1701,11 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
         display: none;
     }
 
-    .aatf-site-header__menu li.is-open > .sub-menu {
+    .aatf-site-header__menu li.is-open>.sub-menu {
         display: block;
     }
 
-    .menu-item-mega > .sub-menu {
+    .menu-item-mega>.sub-menu {
         display: none !important;
     }
 
@@ -1807,12 +1803,12 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
         display: block;
     }
 
-    .aatf-site-header__menu > li {
+    .aatf-site-header__menu>li {
         border-bottom: 1px solid var(--aatf-color-line, #d8e0ea);
         padding: 0.45rem 0;
     }
 
-    .aatf-site-header__menu > li:last-child {
+    .aatf-site-header__menu>li:last-child {
         border-bottom: 0;
     }
 
@@ -1835,11 +1831,11 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
         display: none;
     }
 
-    .aatf-site-header__menu li.is-open > .sub-menu {
+    .aatf-site-header__menu li.is-open>.sub-menu {
         display: block;
     }
 
-    .menu-item-mega > .sub-menu {
+    .menu-item-mega>.sub-menu {
         display: none !important;
     }
 
@@ -2075,172 +2071,210 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     padding-top: 0.18rem;
 }
 
-/* ── Includes / Excludes Cards ────────────────────────────── */
-.aatf-includes-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-}
-
-.aatf-includes-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    overflow: hidden;
+/* ── Editorial Overview ───────────────────────────────────── */
+.aatf-single-trek__overview-editorial {
+    padding: 2.5rem;
     background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
-.aatf-includes-card__header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1rem;
-    font-size: 0.88rem;
-    font-weight: 600;
+.aatf-single-trek__editorial-content {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: #374151;
+    font-weight: 400;
 }
 
-.aatf-includes-card__header--included {
-    background: #f0fdf4;
-    color: #15803d;
-    border-bottom: 1px solid #e5e7eb;
+.aatf-single-trek__editorial-content p {
+    margin-bottom: 1.5rem;
 }
 
-.aatf-includes-card__header--excluded {
-    background: #fef2f2;
-    color: #b91c1c;
-    border-bottom: 1px solid #e5e7eb;
+.aatf-single-trek__editorial-content p:last-child {
+    margin-bottom: 0;
 }
 
-.aatf-includes-card__count {
-    margin-left: auto;
-    width: 26px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    font-size: 0.75rem;
+.aatf-single-trek__editorial-content p:first-child::first-letter {
+    float: left;
+    font-size: 4.5rem;
+    line-height: 0.8;
+    margin-right: 0.75rem;
+    margin-top: 0.35rem;
+    color: var(--brand-orange, #e8820c);
     font-weight: 800;
+    font-family: Georgia, serif;
 }
 
-.aatf-includes-card__header--included .aatf-includes-card__count {
-    background: #dcfce7;
-    color: #15803d;
+.aatf-single-trek__editorial-highlight {
+    margin-top: 2rem;
+    padding: 2rem 2.5rem;
+    background: linear-gradient(135deg, rgba(232,130,12,0.05), rgba(232,130,12,0.01));
+    border-left: 4px solid var(--brand-orange, #e8820c);
+    border-radius: 0 12px 12px 0;
+    position: relative;
 }
 
-.aatf-includes-card__header--excluded .aatf-includes-card__count {
-    background: #fee2e2;
-    color: #b91c1c;
+.aatf-editorial-quote-icon {
+    width: 40px;
+    height: 40px;
+    color: rgba(232,130,12,0.15);
+    position: absolute;
+    top: -15px;
+    left: 20px;
 }
 
-.aatf-includes-card__list {
-    list-style: none;
-    margin: 0;
-    padding: 0.6rem 0;
-}
-
-.aatf-includes-card__item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.65rem;
-    padding: 0.5rem 1.1rem;
-    font-size: 0.86rem;
-    line-height: 1.55;
+.aatf-single-trek__overview-summary {
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-style: italic;
     color: var(--brand-dark, #13243c);
-    transition: background-color 0.15s ease;
+    line-height: 1.6;
+    margin: 0;
 }
 
-.aatf-includes-card__item:hover {
-    background: rgba(19, 36, 60, 0.02);
-}
-
-.aatf-includes-card__item svg {
-    margin-top: 0.2rem;
-    color: #10b981;
-}
-
-.aatf-includes-card__item--excluded svg {
-    color: #ef4444;
-}
-
-.aatf-includes-card__item--excluded {
-    color: #6b7280;
-}
-
-/* ── Equipment Cards ────────────────────────────────────────── */
-.aatf-equipment-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-}
-
-.aatf-equipment-card {
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: #ffffff;
+/* ── Split Pane Includes ───────────────────────────────────── */
+.aatf-split-pane-includes {
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 768px) {
+    .aatf-split-pane-includes {
+        flex-direction: row;
+    }
+}
+
+.aatf-split-pane__half {
+    flex: 1;
+    padding: 2.5rem;
     display: flex;
     flex-direction: column;
 }
 
-.aatf-equipment-card__head {
+.aatf-split-pane__half--dark {
+    background: var(--brand-dark, #13243c);
+    color: #ffffff;
+}
+
+.aatf-split-pane__half--light {
+    background: #ffffff;
+    color: var(--brand-dark, #13243c);
+}
+
+.aatf-split-pane__header {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1.25rem 1.5rem;
-    background: #fdfdfd;
-    border-bottom: 1px solid rgba(19, 36, 60, 0.06);
+    margin-bottom: 2rem;
 }
 
-.aatf-equipment-card__media {
-    width: 50px;
-    height: 50px;
-    flex: 0 0 50px;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #f3f4f6;
-    border: 1px solid rgba(19, 36, 60, 0.06);
+.aatf-split-pane__title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.aatf-split-pane__badge {
+    margin-left: auto;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 50%;
+    font-size: 0.95rem;
+    font-weight: 700;
 }
 
-.aatf-equipment-card__image {
-    display: block;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+.aatf-split-pane__badge--green {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
 }
 
-.aatf-equipment-card__head-text {
-    flex: 1 1 auto;
-    min-width: 0;
+.aatf-split-pane__badge--red {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
 }
 
-.aatf-equipment-card__title {
-    margin: 0 0 0.35rem 0;
-    font-size: 1.05rem;
+.aatf-split-pane__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.aatf-split-pane__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.aatf-split-pane__half--dark .aatf-split-pane__item {
+    color: #e5e7eb;
+}
+
+.aatf-split-pane__icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    margin-top: 0.15rem;
+}
+
+.aatf-split-pane__icon--check {
+    color: #10b981;
+}
+
+.aatf-split-pane__icon--cross {
+    color: #ef4444;
+}
+
+/* ── Minimalist Equipment List ───────────────────────────────── */
+.aatf-equipment-modern-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.aatf-equipment-category {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.aatf-equipment-category__title {
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--brand-dark, #13243c);
-    line-height: 1.2;
-}
-
-.aatf-equipment-card__badge {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    padding: 0.15rem 0.6rem;
-    border-radius: 999px;
-    background: rgba(19, 36, 60, 0.06);
-    color: var(--brand-gray, #4b5563);
-    font-size: 0.75rem;
+    gap: 0.75rem;
+    margin: 0;
+    border-bottom: 2px solid rgba(19, 36, 60, 0.05);
+    padding-bottom: 0.75rem;
+}
+
+.aatf-equipment-category__count {
+    font-size: 0.85rem;
     font-weight: 600;
+    color: var(--brand-orange, #e8820c);
+    background: rgba(232, 130, 12, 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    margin-left: 0.5rem;
 }
 
-.aatf-equipment-card__body {
-    padding: 1.25rem 1.5rem 1.5rem 1.5rem;
-    flex-grow: 1;
-}
-
-.aatf-equipment-card__list {
+.aatf-equipment-list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -2249,31 +2283,26 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     gap: 0.85rem;
 }
 
-.aatf-equipment-card__item {
-    display: grid;
-    grid-template-columns: 20px minmax(0, 1fr);
-    align-items: start;
+.aatf-equipment-list__item {
+    display: flex;
+    align-items: flex-start;
     gap: 0.75rem;
-    font-size: 0.92rem;
+    font-size: 1.05rem;
     line-height: 1.5;
-    color: var(--brand-gray, #4a5568);
+    color: #4a5568;
 }
 
-.aatf-equipment-card__item span:last-child {
-    margin-top: 0.1rem;
-}
-
-.aatf-equipment-card__bullet {
+.aatf-equipment-list__bullet {
     width: 20px;
     height: 20px;
-    margin-top: 0.15rem;
+    margin-top: 0.2rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex: 0 0 20px;
 }
 
-.aatf-equipment-card__bullet::before {
+.aatf-equipment-list__bullet::before {
     content: "";
     width: 6px;
     height: 6px;
@@ -2281,30 +2310,9 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     border-radius: 50%;
 }
 
-/* ── Enhanced Overview ────────────────────────────────────── */
-.aatf-single-trek__overview {
-    padding: 1.1rem 1.25rem;
-    border-left: 3px solid #d1d5db;
-    background: #fafafa;
-    border-radius: 0 6px 6px 0;
-    position: relative;
-}
-
-.aatf-single-trek__overview::before {
-    display: none;
-}
-
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 768px) {
     .aatf-highlights-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .aatf-includes-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .aatf-equipment-grid {
         grid-template-columns: 1fr;
     }
 
