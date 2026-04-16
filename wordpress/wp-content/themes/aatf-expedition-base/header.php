@@ -155,7 +155,7 @@
             </div>
 
             <!-- Nav Links -->
-            <div class="flex-1 min-w-0 flex items-center justify-center gap-7 text-sm font-medium text-[var(--brand-gray)]">
+            <div class="flex-1 min-w-0 flex items-center justify-center gap-7 text-md font-medium text-[var(--brand-gray)]">
                 <?php
                 if (has_nav_menu('primary')) {
                     wp_nav_menu(array(

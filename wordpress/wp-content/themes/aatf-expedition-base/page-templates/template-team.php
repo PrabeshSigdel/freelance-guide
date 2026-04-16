@@ -22,31 +22,66 @@ $team_members = get_posts(array(
     'order' => 'ASC',
 ));
 
+$hero_description = (string) get_post_meta($post_id, 'aatf_team_hero_description', true);
+$hero_image_id = (int)    get_post_meta($post_id, 'aatf_team_hero_image_id', true);
+$hero_bg_url   = $hero_image_id > 0 ? (string) wp_get_attachment_image_url($hero_image_id, 'full') : '';
+
+$intro_image_id = (int)    get_post_meta($post_id, 'aatf_team_intro_image_id', true);
+$intro_bg_url   = $intro_image_id > 0 ? (string) wp_get_attachment_image_url($intro_image_id, 'large') : '';
+
+$hero_style = $hero_bg_url 
+    ? 'background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(' . esc_url($hero_bg_url) . '); background-size: cover; background-position: center;' 
+    : '';
+$text_color_class = $hero_bg_url ? 'text-white' : 'text-gray-900';
+$sub_color_class  = $hero_bg_url ? 'text-orange-400' : 'text-[var(--brand-orange,#e8820c)]';
 ?>
 
-<div class="site-main aatf-team-page">
-
-    <!-- Hero Section using Tailwind -->
-    <section class="team-hero bg-gray-50 py-16 md:py-24 border-b border-gray-200">
-        <div class="container mx-auto px-4 max-w-5xl text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 drop-shadow-sm tracking-tight">
-                <?php echo esc_html(get_the_title($post_id)); ?>
-            </h1>
-
-            <div class="team-hero-content text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                <?php
-                // Fetch post content and apply proper paragraph formatting
-                $content = get_post_field('post_content', $post_id);
-                echo wp_kses_post(wpautop($content));
-                ?>
+<div class="site-main aatf-team-page bg-white">
+    
+    <!-- Header & Introduction Section -->
+    <section class="team-header-intro py-16 md:py-24">
+        <div class="container mx-auto px-4 max-w-7xl">
+            
+            <!-- Title Area -->
+            <div class="text-center mb-16">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                    <?php echo esc_html(get_the_title($post_id)); ?>
+                </h1>
             </div>
+
+            <!-- Description & Intro Image -->
+            <?php if (!empty($hero_description) || !empty($intro_bg_url)) : ?>
+                <div class="flex flex-col md:flex-row items-center gap-12 md:gap-16">
+                    <?php if ($intro_bg_url) : ?>
+                        <div class="w-full md:w-1/2">
+                            <div class="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]">
+                                <img src="<?php echo esc_url($intro_bg_url); ?>" alt="Our Team Introduction" class="object-cover w-full h-full transform hover:scale-105 transition-transform duration-700">
+                                <div class="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-3xl"></div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <div class="w-full <?php echo $intro_bg_url ? 'md:w-1/2' : 'max-w-none text-center'; ?>">
+                        <div class="prose prose-lg md:prose-xl max-w-none text-gray-600 leading-relaxed font-light italic">
+                            <?php echo wp_kses_post(wpautop($hero_description)); ?>
+                        </div>
+                        
+                        <!-- Simple visual divider if centered -->
+                        <?php if (!$intro_bg_url) : ?>
+                            <div class="mt-12 flex justify-center">
+                                <div class="w-24 h-1 bg-[var(--brand-orange,#e8820c)] rounded-full opacity-30"></div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </section>
 
     <!-- Team Grid Section -->
-    <section class="team-grid-section py-16 md:py-24 bg-white">
+    <section class="team-grid-section pb-24 md:pb-32 bg-white">
         <div class="container mx-auto px-4 max-w-7xl">
-            <?php if (empty($team_members)): ?>
+            <?php if (empty($team_members)) : ?>
                 <div class="text-center text-gray-500 py-12 text-lg">
                     <p>No team members found. Start adding them in the admin panel!</p>
                 </div>

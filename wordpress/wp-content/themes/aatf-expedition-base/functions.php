@@ -1546,6 +1546,137 @@ add_action('save_post_page', function ($post_id) {
     }
 }, 20);
 
+/* ── Team Page Hero Meta Box ──────────────────────────────────── */
+add_action('add_meta_boxes_page', function ($post) {
+    if (!$post instanceof WP_Post) {
+        return;
+    }
+    if ((string) get_page_template_slug($post->ID) !== 'page-templates/template-team.php') {
+        return;
+    }
+    add_meta_box(
+        'aatf_team_page_hero_metabox',
+        esc_html__('Team Page Header Details', 'aatf-expedition-base'),
+        function ($post) {
+            wp_nonce_field('aatf_team_page_hero_save', 'aatf_team_page_hero_nonce');
+
+            $hero_desc     = (string) get_post_meta($post->ID, 'aatf_team_hero_description', true);
+            $hero_image_id = (int)    get_post_meta($post->ID, 'aatf_team_hero_image_id', true);
+            $hero_img_url  = $hero_image_id > 0 ? wp_get_attachment_image_url($hero_image_id, 'large') : '';
+
+            echo '<p><label for="aatf_team_hero_description"><strong>' . esc_html__('Header Description', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<p><textarea class="widefat" rows="4" id="aatf_team_hero_description" name="aatf_team_hero_description" placeholder="' . esc_attr__('Our team consists of highly experienced professionals...', 'aatf-expedition-base') . '">' . esc_textarea($hero_desc) . '</textarea></p>';
+
+            $intro_image_id = (int)    get_post_meta($post->ID, 'aatf_team_intro_image_id', true);
+            $intro_img_url  = $intro_image_id > 0 ? wp_get_attachment_image_url($intro_image_id, 'medium_large') : '';
+
+            echo '<p><label><strong>' . esc_html__('Introduction Image (beside text)', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">';
+            if ($intro_img_url) {
+                echo '<img id="aatf_team_intro_preview" src="' . esc_url($intro_img_url) . '" style="max-width:200px;max-height:100px;border-radius:6px;border:1px solid #ddd;">';
+            } else {
+                echo '<img id="aatf_team_intro_preview" src="" style="max-width:200px;max-height:100px;display:none;border-radius:6px;border:1px solid #ddd;">';
+            }
+            echo '</div>';
+            echo '<input type="hidden" id="aatf_team_intro_image_id" name="aatf_team_intro_image_id" value="' . esc_attr((string) $intro_image_id) . '">';
+            echo '<p>';
+            echo '<button type="button" id="aatf_team_intro_select" class="button">' . esc_html__('Select Image', 'aatf-expedition-base') . '</button> ';
+            echo '<button type="button" id="aatf_team_intro_remove" class="button button-link-delete"' . ($intro_image_id < 1 ? ' style="display:none"' : '') . '>' . esc_html__('Remove Image', 'aatf-expedition-base') . '</button>';
+            echo '</p>';
+
+            echo '<p><label><strong>' . esc_html__('Hero Background Image', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">';
+            if ($hero_img_url) {
+                echo '<img id="aatf_team_hero_preview" src="' . esc_url($hero_img_url) . '" style="max-width:200px;max-height:100px;border-radius:6px;border:1px solid #ddd;">';
+            } else {
+                echo '<img id="aatf_team_hero_preview" src="" style="max-width:200px;max-height:100px;display:none;border-radius:6px;border:1px solid #ddd;">';
+            }
+            echo '</div>';
+            echo '<input type="hidden" id="aatf_team_hero_image_id" name="aatf_team_hero_image_id" value="' . esc_attr((string) $hero_image_id) . '">';
+            echo '<p>';
+            echo '<button type="button" id="aatf_team_hero_select" class="button">' . esc_html__('Select Image', 'aatf-expedition-base') . '</button> ';
+            echo '<button type="button" id="aatf_team_hero_remove" class="button button-link-delete"' . ($hero_image_id < 1 ? ' style="display:none"' : '') . '>' . esc_html__('Remove Image', 'aatf-expedition-base') . '</button>';
+            echo '</p>';
+            ?>
+            <script>
+            (function($){
+                $(function(){
+                    var thFrame;
+                    $('#aatf_team_hero_select').on('click', function(e){
+                        e.preventDefault();
+                        if (thFrame) { thFrame.open(); return; }
+                        thFrame = wp.media({ title: '<?php echo esc_js(__('Select Header Image', 'aatf-expedition-base')); ?>', button: { text: '<?php echo esc_js(__('Use this image', 'aatf-expedition-base')); ?>' }, multiple: false });
+                        thFrame.on('select', function(){
+                            var att = thFrame.state().get('selection').first().toJSON();
+                            $('#aatf_team_hero_image_id').val(att.id);
+                            var src = (att.sizes && att.sizes.large) ? att.sizes.large.url : att.url;
+                            $('#aatf_team_hero_preview').attr('src', src).show();
+                            $('#aatf_team_hero_remove').show();
+                        });
+                        thFrame.open();
+                    });
+                    $('#aatf_team_hero_remove').on('click', function(){
+                        $('#aatf_team_hero_image_id').val('0');
+                        $('#aatf_team_hero_preview').attr('src','').hide();
+                        $(this).hide();
+                    });
+
+                    var tiFrame;
+                    $('#aatf_team_intro_select').on('click', function(e){
+                        e.preventDefault();
+                        if (tiFrame) { tiFrame.open(); return; }
+                        tiFrame = wp.media({ title: '<?php echo esc_js(__('Select Intro Image', 'aatf-expedition-base')); ?>', button: { text: '<?php echo esc_js(__('Use this image', 'aatf-expedition-base')); ?>' }, multiple: false });
+                        tiFrame.on('select', function(){
+                            var att = tiFrame.state().get('selection').first().toJSON();
+                            $('#aatf_team_intro_image_id').val(att.id);
+                            var src = (att.sizes && att.sizes.medium_large) ? att.sizes.medium_large.url : att.url;
+                            $('#aatf_team_intro_preview').attr('src', src).show();
+                            $('#aatf_team_intro_remove').show();
+                        });
+                        tiFrame.open();
+                    });
+                    $('#aatf_team_intro_remove').on('click', function(){
+                        $('#aatf_team_intro_image_id').val('0');
+                        $('#aatf_team_intro_preview').attr('src','').hide();
+                        $(this).hide();
+                    });
+                });
+            }(jQuery));
+            </script>
+            <?php
+        },
+        'page',
+        'normal',
+        'high'
+    );
+});
+
+add_action('save_post_page', function ($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) { return; }
+    if (wp_is_post_revision($post_id) || !current_user_can('edit_post', $post_id)) { return; }
+    if (!isset($_POST['aatf_team_page_hero_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aatf_team_page_hero_nonce'])), 'aatf_team_page_hero_save')) { return; }
+
+    if (isset($_POST['aatf_team_hero_description'])) {
+        update_post_meta($post_id, 'aatf_team_hero_description', sanitize_textarea_field(wp_unslash($_POST['aatf_team_hero_description'])));
+    }
+    if (isset($_POST['aatf_team_hero_image_id'])) {
+        $img_id = absint(wp_unslash($_POST['aatf_team_hero_image_id']));
+        if ($img_id > 0) {
+            update_post_meta($post_id, 'aatf_team_hero_image_id', $img_id);
+        } else {
+            delete_post_meta($post_id, 'aatf_team_hero_image_id');
+        }
+    }
+    if (isset($_POST['aatf_team_intro_image_id'])) {
+        $intro_img_id = absint(wp_unslash($_POST['aatf_team_intro_image_id']));
+        if ($intro_img_id > 0) {
+            update_post_meta($post_id, 'aatf_team_intro_image_id', $intro_img_id);
+        } else {
+            delete_post_meta($post_id, 'aatf_team_intro_image_id');
+        }
+    }
+}, 20);
+
 /* ── Conditionally enqueue gallery stylesheet ───────────────────── */
 add_action('wp_enqueue_scripts', function () {
     if (!is_page()) { return; }
