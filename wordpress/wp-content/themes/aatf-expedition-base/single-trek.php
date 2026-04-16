@@ -887,9 +887,7 @@ if (have_posts()) {
                                             <ul class="aatf-equipment-card__list">
                                                 <?php foreach ($section['items'] as $item) : ?>
                                                     <li class="aatf-equipment-card__item">
-                                                        <span class="aatf-equipment-card__bullet" aria-hidden="true">
-                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-                                                        </span>
+                                                        <span class="aatf-equipment-card__bullet" aria-hidden="true"></span>
                                                         <span><?php echo esc_html($item); ?></span>
                                                     </li>
                                                 <?php endforeach; ?>
@@ -2031,3 +2029,4 @@ if (have_posts()) {
 }
 
 get_footer();
+

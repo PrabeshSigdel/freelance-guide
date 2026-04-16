@@ -21,6 +21,7 @@ class AATF_Booking_Handler
         $date = isset($_POST['date']) ? sanitize_text_field(wp_unslash($_POST['date'])) : '';
         $travelers = isset($_POST['travelers']) ? absint(wp_unslash($_POST['travelers'])) : 1;
         $message = isset($_POST['message']) ? sanitize_textarea_field(wp_unslash($_POST['message'])) : '';
+        $payment_method = isset($_POST['payment_method']) ? sanitize_text_field(wp_unslash($_POST['payment_method'])) : '';
         $traveler_details = isset($_POST['travelers_details']) ? self::sanitize_traveler_details(wp_unslash($_POST['travelers_details'])) : array();
 
         if ($trek_id <= 0 || get_post_type($trek_id) !== 'trek') {
@@ -48,6 +49,10 @@ class AATF_Booking_Handler
 
         if ($date === '') {
             wp_send_json_error(array('message' => 'Please choose your departure date.'));
+        }
+
+        if ($payment_method !== 'cash' && $payment_method !== 'online') {
+            wp_send_json_error(array('message' => 'Please select a valid payment method.'));
         }
 
         if (count($traveler_details) !== $travelers) {
@@ -101,9 +106,10 @@ class AATF_Booking_Handler
         update_post_meta($booking_id, 'booking_price_per_person', $price_per_person);
         update_post_meta($booking_id, 'booking_total_price', $total_price);
         update_post_meta($booking_id, 'booking_price_source', $price_source);
+        update_post_meta($booking_id, 'booking_payment_method', $payment_method);
         update_post_meta($booking_id, 'booking_status', 'pending');
 
-        self::send_notifications($booking_id, $trek_id, $departure_id, $name, $email, $date, $travelers, $message, $pricing, $traveler_details);
+        self::send_notifications($booking_id, $trek_id, $departure_id, $name, $email, $date, $travelers, $message, $pricing, $traveler_details, $payment_method);
 
         $price_per_person_label = $price_per_person > 0
             ? 'USD ' . number_format_i18n($price_per_person, floor($price_per_person) === $price_per_person ? 0 : 2)
@@ -123,7 +129,7 @@ class AATF_Booking_Handler
         ));
     }
 
-    private static function send_notifications($booking_id, $trek_id, $departure_id, $name, $email, $date, $travelers, $message, $pricing, $traveler_details)
+    private static function send_notifications($booking_id, $trek_id, $departure_id, $name, $email, $date, $travelers, $message, $pricing, $traveler_details, $payment_method)
     {
         $admin_email = get_option('admin_email');
         $trek_title = get_the_title($trek_id);
@@ -155,7 +161,8 @@ class AATF_Booking_Handler
         $body .= "Name: $name\n";
         $body .= "Email: $email\n";
         $body .= "Date: $date\n";
-        $body .= "Travelers: $travelers\n\n";
+        $body .= "Travelers: $travelers\n";
+        $body .= "Payment Method: " . ucfirst($payment_method) . "\n\n";
 
         if (is_array($traveler_details) && !empty($traveler_details)) {
             $body .= "Traveler Details:\n";
@@ -223,6 +230,48 @@ class AATF_Booking_Handler
         $user_body = "Hi $name,\n\nThank you for your booking request for $trek_title. We have received your details and will get back to you shortly.\n\nBest regards,\nThe Trekking Team";
         
         wp_mail($email, $user_subject, $user_body);
+    }
+
+    public static function send_confirmation_email($booking_id)
+    {
+        $booking_id = (int) $booking_id;
+        $name = get_post_meta($booking_id, 'booking_name', true);
+        $email = get_post_meta($booking_id, 'booking_email', true);
+        $trek_id = get_post_meta($booking_id, 'booking_trek_id', true);
+        $date = get_post_meta($booking_id, 'booking_date', true);
+        $total_price = (float) get_post_meta($booking_id, 'booking_total_price', true);
+        $payment_method = get_post_meta($booking_id, 'booking_payment_method', true);
+
+        if (!$email || !is_email($email) || $payment_method !== 'cash') {
+            return false;
+        }
+
+        $trek_title = get_the_title($trek_id);
+        
+        $subject = sprintf('Booking Confirmed: %s', $trek_title);
+        $body = "Hi $name,\n\n";
+        $body .= "Great news! Your booking for $trek_title has been confirmed.\n\n";
+        $body .= "--- Booking Details ---\n";
+        $body .= "Trek: $trek_title\n";
+        $body .= "Departure Date: $date\n";
+        
+        if ($total_price > 0) {
+            $body .= "Total Amount Payable: USD " . number_format_i18n($total_price, floor($total_price) === $total_price ? 0 : 2) . "\n";
+        } else {
+            $body .= "Total Amount Payable: Price on request\n";
+        }
+        
+        $body .= "Payment Method: Cash / Bank Transfer\n\n";
+        
+        $body .= "--- Important Travel Details ---\n";
+        $body .= "Please plan to pay the remaining balance upon arrival at our office, or via the bank transfer details previously provided. ";
+        $body .= "Remember to bring your original passport, some passport-sized photos, and a copy of your travel insurance policy.\n\n";
+        
+        $body .= "If you have any questions, simply reply to this email.\n\n";
+        $body .= "We look forward to adventuring with you!\n\n";
+        $body .= "Best regards,\nThe Trekking Team";
+
+        return wp_mail($email, $subject, $body);
     }
 
     private static function calculate_booking_pricing($trek_id, $departure_id, $travelers)

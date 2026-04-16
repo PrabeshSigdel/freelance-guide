@@ -2271,12 +2271,14 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     align-items: center;
     justify-content: center;
     flex: 0 0 20px;
-    color: var(--brand-orange, #e8820c);
 }
 
-.aatf-equipment-card__bullet svg {
-    width: 18px;
-    height: 18px;
+.aatf-equipment-card__bullet::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background-color: var(--brand-orange, #e8820c);
+    border-radius: 50%;
 }
 
 /* ── Enhanced Overview ────────────────────────────────────── */

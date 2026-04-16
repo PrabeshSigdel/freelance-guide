@@ -311,21 +311,31 @@
 
     function toggleTravelerStep(form, isVisible) {
         var section = form.querySelector('[data-aatf-travelers-section]');
+        var paymentSection = form.querySelector('[data-aatf-payment-section]');
         var continueButton = form.querySelector('[data-aatf-continue-button]');
-        var footer = form.querySelector('.aatf-booking-form__footer');
+        var footer = form.querySelector('[data-aatf-submit-footer]');
 
-        if (!section) {
-            return;
+        if (section) {
+            section.hidden = !isVisible;
         }
-
-        section.hidden = !isVisible;
 
         if (continueButton) {
             continueButton.hidden = isVisible;
         }
 
+        if (paymentSection) {
+            paymentSection.hidden = true;
+        }
+
         if (footer) {
-            footer.hidden = !isVisible;
+            footer.hidden = true;
+        }
+
+        if (!isVisible) {
+            var radios = form.querySelectorAll('input[name="payment_method"]');
+            for (var i = 0; i < radios.length; i += 1) {
+                radios[i].checked = false;
+            }
         }
     }
 
@@ -475,6 +485,12 @@
             var submitButton = form.querySelector('button[type="submit"]');
             var continueButton = form.querySelector('[data-aatf-continue-button]');
             var backButton = form.querySelector('[data-aatf-back-button]');
+            var continueTravelersButton = form.querySelector('[data-aatf-continue-travelers-button]');
+            var backTravelersButton = form.querySelector('[data-aatf-back-travelers-button]');
+            var paymentSection = form.querySelector('[data-aatf-payment-section]');
+            var travelerSection = form.querySelector('[data-aatf-travelers-section]');
+            var submitFooter = form.querySelector('[data-aatf-submit-footer]');
+            var paymentRadios = form.querySelectorAll('[data-aatf-payment-radio]');
             var trekSelect = form.querySelector('select[name="trek_id"]');
             var departureSelect = form.querySelector('[data-aatf-departure-select]');
             var travelersInput = form.querySelector('input[name="travelers"]');
@@ -551,18 +567,82 @@
                 });
             }
 
+            if (continueTravelersButton) {
+                continueTravelersButton.addEventListener('click', function () {
+                    var namesValid = true;
+                    var nameInputs = form.querySelectorAll('input[name^="travelers_details["][name$="[full_name]"]');
+                    var firstInvalid = null;
+
+                    for (var i = 0; i < nameInputs.length; i += 1) {
+                        if (typeof nameInputs[i].reportValidity === 'function' && !nameInputs[i].reportValidity()) {
+                            namesValid = false;
+                            if (!firstInvalid) {
+                                firstInvalid = nameInputs[i];
+                            }
+                        }
+                    }
+
+                    var emailInput = form.querySelector('input[name="travelers_details[0][email]"]');
+                    if (emailInput && typeof emailInput.reportValidity === 'function' && !emailInput.reportValidity()) {
+                        namesValid = false;
+                        if (!firstInvalid) {
+                            firstInvalid = emailInput;
+                        }
+                    }
+
+                    if (!namesValid) {
+                        if (firstInvalid) {
+                            firstInvalid.focus();
+                        }
+                        return;
+                    }
+
+                    if (travelerSection) {
+                        travelerSection.hidden = true;
+                    }
+                    if (paymentSection) {
+                        paymentSection.hidden = false;
+                        paymentSection.focus();
+                    }
+                });
+            }
+
+            if (backTravelersButton) {
+                backTravelersButton.addEventListener('click', function () {
+                    if (paymentSection) {
+                        paymentSection.hidden = true;
+                    }
+                    if (submitFooter) {
+                        submitFooter.hidden = true;
+                    }
+                    if (travelerSection) {
+                        travelerSection.hidden = false;
+                    }
+                    if (continueTravelersButton) {
+                        continueTravelersButton.focus();
+                    }
+                });
+            }
+
+            Array.prototype.forEach.call(paymentRadios, function(radio) {
+                radio.addEventListener('change', function() {
+                    if (this.checked && submitFooter) {
+                        submitFooter.hidden = false;
+                    }
+                });
+            });
+
             refreshEstimate();
 
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
-                var travelerSection = form.querySelector('[data-aatf-travelers-section]');
 
                 if (!validateSetupStep(form)) {
                     toggleTravelerStep(form, false);
                     return;
                 }
 
-                if (travelerSection && travelerSection.hidden) {
+                if (travelerSection && travelerSection.hidden && paymentSection && paymentSection.hidden) {
                     renderTravelerForms(form, Number(travelersInput.value || 1));
                     toggleTravelerStep(form, true);
 
@@ -570,6 +650,12 @@
                     if (leadField) {
                         leadField.focus();
                     }
+                    return;
+                }
+
+                var paymentMethod = form.querySelector('input[name="payment_method"]:checked');
+                if (!paymentMethod || !paymentMethod.value) {
+                    setBookingStatus(statusNode, 'Please select a payment method to continue.', 'is-error');
                     return;
                 }
 

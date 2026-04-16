@@ -272,6 +272,128 @@ class AATF_Trek_Post_Types
         add_action('add_meta_boxes_trek', array(__CLASS__, 'add_trek_featured_image_meta_box'), 5);
         add_filter('redirect_post_location', array(__CLASS__, 'maybe_add_destination_parent_notice_flag'), 10, 2);
         add_action('admin_notices', array(__CLASS__, 'render_destination_parent_notice'));
+
+        // Booking Admin Enhancements
+        add_filter('manage_trek_booking_posts_columns', array(__CLASS__, 'trek_booking_columns'));
+        add_action('manage_trek_booking_posts_custom_column', array(__CLASS__, 'render_trek_booking_columns'), 10, 2);
+        add_action('add_meta_boxes_trek_booking', array(__CLASS__, 'add_trek_booking_meta_box'));
+        add_action('save_post_trek_booking', array(__CLASS__, 'save_trek_booking_meta_box'));
+    }
+
+    public static function trek_booking_columns($columns)
+    {
+        $new_columns = array();
+        $new_columns['cb'] = isset($columns['cb']) ? $columns['cb'] : '';
+        $new_columns['title'] = 'Booking Request';
+        $new_columns['booking_lead'] = 'Lead Name';
+        $new_columns['booking_trek'] = 'Trek';
+        $new_columns['booking_date'] = 'Departure Date';
+        $new_columns['booking_payment'] = 'Payment Method';
+        $new_columns['booking_status'] = 'Status';
+        $new_columns['date'] = isset($columns['date']) ? $columns['date'] : 'Date';
+        return $new_columns;
+    }
+
+    public static function render_trek_booking_columns($column, $post_id)
+    {
+        if ($column === 'booking_lead') {
+            $name = get_post_meta($post_id, 'booking_name', true);
+            echo esc_html($name ? $name : '-');
+        } elseif ($column === 'booking_trek') {
+            $trek_id = get_post_meta($post_id, 'booking_trek_id', true);
+            echo $trek_id ? esc_html(get_the_title($trek_id)) : '-';
+        } elseif ($column === 'booking_date') {
+            $date = get_post_meta($post_id, 'booking_date', true);
+            echo esc_html($date ? $date : '-');
+        } elseif ($column === 'booking_payment') {
+            $payment = get_post_meta($post_id, 'booking_payment_method', true);
+            echo esc_html($payment ? ucfirst($payment) : '-');
+        } elseif ($column === 'booking_status') {
+            $status = get_post_meta($post_id, 'booking_status', true);
+            if ($status === 'confirmed') {
+                echo '<span style="color: green; font-weight: bold;">Confirmed</span>';
+            } elseif ($status === 'cancelled') {
+                echo '<span style="color: red; font-weight: bold;">Cancelled</span>';
+            } else {
+                echo '<span style="color: orange; font-weight: bold;">Pending</span>';
+            }
+        }
+    }
+
+    public static function add_trek_booking_meta_box()
+    {
+        add_meta_box(
+            'aatf_trek_booking_details',
+            'Booking Details',
+            array(__CLASS__, 'render_trek_booking_meta_box'),
+            'trek_booking',
+            'normal',
+            'high'
+        );
+    }
+
+    public static function render_trek_booking_meta_box($post)
+    {
+        wp_nonce_field('aatf_trek_booking_nonce_action', 'aatf_trek_booking_nonce');
+        $status = get_post_meta($post->ID, 'booking_status', true);
+        $payment = get_post_meta($post->ID, 'booking_payment_method', true) ?: 'cash';
+        
+        $name = get_post_meta($post->ID, 'booking_name', true);
+        $email = get_post_meta($post->ID, 'booking_email', true);
+        $phone = get_post_meta($post->ID, 'booking_phone', true);
+        $total = get_post_meta($post->ID, 'booking_total_price', true);
+        $travelers = get_post_meta($post->ID, 'booking_travelers', true);
+        $trek_id = get_post_meta($post->ID, 'booking_trek_id', true);
+        $date = get_post_meta($post->ID, 'booking_date', true);
+        
+        echo '<div style="margin-bottom: 20px;">';
+        echo '<p><strong>Trek:</strong> ' . esc_html(get_the_title($trek_id)) . '</p>';
+        echo '<p><strong>Name:</strong> ' . esc_html($name) . '</p>';
+        echo '<p><strong>Email:</strong> <a href="mailto:' . esc_attr($email) . '">' . esc_html($email) . '</a></p>';
+        echo '<p><strong>Phone:</strong> ' . esc_html($phone) . '</p>';
+        echo '<p><strong>Date:</strong> ' . esc_html($date) . '</p>';
+        echo '<p><strong>Travelers:</strong> ' . esc_html($travelers) . '</p>';
+        echo '<p><strong>Total Price:</strong> $' . esc_html($total) . '</p>';
+        echo '<p><strong>Payment Method:</strong> ' . esc_html(ucfirst($payment)) . '</p>';
+        echo '</div>';
+
+        echo '<p><label for="booking_status"><strong>Booking Status</strong></label></p>';
+        echo '<select id="booking_status" name="booking_status">';
+        echo '<option value="pending" ' . selected($status, 'pending', false) . '>Pending</option>';
+        echo '<option value="confirmed" ' . selected($status, 'confirmed', false) . '>Confirmed</option>';
+        echo '<option value="cancelled" ' . selected($status, 'cancelled', false) . '>Cancelled</option>';
+        echo '</select>';
+        if ($payment === 'cash') {
+            echo '<p class="description" style="margin-top:10px;">If you change status to "Confirmed" on a cash booking, a confirmation email will automatically be sent to the lead traveler.</p>';
+        }
+    }
+
+    public static function save_trek_booking_meta_box($post_id)
+    {
+        if (!isset($_POST['aatf_trek_booking_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aatf_trek_booking_nonce'])), 'aatf_trek_booking_nonce_action')) {
+            return;
+        }
+
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        $old_status = get_post_meta($post_id, 'booking_status', true);
+        $new_status = isset($_POST['booking_status']) ? sanitize_text_field(wp_unslash($_POST['booking_status'])) : 'pending';
+
+        update_post_meta($post_id, 'booking_status', $new_status);
+        
+        $payment_method = get_post_meta($post_id, 'booking_payment_method', true);
+
+        if ($old_status !== 'confirmed' && $new_status === 'confirmed' && $payment_method === 'cash') {
+            if (class_exists('AATF_Booking_Handler')) {
+                AATF_Booking_Handler::send_confirmation_email($post_id);
+            }
+        }
     }
 
     public static function add_trek_featured_image_meta_box($post)

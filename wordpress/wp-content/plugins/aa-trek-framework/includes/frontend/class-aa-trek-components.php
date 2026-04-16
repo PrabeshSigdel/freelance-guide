@@ -534,11 +534,44 @@ class AATF_Frontend_Components
                             </div>
                             <div class="aatf-booking-form__step-actions aatf-booking-form__step-actions--between">
                                 <button type="button" class="aatf-booking-form__back" data-aatf-back-button>Back</button>
-                                <p class="aatf-booking-form__hint">Traveler 1 should be the main contact for this booking.</p>
+                                <button type="button" class="aatf-booking-form__theme-cta w-full text-white font-bold text-sm tracking-widest uppercase py-3.5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2" style="background-color: var(--brand-orange);" data-aatf-continue-travelers-button>Continue to Payment</button>
                             </div>
                         </div>
 
-                        <div class="aatf-booking-form__footer">
+                        <!-- Step 3: Payment Method -->
+                        <div class="aatf-booking-form__section aatf-booking-form__section--payment" data-aatf-payment-section hidden>
+                            <div class="aatf-booking-form__section-head">
+                                <h3 class="aatf-booking-form__section-title">Payment method</h3>
+                                <p class="aatf-booking-form__section-copy">Choose how you would like to pay for this trek. Our team will confirm your booking after reviewing your request.</p>
+                            </div>
+                            <div class="aatf-booking-form__payment-cards">
+                                <label class="aatf-booking-form__payment-card" data-aatf-payment-card="cash">
+                                    <input type="radio" name="payment_method" value="cash" class="aatf-booking-form__payment-radio" data-aatf-payment-radio />
+                                    <div class="aatf-booking-form__payment-card-inner">
+                                        <span class="aatf-booking-form__payment-icon">&#128181;</span>
+                                        <div>
+                                            <strong class="aatf-booking-form__payment-title">Cash</strong>
+                                            <p class="aatf-booking-form__payment-desc">Pay on arrival or via bank transfer. Our team will send you payment instructions after confirming your booking.</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <div class="aatf-booking-form__payment-card aatf-booking-form__payment-card--disabled" aria-disabled="true" title="Coming soon">
+                                    <div class="aatf-booking-form__payment-card-inner">
+                                        <span class="aatf-booking-form__payment-icon">&#128179;</span>
+                                        <div>
+                                            <strong class="aatf-booking-form__payment-title">Online Payment <span class="aatf-booking-form__payment-badge">Coming Soon</span></strong>
+                                            <p class="aatf-booking-form__payment-desc">Credit / debit card and online payment options will be available soon.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="aatf-booking-form__step-actions aatf-booking-form__step-actions--between">
+                                <button type="button" class="aatf-booking-form__back" data-aatf-back-travelers-button>Back</button>
+                                <p class="aatf-booking-form__hint">Select a payment method to reveal the submit button.</p>
+                            </div>
+                        </div>
+
+                        <div class="aatf-booking-form__footer" data-aatf-submit-footer hidden>
                             <p class="aatf-booking-form__actions">
                                 <button type="submit" class="aatf-booking-form__theme-cta aatf-booking-form__submit w-full text-white font-bold text-sm tracking-widest uppercase py-3.5 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 no-underline" style="background-color: var(--brand-orange);"><?php echo esc_html((string) $atts['submit_label']); ?></button>
                             </p>
