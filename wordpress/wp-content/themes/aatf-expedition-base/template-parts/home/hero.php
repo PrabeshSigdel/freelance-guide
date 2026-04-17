@@ -37,7 +37,7 @@ $explore_page = get_pages(array(
 ));
 $explore_url = !empty($explore_page) ? get_permalink($explore_page[0]->ID) : home_url('/');
 ?>
-<section class="hero-bg relative min-h-[600px] flex flex-col items-center justify-center text-center"
+<section class="hero-bg relative min-h-[680px] flex flex-col items-center justify-center text-center"
     style="background-image: url('<?php echo esc_url($bg_url); ?>');">
     <div class="absolute inset-0 bg-black/25"></div>
 

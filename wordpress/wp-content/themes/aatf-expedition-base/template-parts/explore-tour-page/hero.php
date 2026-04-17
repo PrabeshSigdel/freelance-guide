@@ -28,7 +28,7 @@ if ($media_type === 'image' && $hero_image !== '') {
 ?>
 
 <!-- ── Hero ──────────────────────────────────────────────────────── -->
-<section class="hero-bg relative min-h-[600px] flex flex-col items-center justify-center text-center"
+<section class="hero-bg relative min-h-[680px] flex flex-col items-center justify-center text-center"
     style="background-image: url('<?php echo esc_url($bg_url); ?>');">
     <div class="absolute inset-0 bg-black/25"></div>
 

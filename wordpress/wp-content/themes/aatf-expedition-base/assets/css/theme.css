@@ -122,17 +122,9 @@ body.aatf-section-nav-takeover .aatf-main-nav {
 .aatf-site-header__menu a {
     color: var(--aatf-color-ink, #13243c);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
     display: inline-block;
     padding: 0.3rem 0;
-}
-
-.aatf-site-header__menu>li.menu-item-has-children>a::after {
-    content: "▾";
-    display: inline-block;
-    margin-left: 0.35rem;
-    font-size: 0.85em;
-    opacity: 0.75;
 }
 
 .aatf-site-header__menu a:hover {
@@ -144,7 +136,6 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     margin-left: 0.3rem;
     width: 24px;
     height: 24px;
-    border: 1px solid var(--aatf-color-line, #d8e0ea);
     border-radius: 999px;
     background: #fff;
     font-size: 0.85rem;
@@ -159,7 +150,6 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     left: 0;
     min-width: 220px;
     background: #ffffff;
-    border: 1px solid var(--aatf-color-line, #d8e0ea);
     border-radius: 12px;
     box-shadow: 0 10px 22px rgba(19, 36, 60, 0.12);
     display: none;
@@ -2349,3 +2339,16 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
         padding: 1rem 1.15rem;
     }
 }
+
+/* --- Editorial Staggered Layout for Values --- */
+.stagger-item:nth-child(even) {
+    transform: translateY(120px);
+}
+@media (max-width: 768px) {
+    .stagger-item:nth-child(even) {
+        transform: translateY(0);
+    }
+}
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

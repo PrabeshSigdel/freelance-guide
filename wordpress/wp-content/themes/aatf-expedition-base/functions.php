@@ -17,6 +17,9 @@ class AATF_Header_Menu_Walker extends Walker_Nav_Menu
         $classes[] = 'menu-item-' . $item->ID;
 
         $has_children = in_array('menu-item-has-children', $classes, true);
+        if ($has_children) {
+            $classes[] = 'relative group';
+        }
         $is_mega = aatf_is_destinations_mega_item($item, $classes);
         if ($is_mega) {
             $classes[] = 'menu-item-mega';
@@ -43,7 +46,12 @@ class AATF_Header_Menu_Walker extends Walker_Nav_Menu
         $title = apply_filters('the_title', $item->title, $item->ID);
         $title = apply_filters('nav_menu_item_title', $title, $item, $args, $depth);
 
-        $output .= '<a' . $attributes . '>' . esc_html($title) . '</a>';
+        $link_content = esc_html($title);
+        if ($has_children) {
+            $link_content .= ' <svg class="inline-block w-3 h-3 ml-1 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>';
+        }
+
+        $output .= '<a' . $attributes . '>' . $link_content . '</a>';
 
         if ($has_children) {
             $output .= '<button class="aatf-submenu-toggle" type="button" aria-expanded="false"><span class="screen-reader-text">' . esc_html__('Toggle submenu', 'aatf-expedition-base') . '</span><span aria-hidden="true">+</span></button>';
@@ -1673,6 +1681,86 @@ add_action('save_post_page', function ($post_id) {
             update_post_meta($post_id, 'aatf_team_intro_image_id', $intro_img_id);
         } else {
             delete_post_meta($post_id, 'aatf_team_intro_image_id');
+        }
+    }
+}, 20);
+
+/* ── Blog Page Hero Meta Box ──────────────────────────────────── */
+add_action('add_meta_boxes_page', function ($post) {
+    if (!$post instanceof WP_Post) {
+        return;
+    }
+    $posts_page_id = (int) get_option('page_for_posts');
+    if ($posts_page_id < 1 || $post->ID !== $posts_page_id) {
+        return;
+    }
+    add_meta_box(
+        'aatf_blog_page_hero_metabox',
+        esc_html__('Blog Page Header Details', 'aatf-expedition-base'),
+        function ($post) {
+            wp_nonce_field('aatf_blog_page_hero_save', 'aatf_blog_page_hero_nonce');
+
+            $hero_image_id = (int) get_post_meta($post->ID, 'aatf_blog_hero_image_id', true);
+            $hero_img_url  = $hero_image_id > 0 ? wp_get_attachment_image_url($hero_image_id, 'large') : '';
+
+            echo '<p><label><strong>' . esc_html__('Hero Background Image', 'aatf-expedition-base') . '</strong></label></p>';
+            echo '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">';
+            if ($hero_img_url) {
+                echo '<img id="aatf_blog_hero_preview" src="' . esc_url($hero_img_url) . '" style="max-width:200px;max-height:100px;border-radius:6px;border:1px solid #ddd;">';
+            } else {
+                echo '<img id="aatf_blog_hero_preview" src="" style="max-width:200px;max-height:100px;display:none;border-radius:6px;border:1px solid #ddd;">';
+            }
+            echo '</div>';
+            echo '<input type="hidden" id="aatf_blog_hero_image_id" name="aatf_blog_hero_image_id" value="' . esc_attr((string) $hero_image_id) . '">';
+            echo '<p>';
+            echo '<button type="button" id="aatf_blog_hero_select" class="button">' . esc_html__('Select Image', 'aatf-expedition-base') . '</button> ';
+            echo '<button type="button" id="aatf_blog_hero_remove" class="button button-link-delete"' . ($hero_image_id < 1 ? ' style="display:none"' : '') . '>' . esc_html__('Remove Image', 'aatf-expedition-base') . '</button>';
+            echo '</p>';
+            ?>
+            <script>
+            (function($){
+                $(function(){
+                    var bhFrame;
+                    $('#aatf_blog_hero_select').on('click', function(e){
+                        e.preventDefault();
+                        if (bhFrame) { bhFrame.open(); return; }
+                        bhFrame = wp.media({ title: '<?php echo esc_js(__('Select Blog Header Image', 'aatf-expedition-base')); ?>', button: { text: '<?php echo esc_js(__('Use this image', 'aatf-expedition-base')); ?>' }, multiple: false });
+                        bhFrame.on('select', function(){
+                            var att = bhFrame.state().get('selection').first().toJSON();
+                            $('#aatf_blog_hero_image_id').val(att.id);
+                            var src = (att.sizes && att.sizes.large) ? att.sizes.large.url : att.url;
+                            $('#aatf_blog_hero_preview').attr('src', src).show();
+                            $('#aatf_blog_hero_remove').show();
+                        });
+                        bhFrame.open();
+                    });
+                    $('#aatf_blog_hero_remove').on('click', function(){
+                        $('#aatf_blog_hero_image_id').val('0');
+                        $('#aatf_blog_hero_preview').attr('src','').hide();
+                        $(this).hide();
+                    });
+                });
+            }(jQuery));
+            </script>
+            <?php
+        },
+        'page',
+        'normal',
+        'high'
+    );
+});
+
+add_action('save_post_page', function ($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) { return; }
+    if (wp_is_post_revision($post_id) || !current_user_can('edit_post', $post_id)) { return; }
+    if (!isset($_POST['aatf_blog_page_hero_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['aatf_blog_page_hero_nonce'])), 'aatf_blog_page_hero_save')) { return; }
+
+    if (isset($_POST['aatf_blog_hero_image_id'])) {
+        $img_id = absint(wp_unslash($_POST['aatf_blog_hero_image_id']));
+        if ($img_id > 0) {
+            update_post_meta($post_id, 'aatf_blog_hero_image_id', $img_id);
+        } else {
+            delete_post_meta($post_id, 'aatf_blog_hero_image_id');
         }
     }
 }, 20);

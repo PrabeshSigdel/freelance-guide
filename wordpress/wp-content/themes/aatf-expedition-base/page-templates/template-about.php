@@ -34,10 +34,30 @@ $vision_text = get_post_meta($post_id, 'aatf_about_vision_text', true) ?: 'To be
 $core_title = get_post_meta($post_id, 'aatf_about_core_title', true) ?: 'Our Values';
 $core_text = get_post_meta($post_id, 'aatf_about_core_text', true) ?: 'Integrity in action, safety above all, respect for local cultures, and an unwavering passion for the great outdoors.';
 
+$values_list = array(
+    array(
+        'title' => $mission_title,
+        'text' => $mission_text,
+        'icon' => 'mountain_flag',
+        'link_label' => 'Learn Our Approach',
+    ),
+    array(
+        'title' => $vision_title,
+        'text' => $vision_text,
+        'icon' => 'nature_people',
+        'link_label' => 'Explore Vision',
+    ),
+    array(
+        'title' => $core_title,
+        'text' => $core_text,
+        'icon' => 'explore',
+        'link_label' => 'Our Core Methods',
+    ),
+);
+
 // Why Choose Us Section
 $whyus_subtitle = 'Why choose Us?';
 $whyus_title = get_post_meta($post_id, 'aatf_about_whyus_title', true) ?: 'Expertise in Every Step';
-$whyus_desc = get_post_meta($post_id, 'aatf_about_whyus_desc', true) ?: 'We know you have choices when it comes to adventure. Here is why trekking with us is an experience like no other.';
 $whyus_points_raw = get_post_meta($post_id, 'aatf_about_whyus_points', true);
 $whyus_points = array();
 
@@ -102,7 +122,7 @@ if (empty($story_content)) {
     </section>
 
     <!-- Our Story Section -->
-    <section class="py-16 lg:py-24 px-6 bg-white overflow-hidden">
+    <section class="py-16 lg:py-10 px-6 bg-white overflow-hidden">
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
                 
@@ -140,42 +160,45 @@ if (empty($story_content)) {
         </div>
     </section>
 
-    <!-- Mission & Values Section -->
-    <section class="py-16 lg:py-24 px-6 bg-gray-50">
+    <!-- Values We Live By Section - Redesigned Editorial Layout -->
+    <section class="bg-white py-32 md:py-5 px-6 border-t border-gray-100">
         <div class="max-w-7xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-16">
-                <p class="text-[var(--brand-orange)] font-bold text-sm uppercase tracking-wider mb-2"><?php echo esc_html($values_subtitle); ?></p>
-                <h2 class="text-3xl lg:text-4xl font-extrabold text-[var(--brand-dark)] mb-6"><?php echo esc_html($values_title); ?></h2>
-                <p class="text-[var(--brand-gray)] text-lg"><?php echo esc_html($values_desc); ?></p>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-32 items-baseline">
+                <div class="md:col-span-5">
+                    <h2 class="text-5xl md:text-4xl font-extrabold text-[var(--brand-dark)] tracking-tighter leading-none mb-6">
+                        <?php echo nl2br(esc_html($values_title)); ?>
+                    </h2>
+                </div>
+                <div class="md:col-span-7 md:pl-12">
+                    <p class="text-xl md:text-xl text-[var(--brand-gray)] font-medium italic leading-relaxed">
+                        "<?php echo esc_html($values_desc); ?>"
+                    </p>
+                </div>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Mission Card -->
-                <div class="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 text-center group">
-                    <div class="w-16 h-16 bg-orange-50 text-[var(--brand-orange)] rounded-2xl flex items-center justify-center mx-auto mb-8 transition-colors group-hover:bg-[var(--brand-orange)] group-hover:text-white">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-[var(--brand-dark)] mb-4"><?php echo esc_html($mission_title); ?></h3>
-                    <p class="text-[var(--brand-gray)] leading-relaxed"><?php echo esc_html($mission_text); ?></p>
-                </div>
 
-                <!-- Vision Card -->
-                <div class="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 text-center group">
-                    <div class="w-16 h-16 bg-orange-50 text-[var(--brand-orange)] rounded-2xl flex items-center justify-center mx-auto mb-8 transition-colors group-hover:bg-[var(--brand-orange)] group-hover:text-white">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <!-- Staggered Editorial List -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-24 md:gap-y-0 relative">
+                <?php foreach ($values_list as $index => $item) : ?>
+                <!-- Value 0<?php echo $index + 1; ?> -->
+                <div class="stagger-item group border-t border-gray-100 pt-12 pb-12 md:pb-32">
+                    <div class="flex items-start gap-8">
+                        <span class="text-6xl md:text-8xl font-bold text-gray-100 transition-colors duration-500 group-hover:text-gray-200 select-none">
+                            0<?php echo $index + 1; ?>
+                        </span>
+                        <div class="flex-1 pt-4">
+                            <div class="text-[var(--brand-orange)] mb-4">
+                                <span class="material-symbols-outlined text-3xl"><?php echo esc_attr($item['icon']); ?></span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-[var(--brand-dark)] mb-6 tracking-tight">
+                                <?php echo esc_html($item['title']); ?>
+                            </h3>
+                            <p class="text-[var(--brand-gray)] leading-relaxed text-lg max-w-md mb-8">
+                                <?php echo esc_html($item['text']); ?>
+                            </p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold text-[var(--brand-dark)] mb-4"><?php echo esc_html($vision_title); ?></h3>
-                    <p class="text-[var(--brand-gray)] leading-relaxed"><?php echo esc_html($vision_text); ?></p>
                 </div>
-
-                <!-- Values Card -->
-                <div class="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 text-center group">
-                    <div class="w-16 h-16 bg-orange-50 text-[var(--brand-orange)] rounded-2xl flex items-center justify-center mx-auto mb-8 transition-colors group-hover:bg-[var(--brand-orange)] group-hover:text-white">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-[var(--brand-dark)] mb-4"><?php echo esc_html($core_title); ?></h3>
-                    <p class="text-[var(--brand-gray)] leading-relaxed"><?php echo esc_html($core_text); ?></p>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
@@ -188,7 +211,7 @@ if (empty($story_content)) {
                 <div>
                     <p class="text-[var(--brand-orange)] font-bold text-sm uppercase tracking-wider mb-2"><?php echo esc_html($whyus_subtitle); ?></p>
                     <h2 class="text-3xl lg:text-4xl font-extrabold text-[var(--brand-dark)] mb-6"><?php echo esc_html($whyus_title); ?></h2>
-                    <p class="text-[var(--brand-gray)] text-lg mb-10 leading-relaxed"><?php echo esc_html($whyus_desc); ?></p>
+
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
                         <?php foreach ($whyus_points as $point) : ?>
@@ -196,7 +219,7 @@ if (empty($story_content)) {
                         <div class="flex gap-4 items-start">
                             <div class="shrink-0 w-2 h-2 mt-2.5 bg-[var(--brand-orange)] rounded-full"></div>
                             <div>
-                                <h4 class="font-bold text-[var(--brand-dark)] mb-1"><?php echo esc_html($point['title']); ?></h4>
+                                <h4 class="text-[var(--brand-dark)] mb-1"><?php echo esc_html($point['title']); ?></h4>
                                 <?php if ($point['desc']) : ?>
                                     <p class="text-sm text-[var(--brand-gray)]"><?php echo esc_html($point['desc']); ?></p>
                                 <?php endif; ?>

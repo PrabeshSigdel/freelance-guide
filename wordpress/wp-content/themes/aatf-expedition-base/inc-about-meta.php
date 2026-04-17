@@ -102,7 +102,6 @@ add_action('add_meta_boxes_page', function ($post) {
             // Why Us Section
             $whyus_subtitle = get_post_meta($post->ID, 'aatf_about_whyus_subtitle', true);
             $whyus_title = get_post_meta($post->ID, 'aatf_about_whyus_title', true);
-            $whyus_desc = get_post_meta($post->ID, 'aatf_about_whyus_desc', true);
             $whyus_points = get_post_meta($post->ID, 'aatf_about_whyus_points', true); // Stored as array or newline string
 
             echo '<h3>' . esc_html__('Why Choose Us Section', 'aatf-expedition-base') . '</h3>';
