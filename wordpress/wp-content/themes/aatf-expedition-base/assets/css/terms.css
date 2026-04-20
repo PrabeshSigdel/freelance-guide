@@ -1,0 +1,261 @@
+/* ================================================================
+   Terms & Conditions — Premium Stylesheet
+   Classes used in template-terms.php:
+   .aatf-terms-page, .aatf-terms-container, .aatf-terms-card,
+   .aatf-terms-content, .aatf-terms-body, .aatf-terms-empty
+   ================================================================ */
+
+/* ── Custom Properties ─────────────────────────────────────────── */
+.aatf-terms-page {
+    --tc-primary: #0b473a;
+    --tc-accent: #e8820c;
+    --tc-ink: #1a2b38;
+    --tc-text: #4a5568;
+    --tc-muted: #8898aa;
+    --tc-bg: #ffffff;
+    --tc-card: #ffffff;
+    --tc-border: #dde3ea;
+    --tc-radius: 24px;
+    --tc-shadow: 0 30px 80px rgba(0, 0, 0, 0.09);
+}
+
+/* ── Page Wrapper ──────────────────────────────────────────────── */
+.aatf-terms-page {
+    background: var(--tc-bg);
+    min-height: 100vh;
+}
+
+/* ================================================================
+   CONTAINER
+   ================================================================ */
+.aatf-terms-container {
+    position: relative;
+    z-index: 20;
+    max-width: 920px;
+    margin: 3rem auto 5rem;
+    padding: 0 1.25rem;
+}
+
+/* ── Page headline ─────────────────────────────────────────────── */
+.aatf-terms-headline {
+    font-size: clamp(2rem, 4.5vw, 3rem);
+    font-weight: 800;
+    color: var(--tc-ink);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 3px solid var(--tc-border);
+    position: relative;
+}
+
+.aatf-terms-headline::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--tc-primary);
+    border-radius: 3px;
+}
+
+/* ================================================================
+   CARD — flat, no decoration
+   ================================================================ */
+.aatf-terms-card {
+    background: transparent;
+}
+
+/* ── Content area ──────────────────────────────────────────────── */
+.aatf-terms-content {
+    padding: 2rem 0;
+}
+
+/* ================================================================
+   BODY TEXT — rich typography
+   ================================================================ */
+.aatf-terms-body {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--tc-text);
+}
+
+/* First paragraph lead-in */
+.aatf-terms-body>p:first-child {
+    font-size: 1.15rem;
+    color: #2d3748;
+    line-height: 1.8;
+}
+
+.aatf-terms-body h1,
+.aatf-terms-body h2 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--tc-ink);
+    margin: 3rem 0 1rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 2px solid var(--tc-border);
+    position: relative;
+    line-height: 1.25;
+}
+
+/* Coloured underline accent on headings */
+.aatf-terms-body h1::after,
+.aatf-terms-body h2::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 48px;
+    height: 2px;
+    background: var(--tc-primary);
+    border-radius: 2px;
+}
+
+.aatf-terms-body h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--tc-ink);
+    margin: 2.25rem 0 0.75rem;
+}
+
+.aatf-terms-body h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--tc-primary);
+    margin: 1.75rem 0 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.aatf-terms-body p {
+    margin: 0 0 1.4rem;
+}
+
+.aatf-terms-body strong {
+    color: var(--tc-ink);
+    font-weight: 700;
+}
+
+.aatf-terms-body a {
+    color: var(--tc-primary);
+    text-decoration: underline;
+    text-decoration-color: rgba(11, 71, 58, 0.4);
+    text-underline-offset: 3px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.aatf-terms-body a:hover {
+    color: var(--tc-accent);
+    text-decoration-color: rgba(232, 130, 12, 0.5);
+}
+
+.aatf-terms-body ul {
+    list-style-type: disc;
+    margin: 0 0 1.4rem;
+    padding-left: 1.6rem;
+}
+
+.aatf-terms-body ol {
+    list-style-type: decimal;
+    margin: 0 0 1.4rem;
+    padding-left: 1.6rem;
+}
+
+.aatf-terms-body ul ul {
+    list-style-type: circle;
+    margin: 0.4rem 0 0.4rem;
+}
+
+.aatf-terms-body ol ol {
+    list-style-type: lower-alpha;
+    margin: 0.4rem 0 0.4rem;
+}
+
+.aatf-terms-body li {
+    margin-bottom: 0.55rem;
+    line-height: 1.75;
+    display: list-item;
+}
+
+.aatf-terms-body blockquote {
+    margin: 2rem 0;
+    padding: 1.25rem 1.5rem;
+    border-left: 4px solid var(--tc-primary);
+    background: rgba(11, 71, 58, 0.04);
+    border-radius: 0 12px 12px 0;
+    font-style: italic;
+    color: #4a5568;
+}
+
+.aatf-terms-body hr {
+    border: none;
+    border-top: 1px solid var(--tc-border);
+    margin: 2.5rem 0;
+}
+
+/* ── Empty state ───────────────────────────────────────────────── */
+.aatf-terms-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--tc-muted);
+    font-style: italic;
+    font-size: 1.05rem;
+}
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+.fade-up {
+    animation: tcFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(28px);
+}
+
+.delay-100 {
+    animation-delay: 0.12s;
+}
+
+.delay-200 {
+    animation-delay: 0.22s;
+}
+
+@keyframes tcFadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 900px) {
+    .aatf-terms-content {
+        padding: 2.5rem 2.25rem;
+    }
+
+    .aatf-terms-container {
+        margin-top: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .aatf-terms-container {
+        margin-top: 1.5rem;
+        padding: 0 0.85rem;
+    }
+
+    .aatf-terms-content {
+        padding: 2rem 1.25rem;
+    }
+
+    .aatf-terms-body h2 {
+        font-size: 1.3rem;
+    }
+
+    .aatf-terms-body>p:first-child {
+        font-size: 1.05rem;
+    }
+}

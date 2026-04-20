@@ -1460,6 +1460,7 @@ add_action('save_post_page', function ($post_id) {
 
 require_once get_template_directory() . '/inc-about-meta.php';
 require_once get_template_directory() . '/inc-gallery-meta.php';
+require_once get_template_directory() . '/inc-terms-meta.php';
 
 /* ── Gallery Page Hero Meta Box ─────────────────────────────────── */
 add_action('add_meta_boxes_page', function ($post) {
@@ -1776,6 +1777,20 @@ add_action('wp_enqueue_scripts', function () {
         get_template_directory_uri() . '/assets/css/gallery.css',
         array('aatf-expedition-base-layout'),
         file_exists($gallery_css_path) ? (string) filemtime($gallery_css_path) : '1.0.0'
+    );
+}, 15);
+
+/* ── Conditionally enqueue terms stylesheet ─────────────────────── */
+add_action('wp_enqueue_scripts', function () {
+    if (!is_page()) { return; }
+    $template = (string) get_page_template_slug(get_the_ID());
+    if ($template !== 'page-templates/template-terms.php') { return; }
+    $terms_css_path = get_template_directory() . '/assets/css/terms.css';
+    wp_enqueue_style(
+        'aatf-terms',
+        get_template_directory_uri() . '/assets/css/terms.css',
+        array('aatf-expedition-base-layout'),
+        file_exists($terms_css_path) ? (string) filemtime($terms_css_path) : '1.0.0'
     );
 }, 15);
 
