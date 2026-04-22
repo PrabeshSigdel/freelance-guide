@@ -186,13 +186,7 @@ if (!function_exists('aatf_get_trek_location_label')) {
                                     <?php esc_html_e('Featured', 'aatf-expedition-base'); ?>
                                 </span>
                             <?php endif; ?>
-                            <button class="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white p-2 rounded-full transition-colors"
-                                aria-label="<?php esc_attr_e('Add to favorites', 'aatf-expedition-base'); ?>">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
-                                </svg>
-                            </button>
+
                         </div>
                         <div class="p-6 -mt-8 relative z-10 bg-white rounded-t-3xl flex-1 flex flex-col">
                             <div class="flex justify-between items-center mb-3">
@@ -279,13 +273,7 @@ if (!function_exists('aatf_get_trek_location_label')) {
                                     <?php esc_html_e('Featured', 'aatf-expedition-base'); ?>
                                 </span>
                             <?php endif; ?>
-                            <button class="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white p-2 rounded-full transition-colors"
-                                aria-label="<?php esc_attr_e('Add to favorites', 'aatf-expedition-base'); ?>">
-                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
-                                </svg>
-                            </button>
+
                         </div>
                         <div class="p-6 -mt-8 relative z-10 bg-white rounded-t-3xl flex-1 flex flex-col">
                             <div class="flex justify-between items-center mb-3">

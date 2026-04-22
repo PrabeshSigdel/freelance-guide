@@ -1461,6 +1461,7 @@ add_action('save_post_page', function ($post_id) {
 require_once get_template_directory() . '/inc-about-meta.php';
 require_once get_template_directory() . '/inc-gallery-meta.php';
 require_once get_template_directory() . '/inc-terms-meta.php';
+require_once get_template_directory() . '/inc-destination-meta.php';
 
 /* ── Gallery Page Hero Meta Box ─────────────────────────────────── */
 add_action('add_meta_boxes_page', function ($post) {

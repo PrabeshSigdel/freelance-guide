@@ -227,14 +227,7 @@ function aatf_get_trek_location_label(int $post_id): string
                                     <img src="<?php echo esc_url($tour['image']); ?>"
                                         alt="<?php echo esc_attr($tour['title']); ?>"
                                         class="w-full h-52 object-cover" />
-                                    <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform"
-                                        aria-label="<?php esc_attr_e('Add to wishlist', 'aatf-expedition-base'); ?>">
-                                        <svg class="w-4 h-4 text-[var(--brand-gray)] hover:text-red-500 transition-colors"
-                                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                        </svg>
-                                    </button>
+
                                 </div>
                                 <div class="p-4">
                                     <div class="flex-1 min-h-[140px]">
@@ -301,14 +294,7 @@ function aatf_get_trek_location_label(int $post_id): string
                                     <img src="<?php echo esc_url($thumb); ?>"
                                         alt="<?php echo esc_attr(get_the_title($trek->ID)); ?>"
                                         class="w-full h-52 object-cover" />
-                                    <button class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform"
-                                        aria-label="<?php esc_attr_e('Add to wishlist', 'aatf-expedition-base'); ?>">
-                                        <svg class="w-4 h-4 text-[var(--brand-gray)] hover:text-red-500 transition-colors"
-                                            fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                        </svg>
-                                    </button>
+
                                 </div>
                                 <div class="p-4">
                                     <div class="flex-1 min-h-[100px]">

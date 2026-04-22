@@ -6,10 +6,9 @@ if (get_theme_mod('aatf_home_show_plan_trips', '1') !== '1') {
 }
 
 $phone    = trim((string) get_theme_mod('aatf_header_phone', '66888000'));
-$cta_url  = trim((string) get_theme_mod('aatf_header_cta_url', home_url('/booking/')));
-$nav_url  = $cta_url !== '' ? $cta_url : home_url('/booking/');
+$explore_page = get_page_by_path('explore-tour');
+$nav_url      = $explore_page ? get_permalink($explore_page->ID) : home_url('/explore-tour/');
 $heading  = trim((string) get_theme_mod('aatf_home_plan_trips_heading', 'Plan Your Trip with Us'));
-
 $selected_destination_id = absint((int) get_theme_mod('aatf_home_plan_trips_destination_id', 0));
 $destination = null;
 
