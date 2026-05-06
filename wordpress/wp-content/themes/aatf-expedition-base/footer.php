@@ -268,7 +268,7 @@ if ($subscription_status === 'success') {
             </div>
 
             <!-- Newsletter column -->
-            <div class="aatf-modern-footer__newsletter">
+            <!-- <div class="aatf-modern-footer__newsletter">
                 <?php if ($newsletter_heading !== '') : ?>
                     <h4 class="text-white font-semibold text-base mb-5"><?php echo esc_html($newsletter_heading); ?></h4>
                 <?php endif; ?>
@@ -307,7 +307,7 @@ if ($subscription_status === 'success') {
                         </p>
                     <?php endif; ?>
                 </form>
-            </div>
+            </div> -->
 
         </div>
     </div>

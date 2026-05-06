@@ -1,4 +1,6 @@
 (function () {
+    var navBreakpoint = 900;
+
     /* ── Sticky scroll for legacy .aatf-site-header (if present) ─── */
     var legacyHeader = document.querySelector('.aatf-site-header');
     if (legacyHeader) {
@@ -105,7 +107,7 @@
 
             /* Show/hide the toggle button depending on viewport */
             function syncToggleVisibility() {
-                var isMobile = window.innerWidth <= 768;
+                var isMobile = window.innerWidth <= navBreakpoint;
                 btn.style.display = isMobile ? 'inline-flex' : 'none';
             }
             syncToggleVisibility();

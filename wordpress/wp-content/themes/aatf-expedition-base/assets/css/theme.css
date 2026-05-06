@@ -217,8 +217,8 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     }
 }
 
-/* ── Small tablet & mobile (≤ 768 px) ───────────────────────── */
-@media (max-width: 768px) {
+/* ── Tablet & mobile (≤ 900 px) ─────────────────────────────── */
+@media (max-width: 900px) {
 
     /* Hide top-bar email on very small tablet */
     .aatf-topbar__email {
@@ -1475,6 +1475,37 @@ body.aatf-nav-open {
     height: 360px;
     object-fit: cover;
     object-position: center;
+}
+
+@media (max-width: 767px) {
+    .aatf-single-trek__gallery-wrap {
+        overflow: hidden;
+    }
+
+    .aatf-single-trek__gallery {
+        display: grid;
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: 100%;
+        gap: 0;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        scrollbar-width: none;
+    }
+
+    .aatf-single-trek__gallery::-webkit-scrollbar {
+        display: none;
+    }
+
+    .aatf-single-trek__gallery-image {
+        height: 260px;
+        border-radius: 0;
+        scroll-snap-align: start;
+    }
 }
 
 
@@ -2945,6 +2976,35 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
 }
 
 @media (max-width: 600px) {
+    .aatf-single-trek__gallery-wrap {
+        overflow: hidden;
+    }
+
+    .aatf-single-trek__gallery {
+        display: grid;
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: 100%;
+        gap: 0;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        scrollbar-width: none;
+    }
+
+    .aatf-single-trek__gallery::-webkit-scrollbar {
+        display: none;
+    }
+
+    .aatf-single-trek__gallery-image {
+        height: 260px;
+        border-radius: 0;
+        scroll-snap-align: start;
+    }
+
     .dest-hero {
         min-height: 300px;
     }
@@ -2978,6 +3038,274 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     .dest-tab-panel,
     .dest-wp-content {
         padding: 1.2rem 1rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .aatf-single-trek__section-nav {
+        padding: 0.55rem 0;
+    }
+
+    .aatf-single-trek__section-nav-track {
+        gap: 0.55rem;
+        padding: 0.35rem 0.15rem;
+    }
+
+    .aatf-single-trek__section-nav-tour {
+        min-width: 170px;
+        padding-right: 0.5rem;
+    }
+
+    .aatf-single-trek__section-nav-title {
+        font-size: 0.88rem;
+    }
+
+    .aatf-single-trek__section-nav-location {
+        font-size: 0.74rem;
+    }
+
+    .aatf-single-trek__section-link {
+        min-height: 38px;
+        padding: 0.62rem 0.85rem;
+        font-size: 0.82rem;
+    }
+
+    .aatf-single-trek__overview-editorial {
+        padding: 1.5rem;
+        border-radius: 10px;
+    }
+
+    .aatf-single-trek__editorial-content {
+        font-size: 0.97rem;
+        line-height: 1.75;
+    }
+
+    .aatf-single-trek__editorial-content p:first-child::first-letter {
+        font-size: 3.5rem;
+        margin-right: 0.55rem;
+        margin-top: 0.2rem;
+    }
+
+    .aatf-single-trek__editorial-highlight {
+        margin-top: 1.4rem;
+        padding: 1.35rem 1.25rem 1.25rem;
+    }
+
+    .aatf-single-trek__overview-summary {
+        font-size: 1.06rem;
+        line-height: 1.65;
+    }
+
+    .aatf-split-pane__half {
+        padding: 1.5rem;
+    }
+
+    .aatf-split-pane__header {
+        gap: 0.75rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .aatf-split-pane__title {
+        font-size: 1.12rem;
+    }
+
+    .aatf-split-pane__item {
+        gap: 0.75rem;
+        font-size: 0.98rem;
+    }
+
+    .aatf-equipment-modern-container {
+        gap: 1.75rem;
+        padding: 1.5rem;
+    }
+
+    .aatf-equipment-category__title {
+        font-size: 1.08rem;
+        gap: 0.55rem;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .aatf-equipment-list__item {
+        font-size: 0.98rem;
+    }
+
+    .aatf-altitude-profile {
+        padding: 1rem;
+        border-radius: 16px;
+    }
+
+    .aatf-altitude-profile__intro {
+        align-items: stretch;
+    }
+
+    .aatf-altitude-profile__subtitle {
+        max-width: none;
+        line-height: 1.65;
+    }
+
+    .aatf-altitude-profile__head {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .aatf-altitude-profile__stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .aatf-altitude-profile__chart {
+        padding: 0.9rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .aatf-single-trek__content-section {
+        overflow-wrap: anywhere;
+    }
+
+    .aatf-single-trek__section-nav-track {
+        padding: 0.25rem 0;
+    }
+
+    .aatf-single-trek__section-nav-tour {
+        min-width: 140px;
+    }
+
+    .aatf-single-trek__overview-editorial {
+        padding: 1.15rem;
+    }
+
+    .aatf-single-trek__editorial-content {
+        font-size: 0.92rem;
+    }
+
+    .aatf-single-trek__editorial-content p:first-child::first-letter {
+        font-size: 2.7rem;
+        line-height: 0.9;
+        margin-right: 0.45rem;
+        margin-top: 0.1rem;
+    }
+
+    .aatf-single-trek__editorial-highlight {
+        padding: 1rem 0.95rem 0.95rem 1rem;
+        border-left-width: 3px;
+    }
+
+    .aatf-editorial-quote-icon {
+        width: 32px;
+        height: 32px;
+        top: -12px;
+        left: 14px;
+    }
+
+    .aatf-single-trek__overview-summary {
+        font-size: 0.98rem;
+    }
+
+    .aatf-split-pane__half {
+        padding: 1.15rem 1rem;
+    }
+
+    .aatf-split-pane__header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+
+    .aatf-split-pane__title {
+        font-size: 1rem;
+    }
+
+    .aatf-split-pane__badge {
+        width: 32px;
+        height: 32px;
+        font-size: 0.84rem;
+    }
+
+    .aatf-split-pane__item {
+        font-size: 0.92rem;
+        gap: 0.65rem;
+    }
+
+    .aatf-split-pane__icon {
+        width: 20px;
+        height: 20px;
+        flex-basis: 20px;
+    }
+
+    .aatf-equipment-modern-container {
+        padding: 1.15rem 1rem;
+        gap: 1.35rem;
+    }
+
+    .aatf-equipment-category__title {
+        font-size: 1rem;
+        padding-bottom: 0.6rem;
+    }
+
+    .aatf-equipment-category__count {
+        margin-left: 0;
+    }
+
+    .aatf-equipment-list {
+        gap: 0.7rem;
+    }
+
+    .aatf-equipment-list__item {
+        font-size: 0.92rem;
+        line-height: 1.45;
+    }
+
+    .aatf-itinerary-stop {
+        padding-left: 1.9rem;
+    }
+
+    .aatf-itinerary-stop::before,
+    .aatf-itinerary-stop::after {
+        left: 0.7rem;
+    }
+
+    .aatf-itinerary-stop__marker {
+        width: 1.45rem;
+    }
+
+    .aatf-itinerary-stop__dot {
+        width: 11px;
+        height: 11px;
+    }
+
+    .aatf-itinerary-stop__card {
+        border-radius: 12px;
+    }
+
+    .aatf-altitude-profile {
+        padding: 0.9rem;
+    }
+
+    .aatf-altitude-profile__stats {
+        grid-template-columns: 1fr;
+        gap: 0.7rem;
+    }
+
+    .aatf-altitude-profile__stat {
+        padding: 0.8rem 0.85rem;
+    }
+
+    .aatf-altitude-profile__chart-top {
+        gap: 0.65rem;
+    }
+
+    .aatf-altitude-profile__legend {
+        gap: 0.55rem 0.75rem;
+    }
+
+    .aatf-altitude-profile__legend-item {
+        font-size: 0.72rem;
+    }
+
+    .aatf-altitude-profile__scroll {
+        gap: 0.5rem;
     }
 }
 
