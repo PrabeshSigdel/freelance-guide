@@ -75,26 +75,350 @@ body.aatf-section-nav-takeover .aatf-main-nav {
     font-size: 1.1rem;
 }
 
+/* ── Hamburger toggle button ─────────────────────────────────── */
 .aatf-nav-toggle {
     display: none;
+    /* hidden on desktop */
     width: 44px;
     height: 44px;
-    border: 1px solid var(--aatf-color-line, #d8e0ea);
+    border: 1.5px solid #d8e0ea;
     border-radius: 10px;
     background: #fff;
     cursor: pointer;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 5px;
     padding: 0;
     flex-direction: column;
+    flex-shrink: 0;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    z-index: 200;
+}
+
+.aatf-nav-toggle:hover {
+    background: #f5f7fa;
+    border-color: #b0bacb;
 }
 
 .aatf-nav-toggle__line {
     display: block;
-    width: 18px;
+    width: 20px;
     height: 2px;
-    background: var(--aatf-color-ink, #13243c);
+    background: #13243c;
+    border-radius: 2px;
+    transform-origin: center;
+    transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+}
+
+/* Animated "X" when open */
+.aatf-nav-toggle.is-active .aatf-nav-toggle__line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.aatf-nav-toggle.is-active .aatf-nav-toggle__line:nth-child(2) {
+    opacity: 0;
+    width: 0;
+}
+
+.aatf-nav-toggle.is-active .aatf-nav-toggle__line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── Nav drawer (hidden elements that only show on mobile) ───── */
+.aatf-nav-drawer__header {
+    display: none;
+    /* shown only in mobile drawer */
+}
+
+.aatf-nav-drawer__cta {
+    display: none;
+    /* shown only in mobile drawer */
+}
+
+.aatf-nav-links {
+    display: contents;
+    /* transparent wrapper on desktop */
+}
+
+/* ── Overlay backdrop ────────────────────────────────────────── */
+.aatf-nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 20, 40, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 140;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.aatf-nav-overlay.is-active {
+    display: block;
+    opacity: 1;
+}
+
+/* ── Main nav inner row ──────────────────────────────────────── */
+.aatf-main-nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+}
+
+/* ── Close button inside drawer ─────────────────────────────── */
+.aatf-nav-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #d8e0ea;
+    border-radius: 8px;
+    background: #f5f7fa;
+    cursor: pointer;
+    color: #13243c;
+    transition: background 0.2s ease;
+}
+
+.aatf-nav-close:hover {
+    background: #e8ecf2;
+}
+
+/* ── Drawer CTA button ───────────────────────────────────────── */
+.aatf-drawer-cta-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    background: var(--brand-orange, #e88200);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: opacity 0.2s ease;
+}
+
+.aatf-drawer-cta-btn:hover {
+    opacity: 0.88;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Tablet & below (≤ 1024 px) ─────────────────────────────── */
+@media (max-width: 1024px) {
+    .aatf-main-nav__inner {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* ── Small tablet & mobile (≤ 768 px) ───────────────────────── */
+@media (max-width: 768px) {
+
+    /* Hide top-bar email on very small tablet */
+    .aatf-topbar__email {
+        display: none;
+    }
+
+    /* Show hamburger */
+    .aatf-nav-toggle {
+        display: flex;
+        margin-left: auto;
+    }
+
+    /* ── Mobile slide-in drawer ── */
+    .aatf-nav-drawer {
+        /* Override Tailwind flex utilities for mobile */
+        display: block !important;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(320px, 85vw);
+        background: #ffffff;
+        box-shadow: -8px 0 32px rgba(10, 20, 40, 0.18);
+        z-index: 150;
+        overflow-y: auto;
+        padding: 0;
+        /* Start off-screen to the right */
+        transform: translateX(100%);
+        transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Reset desktop flex layout */
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        justify-content: flex-start;
+    }
+
+    .aatf-nav-drawer.is-open {
+        transform: translateX(0);
+    }
+
+    /* Drawer header row */
+    .aatf-nav-drawer__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.1rem;
+        border-bottom: 1px solid #e8ecf2;
+        background: #f9fafc;
+    }
+
+    .aatf-nav-drawer__title {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #13243c;
+    }
+
+    /* Nav links section inside drawer */
+    .aatf-nav-links {
+        display: block;
+        /* override contents */
+        padding: 0.5rem 0;
+    }
+
+    /* WordPress menu ul reset for mobile */
+    .aatf-nav-drawer .aatf-site-header__menu {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0 !important;
+    }
+
+    .aatf-nav-drawer .aatf-site-header__menu li {
+        border-bottom: 1px solid #f0f3f8;
+    }
+
+    .aatf-nav-drawer .aatf-site-header__menu > li.menu-item-has-children {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .aatf-nav-drawer .aatf-site-header__menu>li>a {
+        display: block;
+        flex: 1 1 auto;
+        padding: 0.85rem 3.5rem 0.85rem 1.25rem;
+        font-size: 0.97rem;
+        font-weight: 600;
+        color: #13243c;
+        text-decoration: none;
+        transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .aatf-nav-drawer .aatf-site-header__menu>li>a:hover {
+        background: #f5f7fa;
+        color: var(--brand-orange, #e88200);
+    }
+
+    .aatf-nav-drawer .aatf-site-header__menu > li > .aatf-submenu-toggle {
+        position: static;
+        display: inline-flex;
+        flex: 0 0 auto;
+        width: 3rem;
+        height: 3rem;
+        margin-right: 0.5rem;
+        color: #617087;
+    }
+
+    /* Submenu inside drawer */
+    .aatf-nav-drawer .aatf-site-header__menu .sub-menu {
+        width: 100%;
+        position: static;
+        display: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        background: #f9fafc;
+        border-top: 1px solid #e8ecf2;
+    }
+
+    .aatf-nav-drawer .aatf-site-header__menu li.is-open>.sub-menu {
+        display: block;
+    }
+
+    .aatf-nav-drawer .aatf-site-header__menu .sub-menu li a {
+        padding: 0.65rem 1.75rem;
+        font-size: 0.9rem;
+        color: #4a5568;
+        display: block;
+    }
+
+    .aatf-nav-drawer .aatf-site-header__menu .sub-menu li a:hover {
+        color: var(--brand-orange, #e88200);
+    }
+
+    /* Fallback anchor links (no WP menu) */
+    .aatf-nav-links>a {
+        display: block;
+        padding: 0.85rem 1.25rem;
+        font-size: 0.97rem;
+        font-weight: 600;
+        color: #13243c;
+        text-decoration: none;
+        border-bottom: 1px solid #f0f3f8;
+        transition: background 0.15s ease;
+    }
+
+    .aatf-nav-links>a:hover {
+        background: #f5f7fa;
+        color: var(--brand-orange, #e88200);
+    }
+
+    /* CTA at bottom of drawer */
+    .aatf-nav-drawer__cta {
+        display: block;
+        padding: 1.25rem 1.1rem 1.5rem;
+        margin-top: auto;
+        border-top: 1px solid #e8ecf2;
+    }
+
+    /* Shrink logo a bit */
+    .aatf-main-nav__logo {
+        width: 52px !important;
+        height: 52px !important;
+    }
+
+    /* Hide the desktop nav (it's now inside the drawer) */
+    /* The drawer handles it — nothing extra to hide since it's positioned off-screen */
+}
+
+/* ── Mobile phones (≤ 480 px) ───────────────────────────────── */
+@media (max-width: 480px) {
+
+    /* Collapse entire top-bar on phones */
+    .aatf-topbar {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        padding: 0.4rem 1rem;
+        font-size: 0.75rem;
+    }
+
+    .aatf-topbar__right {
+        display: none;
+        /* hide social + CTA from topbar; they're in the drawer */
+    }
+
+    .aatf-main-nav__inner {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .aatf-nav-drawer {
+        width: 90vw;
+    }
+}
+
+/* ── Prevent body scroll when drawer is open ─────────────────── */
+body.aatf-nav-open {
+    overflow: hidden;
 }
 
 .aatf-site-header__nav {
@@ -133,14 +457,18 @@ body.aatf-section-nav-takeover .aatf-main-nav {
 
 .aatf-submenu-toggle {
     display: none;
-    margin-left: 0.3rem;
-    width: 24px;
-    height: 24px;
-    border-radius: 999px;
-    background: #fff;
-    font-size: 0.85rem;
-    line-height: 1;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50px;
+    height: 50px;
+    background: transparent;
+    border: none;
     cursor: pointer;
+    color: #617087;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
 }
 
 .aatf-site-header__menu .sub-menu {
@@ -2098,7 +2426,7 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
 .aatf-single-trek__editorial-highlight {
     margin-top: 2rem;
     padding: 2rem 2.5rem;
-    background: linear-gradient(135deg, rgba(232,130,12,0.05), rgba(232,130,12,0.01));
+    background: linear-gradient(135deg, rgba(232, 130, 12, 0.05), rgba(232, 130, 12, 0.01));
     border-left: 4px solid var(--brand-orange, #e8820c);
     border-radius: 0 12px 12px 0;
     position: relative;
@@ -2107,7 +2435,7 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
 .aatf-editorial-quote-icon {
     width: 40px;
     height: 40px;
-    color: rgba(232,130,12,0.15);
+    color: rgba(232, 130, 12, 0.15);
     position: absolute;
     top: -15px;
     left: 20px;
@@ -2344,11 +2672,13 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
 .stagger-item:nth-child(even) {
     transform: translateY(120px);
 }
+
 @media (max-width: 768px) {
     .stagger-item:nth-child(even) {
         transform: translateY(0);
     }
 }
+
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
@@ -2516,8 +2846,13 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     max-width: 860px;
 }
 
-.dest-info-section__content p { margin: 0 0 1.1rem; }
-.dest-info-section__content p:last-child { margin-bottom: 0; }
+.dest-info-section__content p {
+    margin: 0 0 1.1rem;
+}
+
+.dest-info-section__content p:last-child {
+    margin-bottom: 0;
+}
 
 .dest-info-section__content h2,
 .dest-info-section__content h3,
@@ -2533,7 +2868,9 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     margin-bottom: 1.1rem;
 }
 
-.dest-info-section__content li { margin-bottom: 0.45rem; }
+.dest-info-section__content li {
+    margin-bottom: 0.45rem;
+}
 
 /* ── WP Main Content ──────────────────────────────────────────────── */
 .dest-wp-content {
@@ -2592,7 +2929,9 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
 
 /* ── Responsive ───────────────────────────────────────────────────── */
 @media (max-width: 900px) {
-    .dest-hero { min-height: 380px; }
+    .dest-hero {
+        min-height: 380px;
+    }
 
     .dest-tabs__btn {
         padding: 0.6rem 1rem;
@@ -2606,8 +2945,13 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
 }
 
 @media (max-width: 600px) {
-    .dest-hero { min-height: 300px; }
-    .dest-hero__title { font-size: 1.9rem; }
+    .dest-hero {
+        min-height: 300px;
+    }
+
+    .dest-hero__title {
+        font-size: 1.9rem;
+    }
 
     .dest-tabs {
         gap: 0;
@@ -2617,7 +2961,9 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
         scrollbar-width: none;
     }
 
-    .dest-tabs::-webkit-scrollbar { display: none; }
+    .dest-tabs::-webkit-scrollbar {
+        display: none;
+    }
 
     .dest-tabs__btn {
         padding: 0.55rem 0.85rem;
@@ -2625,7 +2971,9 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
         flex-shrink: 0;
     }
 
-    .dest-tabs__icon { display: none; }
+    .dest-tabs__icon {
+        display: none;
+    }
 
     .dest-tab-panel,
     .dest-wp-content {
@@ -2681,7 +3029,9 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     padding: 1rem 1.1rem;
 }
 
-.dest-tour-card__top { flex: 1; }
+.dest-tour-card__top {
+    flex: 1;
+}
 
 .dest-tour-card__stars {
     display: flex;
@@ -2690,11 +3040,24 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     margin-bottom: 0.45rem;
 }
 
-.dest-stars { display: flex; gap: 0.1rem; }
+.dest-stars {
+    display: flex;
+    gap: 0.1rem;
+}
 
-.dest-star { width: 14px; height: 14px; flex-shrink: 0; }
-.dest-star--full  { color: #f59e0b; }
-.dest-star--empty { color: #d1d5db; }
+.dest-star {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.dest-star--full {
+    color: #f59e0b;
+}
+
+.dest-star--empty {
+    color: #d1d5db;
+}
 
 .dest-tour-card__rating-val {
     font-size: 0.8rem;
@@ -2711,8 +3074,14 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     color: #13243c;
 }
 
-.dest-tour-card__title a { color: inherit; text-decoration: none; }
-.dest-tour-card__title a:hover { color: #0b473a; }
+.dest-tour-card__title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.dest-tour-card__title a:hover {
+    color: #0b473a;
+}
 
 .dest-tour-card__location {
     display: flex;
@@ -2723,7 +3092,11 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     margin-bottom: 0.55rem;
 }
 
-.dest-tour-card__location svg { width: 11px; height: 11px; flex-shrink: 0; }
+.dest-tour-card__location svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+}
 
 .dest-tour-card__price-line {
     margin: 0 0 0.5rem;
@@ -2761,7 +3134,11 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     color: #617087;
 }
 
-.dest-tour-card__meta-item svg { width: 13px; height: 13px; flex-shrink: 0; }
+.dest-tour-card__meta-item svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+}
 
 .dest-tour-card__explore {
     display: inline-flex;
@@ -2775,17 +3152,31 @@ body.aatf-section-nav-takeover .aatf-single-trek__section-nav {
     transition: gap 0.18s, color 0.18s;
 }
 
-.dest-tour-card__explore:hover { gap: 0.45rem; color: #b85800; }
-.dest-tour-card__explore svg { width: 11px; height: 11px; }
+.dest-tour-card__explore:hover {
+    gap: 0.45rem;
+    color: #b85800;
+}
+
+.dest-tour-card__explore svg {
+    width: 11px;
+    height: 11px;
+}
 
 @media (max-width: 1100px) {
-    .dest-tour-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .dest-tour-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 760px) {
-    .dest-tour-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .dest-tour-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
-    .dest-tour-grid { grid-template-columns: 1fr; }
+    .dest-tour-grid {
+        grid-template-columns: 1fr;
+    }
 }

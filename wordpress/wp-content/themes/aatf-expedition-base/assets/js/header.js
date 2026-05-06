@@ -1,40 +1,115 @@
 (function () {
-    var header = document.querySelector('.aatf-site-header');
-    if (header) {
-        var navToggle = header.querySelector('.aatf-nav-toggle');
-        var subToggles = header.querySelectorAll('.aatf-submenu-toggle');
-
-        var onScroll = function () {
-            if (window.scrollY > 24) {
-                header.classList.add('is-sticky');
-            } else {
-                header.classList.remove('is-sticky');
-            }
+    /* ── Sticky scroll for legacy .aatf-site-header (if present) ─── */
+    var legacyHeader = document.querySelector('.aatf-site-header');
+    if (legacyHeader) {
+        var onLegacyScroll = function () {
+            legacyHeader.classList.toggle('is-sticky', window.scrollY > 24);
         };
+        onLegacyScroll();
+        window.addEventListener('scroll', onLegacyScroll, { passive: true });
+    }
 
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
+    /* ── Sticky scroll for .aatf-main-nav ───────────────────────── */
+    var mainNav = document.querySelector('.aatf-main-nav');
+    if (mainNav) {
+        var onNavScroll = function () {
+            mainNav.classList.toggle('is-sticky', window.scrollY > 24);
+        };
+        onNavScroll();
+        window.addEventListener('scroll', onNavScroll, { passive: true });
+    }
 
+    /* ── Hamburger / Drawer ──────────────────────────────────────── */
+    var navToggle = document.getElementById('aatf-nav-toggle');
+    var navClose = document.getElementById('aatf-nav-close');
+    var navOverlay = document.getElementById('aatf-nav-overlay');
+    var navDrawer = document.getElementById('aatf-primary-nav');
+
+    function openDrawer() {
+        if (!navDrawer) { return; }
+        navDrawer.classList.add('is-open');
+        if (navOverlay) { navOverlay.classList.add('is-active'); }
         if (navToggle) {
-            navToggle.addEventListener('click', function () {
-                var expanded = navToggle.getAttribute('aria-expanded') === 'true';
-                navToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-                header.classList.toggle('is-menu-open', !expanded);
-            });
+            navToggle.classList.add('is-active');
+            navToggle.setAttribute('aria-expanded', 'true');
         }
+        document.body.classList.add('aatf-nav-open');
+    }
 
-        subToggles.forEach(function (toggle) {
-            toggle.addEventListener('click', function (event) {
-                event.preventDefault();
-                var parentItem = toggle.closest('li');
-                if (!parentItem) {
-                    return;
+    function closeDrawer() {
+        if (!navDrawer) { return; }
+        navDrawer.classList.remove('is-open');
+        if (navOverlay) { navOverlay.classList.remove('is-active'); }
+        if (navToggle) {
+            navToggle.classList.remove('is-active');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+        document.body.classList.remove('aatf-nav-open');
+    }
+
+    if (navToggle) {
+        navToggle.addEventListener('click', function () {
+            var isOpen = navDrawer && navDrawer.classList.contains('is-open');
+            isOpen ? closeDrawer() : openDrawer();
+        });
+    }
+
+    if (navClose) { navClose.addEventListener('click', closeDrawer); }
+    if (navOverlay) { navOverlay.addEventListener('click', closeDrawer); }
+
+    /* Close on Escape key */
+    document.addEventListener('keydown', function (e) {
+        if ((e.key === 'Escape' || e.keyCode === 27) && navDrawer && navDrawer.classList.contains('is-open')) {
+            closeDrawer();
+            if (navToggle) { navToggle.focus(); }
+        }
+    });
+
+    /* Close drawer only for in-page anchor navigation. Let full page loads
+       replace the view without starting a closing animation first. */
+    if (navDrawer) {
+        navDrawer.querySelectorAll('a').forEach(function (link) {
+            link.addEventListener('click', function () {
+                var href = link.getAttribute('href') || '';
+                if (href.charAt(0) === '#') {
+                    closeDrawer();
                 }
-
-                var expanded = toggle.getAttribute('aria-expanded') === 'true';
-                toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-                parentItem.classList.toggle('is-open', !expanded);
             });
+        });
+    }
+
+    /* ── Mobile submenu toggles (tap to expand inside drawer) ────── */
+    if (navDrawer) {
+        var menuItems = navDrawer.querySelectorAll('.aatf-site-header__menu > li.menu-item-has-children');
+        menuItems.forEach(function (item) {
+            var btn = item.querySelector('.aatf-submenu-toggle');
+            if (!btn) { return; }
+
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var isOpen = item.classList.contains('is-open');
+
+                /* Close all siblings */
+                menuItems.forEach(function (sibling) {
+                    if (sibling !== item) {
+                        sibling.classList.remove('is-open');
+                        var sibBtn = sibling.querySelector('.aatf-submenu-toggle');
+                        if (sibBtn) { sibBtn.setAttribute('aria-expanded', 'false'); }
+                    }
+                });
+
+                item.classList.toggle('is-open', !isOpen);
+                btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+            });
+
+            /* Show/hide the toggle button depending on viewport */
+            function syncToggleVisibility() {
+                var isMobile = window.innerWidth <= 768;
+                btn.style.display = isMobile ? 'inline-flex' : 'none';
+            }
+            syncToggleVisibility();
+            window.addEventListener('resize', syncToggleVisibility);
         });
     }
 

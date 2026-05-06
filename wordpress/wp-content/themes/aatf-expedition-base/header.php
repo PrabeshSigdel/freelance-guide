@@ -69,7 +69,7 @@
     ?>
 
     <!-- ── Top Bar ──────────────────────────────────────────────────── -->
-    <div class="bg-[#2d2d2d] text-white text-sm py-2 px-6 flex items-center justify-between">
+    <div class="aatf-topbar bg-[#2d2d2d] text-white text-sm py-2 px-6 flex items-center justify-between">
 
         <div class="flex items-center gap-6">
 
@@ -90,7 +90,7 @@
 
             <?php if ($email !== '') : ?>
                 <!-- Email -->
-                <div class="flex items-center gap-2">
+                <div class="aatf-topbar__email flex items-center gap-2">
                     <svg class="w-4 h-4 text-[var(--brand-orange)]" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -105,7 +105,7 @@
 
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="aatf-topbar__right flex items-center gap-4">
 
             <?php foreach ($social_links as $social_link) : ?>
                 <?php if ($social_link['url'] === '') {
@@ -131,7 +131,7 @@
 
             <?php if ($cta_label !== '') : ?>
                 <a href="<?php echo esc_url($cta_url); ?>"
-                    class="bg-[var(--brand-orange)] text-white px-4 py-2 text-xs font-semibold tracking-wide ml-2 hover:opacity-90 transition-opacity">
+                    class="aatf-topbar__cta bg-[var(--brand-orange)] text-white px-4 py-2 text-xs font-semibold tracking-wide ml-2 hover:opacity-90 transition-opacity">
                     <?php echo esc_html($cta_label); ?>
                 </a>
             <?php endif; ?>
@@ -141,10 +141,10 @@
 
     <!-- ── Navigation ───────────────────────────────────────────────── -->
     <nav class="aatf-main-nav bg-white sticky top-0 z-50" aria-label="<?php esc_attr_e('Primary Menu', 'aatf-expedition-base'); ?>">
-        <div class="max-w-7xl mx-auto py-3 flex items-center gap-6">
+        <div class="aatf-main-nav__inner max-w-7xl mx-auto py-3 flex items-center gap-6">
 
             <!-- Logo / Brand -->
-            <div class="w-[68px] h-[68px] flex items-center justify-center shrink-0">
+            <div class="aatf-main-nav__logo w-[68px] h-[68px] flex items-center justify-center shrink-0">
                 <?php if (has_custom_logo()) : ?>
                     <?php echo wp_kses_post(get_custom_logo()); ?>
                 <?php else : ?>
@@ -155,54 +155,76 @@
                 <?php endif; ?>
             </div>
 
-            <!-- Nav Links -->
-            <div class="flex-1 min-w-0 flex items-center justify-center gap-7 text-md font-medium text-[var(--brand-gray)]">
-                <?php
-                if (has_nav_menu('primary')) {
-                    wp_nav_menu(array(
-                        'theme_location' => 'primary',
-                        'container'      => false,
-                        'menu_class'     => 'aatf-site-header__menu flex items-center gap-7',
-                        'walker'         => new AATF_Header_Menu_Walker(),
-                        'fallback_cb'    => false,
-                        'link_before'    => '',
-                        'link_after'     => '',
-                        'item_spacing'   => 'discard',
-                    ));
-                } else {
-                ?>
-                    <a href="<?php echo esc_url(home_url('/')); ?>"
-                        class="<?php echo is_front_page() ? 'nav-item text-[var(--brand-dark)] font-semibold border-b-2 border-[var(--brand-orange)] pb-1 cursor-pointer' : 'hover:text-[var(--brand-orange)] transition-colors cursor-pointer'; ?>">
-                        <?php esc_html_e('Home', 'aatf-expedition-base'); ?>
-                    </a>
-                    <?php foreach ($fallback_pages as $fallback_page) : ?>
-                        <?php
-                        $page_classes = 'hover:text-[var(--brand-orange)] transition-colors cursor-pointer';
-                        if (is_page((int) $fallback_page->ID)) {
-                            $page_classes = 'nav-item text-[var(--brand-dark)] font-semibold border-b-2 border-[var(--brand-orange)] pb-1 cursor-pointer';
-                        }
-                        ?>
-                        <a href="<?php echo esc_url(get_permalink((int) $fallback_page->ID)); ?>"
-                            class="<?php echo esc_attr($page_classes); ?>">
-                            <?php echo esc_html(get_the_title((int) $fallback_page->ID)); ?>
+            <!-- Nav Links (desktop) / Mobile Drawer -->
+            <div class="aatf-nav-drawer flex-1 min-w-0 flex items-center justify-center gap-7 text-md font-medium text-[var(--brand-gray)]"
+                id="aatf-primary-nav">
+
+                <!-- Mobile drawer header (logo + close button) -->
+                <div class="aatf-nav-drawer__header">
+                    <span class="aatf-nav-drawer__title"><?php bloginfo('name'); ?></span>
+                </div>
+
+                <!-- Nav menu items -->
+                <div class="aatf-nav-links">
+                    <?php
+                    if (has_nav_menu('primary')) {
+                        wp_nav_menu(array(
+                            'theme_location' => 'primary',
+                            'container'      => false,
+                            'menu_class'     => 'aatf-site-header__menu flex items-center gap-7',
+                            'walker'         => new AATF_Header_Menu_Walker(),
+                            'fallback_cb'    => false,
+                            'link_before'    => '',
+                            'link_after'     => '',
+                            'item_spacing'   => 'discard',
+                        ));
+                    } else {
+                    ?>
+                        <a href="<?php echo esc_url(home_url('/')); ?>"
+                            class="<?php echo is_front_page() ? 'nav-item text-[var(--brand-dark)] font-semibold border-b-2 border-[var(--brand-orange)] pb-1 cursor-pointer' : 'hover:text-[var(--brand-orange)] transition-colors cursor-pointer'; ?>">
+                            <?php esc_html_e('Home', 'aatf-expedition-base'); ?>
                         </a>
-                    <?php endforeach; ?>
-                <?php
-                }
-                ?>
+                        <?php foreach ($fallback_pages as $fallback_page) : ?>
+                            <?php
+                            $page_classes = 'hover:text-[var(--brand-orange)] transition-colors cursor-pointer';
+                            if (is_page((int) $fallback_page->ID)) {
+                                $page_classes = 'nav-item text-[var(--brand-dark)] font-semibold border-b-2 border-[var(--brand-orange)] pb-1 cursor-pointer';
+                            }
+                            ?>
+                            <a href="<?php echo esc_url(get_permalink((int) $fallback_page->ID)); ?>"
+                                class="<?php echo esc_attr($page_classes); ?>">
+                                <?php echo esc_html(get_the_title((int) $fallback_page->ID)); ?>
+                            </a>
+                        <?php endforeach; ?>
+                    <?php
+                    }
+                    ?>
+                </div>
+
+                <!-- Mobile CTA inside drawer -->
+                <?php if ($cta_label !== '') : ?>
+                    <div class="aatf-nav-drawer__cta">
+                        <a href="<?php echo esc_url($cta_url); ?>" class="aatf-drawer-cta-btn">
+                            <?php echo esc_html($cta_label); ?>
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
 
+            <!-- ── Mobile hamburger toggle ────────────────────────────── -->
+            <button class="aatf-nav-toggle" id="aatf-nav-toggle" type="button"
+                aria-expanded="false" aria-controls="aatf-primary-nav"
+                aria-label="<?php esc_attr_e('Toggle menu', 'aatf-expedition-base'); ?>">
+                <span class="aatf-nav-toggle__line"></span>
+                <span class="aatf-nav-toggle__line"></span>
+                <span class="aatf-nav-toggle__line"></span>
+                <span class="screen-reader-text"><?php esc_html_e('Toggle menu', 'aatf-expedition-base'); ?></span>
+            </button>
 
         </div>
 
-        <!-- ── Mobile hamburger toggle (hidden on desktop) ──────────── -->
-        <button class="aatf-nav-toggle hidden" type="button"
-            aria-expanded="false" aria-controls="aatf-primary-nav">
-            <span class="aatf-nav-toggle__line"></span>
-            <span class="aatf-nav-toggle__line"></span>
-            <span class="aatf-nav-toggle__line"></span>
-            <span class="screen-reader-text"><?php esc_html_e('Toggle menu', 'aatf-expedition-base'); ?></span>
-        </button>
+        <!-- Mobile overlay backdrop -->
+        <div class="aatf-nav-overlay" id="aatf-nav-overlay" aria-hidden="true"></div>
     </nav>
 
     <main class="site-main">

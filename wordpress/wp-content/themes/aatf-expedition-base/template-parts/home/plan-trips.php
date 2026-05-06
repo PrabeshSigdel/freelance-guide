@@ -127,54 +127,54 @@ if (empty($bullet_items)) {
 
 <!-- ── Plan Your Trip with Us ─────────────────────────────────────── -->
 <section class="bg-white py-16 overflow-hidden">
-    <div class="max-w-7xl mx-auto flex items-center gap-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-12">
 
         <!-- Left: Image -->
-        <div class="relative shrink-0 w-[500px] h-[500px]">
-            <div class="absolute top-8 right-8 bottom-8 left-0 rounded-[28px] overflow-hidden shadow-xl z-10">
+        <div class="relative shrink-0 w-full max-w-[500px] mx-auto lg:mx-0 aspect-square">
+            <div class="absolute top-4 right-4 bottom-4 left-0 sm:top-6 sm:right-6 sm:bottom-6 lg:top-8 lg:right-8 lg:bottom-8 rounded-[22px] sm:rounded-[28px] overflow-hidden shadow-xl z-10">
                 <img src="<?php echo esc_url($thumb); ?>"
                     alt="<?php echo esc_attr($destination_title); ?>"
                     class="w-full h-full object-cover" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent"></div>
-                <div class="absolute bottom-3 right-3 text-right leading-tight drop-shadow-lg z-10">
-                    <p class="text-sm font-bold uppercase tracking-widest" style="color: var(--brand-orange);">
+                <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 text-right leading-tight drop-shadow-lg z-10">
+                    <p class="text-[11px] sm:text-sm font-bold uppercase tracking-[0.2em]" style="color: var(--brand-orange);">
                         <?php esc_html_e('Featured', 'aatf-expedition-base'); ?>
                     </p>
-                    <p class="text-xl font-extrabold text-white -mt-1"><?php echo esc_html($badge_label); ?></p>
+                    <p class="text-lg sm:text-xl font-extrabold text-white -mt-1"><?php echo esc_html($badge_label); ?></p>
                 </div>
             </div>
 
-            <div class="absolute bottom-0 left-0 z-30 bg-white rounded-xl shadow-lg px-4 py-3 border border-gray-100">
+            <div class="absolute bottom-0 left-0 z-30 bg-white rounded-xl shadow-lg px-3 py-3 sm:px-4 border border-gray-100 max-w-[78%] sm:max-w-none">
                 <p class="text-[10px] font-semibold tracking-widest uppercase mb-0.5" style="color: var(--brand-gray);">
                     <?php esc_html_e('Book Tour Now', 'aatf-expedition-base'); ?>
                 </p>
-                <p class="text-xl font-extrabold tracking-wide" style="color: var(--brand-dark);">
+                <p class="text-lg sm:text-xl font-extrabold tracking-wide break-words" style="color: var(--brand-dark);">
                     <?php echo esc_html($phone); ?>
                 </p>
             </div>
         </div>
 
         <!-- Right: Content -->
-        <div class="flex-1">
+        <div class="flex-1 w-full">
             <p class="text-sm font-semibold mb-2" style="color: var(--brand-orange);">
                 <?php esc_html_e('Get to know us', 'aatf-expedition-base'); ?>
             </p>
-            <h2 class="text-4xl font-extrabold leading-tight mb-5" style="color: var(--brand-dark);">
+            <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-4 sm:mb-5" style="color: var(--brand-dark);">
                 <?php echo esc_html($heading); ?>
             </h2>
-            <p class="text-md leading-relaxed mb-7" style="color: var(--brand-gray);">
+            <p class="text-sm sm:text-base leading-relaxed mb-6 sm:mb-7" style="color: var(--brand-gray);">
                 <?php echo esc_html($summary); ?>
             </p>
-            <p class="text-lg font-bold mb-5" style="color: var(--brand-dark);">
+            <p class="text-base sm:text-lg font-bold mb-4 sm:mb-5" style="color: var(--brand-dark);">
                 <a href="<?php echo esc_url($destination_url); ?>" class="hover:underline">
                     <?php echo esc_html($destination_title); ?>
                 </a>
             </p>
 
-            <ul class="space-y-3 mb-8">
+            <ul class="space-y-3 mb-7 sm:mb-8">
                 <?php foreach ($bullet_items as $item) : ?>
-                    <li class="flex items-center gap-3 text-sm font-medium" style="color: var(--brand-dark);">
-                        <span class="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                    <li class="flex items-start gap-3 text-sm font-medium leading-relaxed" style="color: var(--brand-dark);">
+                        <span class="w-5 h-5 mt-0.5 rounded-full flex items-center justify-center shrink-0"
                             style="background-color: var(--brand-orange);">
                             <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
@@ -187,7 +187,7 @@ if (empty($bullet_items)) {
 
             <div class="flex flex-wrap items-center gap-4">
                 <a href="<?php echo esc_url($nav_url); ?>"
-                class="inline-block text-white text-xs font-bold tracking-widest uppercase px-8 py-4 rounded-lg hover:opacity-90 transition-opacity"
+                class="inline-flex w-full sm:w-auto justify-center text-center text-white text-xs font-bold tracking-widest uppercase px-6 sm:px-8 py-4 rounded-lg hover:opacity-90 transition-opacity"
                 style="background-color: var(--brand-navy);">
                     <?php esc_html_e('Book with Us Now', 'aatf-expedition-base'); ?>
                 </a>
@@ -196,5 +196,4 @@ if (empty($bullet_items)) {
 
     </div>
 </section>
-
 
