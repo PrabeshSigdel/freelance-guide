@@ -103,4 +103,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** Sets up WordPress vars and included files. */
 require_once ABSPATH . 'wp-settings.php';
 
-// new password: BestNepal@123 for live server freelance guide
+// username: bestadmin.....new password: , BestNepal@123 for live server old freelance guide
+//username: prabesh.....password for newsite/wp-admin: prabesh@123
